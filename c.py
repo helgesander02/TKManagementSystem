@@ -1,18 +1,26 @@
 from tkinter import *
-from tkinter import ttk
 
-def show_btn(pathname, value):
-	print (pathname)
-	print (value)
-	pathname.insert(END, value)
+root = Tk()
 
-def main_gui():
-	def gen_cmd(i):return lambda:show_btn(en_1,i)
-	win =Tk()
-	en_1=ttk.Entry(win)
-	en_1.pack()
-	for i in range(1,11):
-		btn_i=ttk.Button(win,text=i,command=gen_cmd(i))
-		btn_i.pack()
-	win.mainloop()
-main_gui()
+# 創建 Frame
+frame = Frame(root)
+frame.pack()
+
+# 創建初始的 Label
+label = Label(frame, text="這是初始的內容")
+label.pack()
+label1 = Label(frame, text="2")
+label1.pack()
+
+# 創建更新按鈕，點擊時會更新 Label 的內容
+def update_label():
+    # 更新 Label 的內容
+    label.config(text="這是更新後的內容")
+    # 使用 pack() 方法重新放置 Label
+    label.pack()
+
+button = Button(root, text="更新", command=update_label)
+button.pack()
+
+root.mainloop()
+

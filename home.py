@@ -7,6 +7,10 @@ from menber import Menber_Main_Frame
 from goods import Goods_Main_Frame
 from data import Data_Main_Frame
 
+from sql_app.crud import *
+from sqlalchemy.orm import Session
+from sql_app.database import engine,SessionLocal
+
 # https://steam.oxxostudio.tw/category/python/tkinter/grid.html
 # .grid 詳細解釋
 # https://vocus.cc/article/62577184fd89780001e55c39
@@ -89,10 +93,11 @@ class Search_Frame(customtkinter.CTkFrame):
                                                         font=("microsoft yahei", 18, 'bold'))
 
         self.menber_button.place(relx=0.9, rely=0.5, anchor=tk.CENTER)
-        
+    
 class Schedule_Frame(customtkinter.CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master,user_name, **kwargs):
         super().__init__(master, **kwargs)
+
         for i in range(7):
             self.columnconfigure(i,weight=1)
         self.columnconfigure(4,weight=2)
@@ -110,18 +115,48 @@ class Schedule_Frame(customtkinter.CTkFrame):
         a.grid(row=0,column=5)
         a=customtkinter.CTkLabel(self,text='金額',fg_color = ("#DDDDDD"),text_color='black')
         a.grid(row=0,column=6)
-
+        if user_name!='':
+            user=get_user(Session(engine),user_name)
+            od_l={}
+            order_list=get_od(Session(engine),user_id=user.ID)
+            for i in order_list:
+                if i.order_number in od_l:
+                    od_l[i.order_number][4]+=f',{i.p_ID_.product_Name}'
+                    od_l[i.order_number][6]+=i.count*i.p_ID_.product_Price
+                else:
+                    od_l[i.order_number]=[i.M_ID_.Name,i.od_id,i.Date_,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
+            for key,value in od_l.items():
+                a=customtkinter.CTkLabel(self,text=f'{key}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=key,column=0)
+                a=customtkinter.CTkLabel(self,text=f'{value[1]}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=key,column=1)
+                a=customtkinter.CTkLabel(self,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=key,column=2) 
+                a=customtkinter.CTkLabel(self,text=f'{value[3]}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=key,column=3) 
+                a=customtkinter.CTkLabel(self,text=f'{value[4]}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=key,column=4,sticky='w')
+                a=customtkinter.CTkLabel(self,text=f'{value[5]}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=key,column=5)
+                a=customtkinter.CTkLabel(self,text=f'{value[6]}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=key,column=6)
 class Home_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         #Search_Frame
-        self.Search_Frame = Search_Frame(self,  fg_color = ("#DDDDDD") ,width=1200 ,height=180)
-        # self.Search_Frame.grid(row=0, column=0)
-        self.Search_Frame.pack(pady=30)
+        self.Search_Frame_ = Search_Frame(self,  fg_color = ("#DDDDDD"))
+        self.Search_Frame_.MS_button.configure(command=lambda: self.search_user(self.Search_Frame_.MS_entry.get()))
+        self.Search_Frame_.pack(pady=30,padx=30,fill='x')
+        
         #Schedule_Frame
-        self.Schedule_Frame = Schedule_Frame(self,  fg_color = ("#DDDDDD") ,width=1200 ,height=680)
-        # self.Schedule_Frame.grid(row=1, column=0, pady=10)
-        self.Schedule_Frame.pack(fill='both',expand=1,padx=30,pady=30)
+        self.Schedule_Frame_ = Schedule_Frame(self,user_name='',  fg_color = ("#DDDDDD"))
+        
+        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30)
+        
+    def search_user(self,user_name):
+        self.Schedule_Frame_.pack_forget()
+        self.Schedule_Frame_=Schedule_Frame(self,user_name=user_name,  fg_color = ("#DDDDDD"))
+        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30)
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()

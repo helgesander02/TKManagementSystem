@@ -7,8 +7,11 @@ from typing import Union
 from typing import Callable
 from sql_app.crud import *
 from sqlalchemy.orm import Session
-from sql_app.database import engine
+from sql_app.database import engine,SessionLocal
 # Order () 訂單
+phone_data=''
+pick_up_data=''
+remark_data=''
 class Order_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -206,46 +209,49 @@ class input_order(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.columnconfigure((0,1),weight=1)
-        self.input_top_=input_top(self, fg_color = ("#DDDDDD"))
-        self.input_top_.pack(fill='x',padx=30,pady=5)
-        self.product_=product_Frame(self, fg_color = ("#DDDDDD"))
-        self.product_.pack(fill='both',expand=1,padx=30,pady=5)
-# https://gist.github.com/apua/e43f007fbc9813ae97f7831ed25bb62b
-class input_top(customtkinter.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
+        self.input_top_=customtkinter.CTkFrame(self, fg_color = ("#DDDDDD"))
+        self.input_top_.columnconfigure(5,weight=5)
         for i in range(6):
             self.columnconfigure(i,weight=1)
-        self.ph_label=customtkinter.CTkLabel(self, text="電話",text_color='black')
-        self.phone=customtkinter.CTkEntry(self, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black')
+        self.ph_label=customtkinter.CTkLabel(self.input_top_, text="電話",text_color='black')
+        self.phone=customtkinter.CTkEntry(self.input_top_, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black')
+        
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
-        self.path_label=customtkinter.CTkLabel(self, text="通路",text_color='black')
-        self.path=customtkinter.CTkComboBox(self,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black')
+        self.path=customtkinter.CTkComboBox(self.input_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
         self.path_label.grid(row=1,column=0,padx=30,pady=5)
         self.path.grid(row=1,column=1,padx=30,pady=5)
-        self.pick_up_label=customtkinter.CTkLabel(self, text="取貨方式",text_color='black')
-        self.pick_up=customtkinter.CTkComboBox(self,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.pick_up_label=customtkinter.CTkLabel(self.input_top_, text="取貨方式",text_color='black')
+        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "取貨2"],fg_color = ("#DDDDDD"),text_color='black')
         self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
-        self.date_label=customtkinter.CTkLabel(self, text="日期",text_color='black')
-        self.date_=DateEntry(self,selectmode='day')
+        self.date_label=customtkinter.CTkLabel(self.input_top_, text="日期",text_color='black')
+        self.date_=DateEntry(self.input_top_,selectmode='day')
         self.date_label.grid(row=0,column=2,padx=30,pady=5)
         self.date_.grid(row=0,column=3,padx=30,pady=5)
-        self.date_1=DateEntry(self,selectmode='day')
-        self.date_1.grid(row=1,column=3,padx=30,pady=5)
-        self.Remark_label=customtkinter.CTkLabel(self, text="備註",text_color='black')
+        self.search=customtkinter.CTkEntry(self.input_top_,fg_color = ("#EEEEEE"),text_color='black')
+        self.search=customtkinter.CTkEntry(self.input_top_,fg_color = ("#EEEEEE"),text_color='black')
+        self.search_bt=customtkinter.CTkButton(self.input_top_, text="Q", width=40,
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 14, 'bold'),
+                                                        )
+        self.search_bt.grid(row=2,column=4,sticky='ew')
+        self.search.grid(row=2,column=3,sticky='ew')
+        self.Remark_label=customtkinter.CTkLabel(self.input_top_, text="備註",text_color='black')
         self.Remark_label.grid(row=0,column=4,padx=30,pady=5)
-        self.Remark_textbox = customtkinter.CTkTextbox(self, corner_radius=0,width=300,fg_color='white',border_color='black',text_color='black',border_width=1)
-        self.Remark_textbox.grid(row=0, column=5,rowspan=3,padx=30,pady=5)        
-class product_Frame(customtkinter.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
+        self.Remark_textbox = customtkinter.CTkTextbox(self.input_top_, corner_radius=0,fg_color='white',border_color='black',text_color='black',border_width=1)
+        self.Remark_textbox.grid(row=0, column=5,rowspan=3,padx=30,pady=5,sticky='we')        
+        # self.input_top_=input_top(self, fg_color = ("#DDDDDD")) 
+        self.input_top_.pack(fill='x',padx=30,pady=5)
+        
+        
+        self.product_=customtkinter.CTkFrame(self, fg_color = ("#DDDDDD"))
         prodcuts=get_all_products(Session(engine))
-        list1=[['a','小','a元'],['b','大','b元'],['c','小','c元'],['d','小','d元'],['e','小','e元']]
+        
         self.bt_group={}
         self.buy_list={}
-        self.a_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
+        self.a_frame=customtkinter.CTkFrame(self.product_,fg_color = ("#DDDDDD"))
         for i in range(len(prodcuts)):
             self.a_frame.columnconfigure(i,weight=1)
         def gen_cmd(i):return lambda:self.buy_bt_click(i)
@@ -264,27 +270,37 @@ class product_Frame(customtkinter.CTkFrame):
             buy_button.grid(row=i,column=5, padx=30, pady=0)
             
         self.a_frame.pack(side='left',anchor='n',fill='x',expand=1)
-        self.sum_frame_=sum_Frame(self,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
-        self.sum_frame_.pack(side='right',anchor='n',fill='both')
-        
+        self.sum_frame_.pack(side='right',anchor='n',fill='both')        
+        # self.product_=product_Frame(self, fg_color = ("#DDDDDD"))
+        self.product_.pack(fill='both',expand=1,padx=30,pady=5)
+    def add_od(self):
+        add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1')
     def buy_bt_click(self,a):
         self.sum_frame_.pack_forget()
-        self.sum_frame_=sum_Frame(self,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
+        self.buy_list=self.sum_frame_.buy_list
+        
     def reset_(self):
-        print('a')
         self.buy_list={}
         self.sum_frame_.pack_forget()
-        self.sum_frame_=sum_Frame(self,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
+# https://gist.github.com/apua/e43f007fbc9813ae97f7831ed25bb62b
 class sum_Frame(customtkinter.CTkFrame):
     def __init__(self, master,a,buy_list,bt_group, **kwargs):
         super().__init__(master, **kwargs)
         self.a=a
         self.buy_list=buy_list
         self.bt_group=bt_group
+        # self.contents_=sum_list(self,a=self.a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        # self.contents_.pack(fill='both',expand=1)
         self.contents_=customtkinter.CTkFrame(self,  fg_color = ("#EEEEEE"))
         self.contents_.rowconfigure(len(buy_list),weight=1)
         
@@ -316,6 +332,26 @@ class sum_Frame(customtkinter.CTkFrame):
         self.reset_bt=customtkinter.CTkButton(self,text='重設訂單',width=300)
         self.confirm_bt.pack(pady=10)
         self.reset_bt.pack()
+class sum_list(customtkinter.CTkFrame):
+    def __init__(self, master,a,buy_list,bt_group, **kwargs):
+        super().__init__(master, **kwargs)
+        self.rowconfigure(len(buy_list),weight=1)
+        self.a=a
+        self.buy_list=buy_list
+        self.bt_group=bt_group
+        
+        if self.a!='':
+            self.buy_list[self.a]=[self.bt_group[self.a][0].get(),self.bt_group[self.a][1]]
+            if self.buy_list[self.a][0]==0:del self.buy_list[self.a]
+            i=0
+            for key,value in self.buy_list.items():
+                name_=customtkinter.CTkLabel(self,text=f'{key}',text_color='black')
+                number_=customtkinter.CTkLabel(self,text=f'X{value[0]:5}',text_color='black')
+                price_=customtkinter.CTkLabel(self,text=f'{value[0]*value[1]}',text_color='black')
+                name_.grid(row=i,column=0, padx=20, pady=3,sticky='nw')
+                number_.grid(row=i,column=1, padx=20, pady=3,sticky='n')
+                price_.grid(row=i,column=2, padx=20, pady=3,sticky='n')
+                i+=1
 class FloatSpinbox(customtkinter.CTkFrame):
     def __init__(self, *args,
                  width: int = 100,

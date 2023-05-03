@@ -69,8 +69,8 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
     def member_search_click(self):
         user=get_user(Session(engine),self.search.get())
         try:
-            self.user_id=user.Name
-            self.member_label.configure(text=f'會員編號：{user.Member_ID}')
+            self.user_id=user.Phone
+            self.member_label.configure(text=f'會員編號：{user.ID}')
             self.member_name.configure(text=f'名稱：{user.Name}')
             self.member_address.configure(text=f'地址：{user.Address}')
         except:
@@ -146,7 +146,7 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             edit_n1=customtkinter.CTkLabel(self,text='電話',text_color='black')
             edit_n2=customtkinter.CTkLabel(self,text='地址',text_color='black')
             edit_n3=customtkinter.CTkLabel(self,text='備註',text_color='black')
-            edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
+            # edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
             self.edit_entry_n=customtkinter.CTkEntry(self)
             self.edit_entry_n1=customtkinter.CTkEntry(self)
             self.edit_entry_n2=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
@@ -157,7 +157,7 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             confirm_bt=customtkinter.CTkButton(self,text='確定更改',command=self.confirm_edit)
             self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
             confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
-            edit_n4.grid(row=0,column=0)
+            # edit_n4.grid(row=0,column=0)
             edit_n.grid(row=1,column=0)
             edit_n1.grid(row=2,column=0)
             edit_n2.grid(row=3,column=0)
