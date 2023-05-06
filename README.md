@@ -4,5 +4,5 @@
 
 # Installation
 
-* Clone this repo by `git clone https://github.com/helgesander02/management-system`
+* Clone this repo by `git clone https://github.com/helgesander02/TKManagementSystem`
 * Python libraries. Install core requirements by `pip install -r requirements.txt`
