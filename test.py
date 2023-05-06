@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
 from sql_app.database import engine
 from sql_app.crud import *
-a=get_user(Session(engine),'0912345678')
-print(a.Address)
+t={'a':['1',1],'b':['1',1]}
+# a=get_user(Session(engine),'0912345678')
+# print(a.Address)
 # od_l={}
 # a=get_od(Session(engine),'1')
 # for i in a:

@@ -115,6 +115,8 @@ class Schedule_Frame(customtkinter.CTkFrame):
         a.grid(row=0,column=5)
         a=customtkinter.CTkLabel(self,text='金額',fg_color = ("#DDDDDD"),text_color='black')
         a.grid(row=0,column=6)
+        self.toplevel_window = None
+        def gen_cmd(i):return lambda:self.od_info(i)
         if user_name!='':
             user=get_user(Session(engine),user_name)
             od_l={}
@@ -124,22 +126,48 @@ class Schedule_Frame(customtkinter.CTkFrame):
                     od_l[i.order_number][4]+=f',{i.p_ID_.product_Name}'
                     od_l[i.order_number][6]+=i.count*i.p_ID_.product_Price
                 else:
-                    od_l[i.order_number]=[i.M_ID_.Name,i.od_id,i.Date_,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
+                    od_l[i.order_number]=[i.M_ID_.Name,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
+            i=1
             for key,value in od_l.items():
-                a=customtkinter.CTkLabel(self,text=f'{key}',fg_color = ("#DDDDDD"),text_color='black')
-                a.grid(row=key,column=0)
-                a=customtkinter.CTkLabel(self,text=f'{value[1]}',fg_color = ("#DDDDDD"),text_color='black')
-                a.grid(row=key,column=1)
+                a=customtkinter.CTkLabel(self,text=f'{value[0]}',fg_color = ("#DDDDDD"),text_color='black')
+                a.grid(row=i,column=0)
+                a=customtkinter.CTkButton(self,text=f'{key}',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(key))
+                a.grid(row=i,column=1)
                 a=customtkinter.CTkLabel(self,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black')
-                a.grid(row=key,column=2) 
+                a.grid(row=i,column=2) 
                 a=customtkinter.CTkLabel(self,text=f'{value[3]}',fg_color = ("#DDDDDD"),text_color='black')
-                a.grid(row=key,column=3) 
+                a.grid(row=i,column=3) 
                 a=customtkinter.CTkLabel(self,text=f'{value[4]}',fg_color = ("#DDDDDD"),text_color='black')
-                a.grid(row=key,column=4,sticky='w')
+                a.grid(row=i,column=4,sticky='w')
                 a=customtkinter.CTkLabel(self,text=f'{value[5]}',fg_color = ("#DDDDDD"),text_color='black')
-                a.grid(row=key,column=5)
+                a.grid(row=i,column=5)
                 a=customtkinter.CTkLabel(self,text=f'{value[6]}',fg_color = ("#DDDDDD"),text_color='black')
-                a.grid(row=key,column=6)
+                a.grid(row=i,column=6)
+                i+=1
+    def od_info(self,a):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = info_window(self,a=a)  # create window if its None or destroyed
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
+class info_window(customtkinter.CTkToplevel):
+    def __init__(self, *args,a, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("200x300")
+        self.columnconfigure((0,1),weight=1)
+        user=get_od_info(Session(engine),od_nb=a)
+        self.label_odnb = customtkinter.CTkLabel(self, text='訂單編號：')
+        self.label_odnb.grid(row=0,column=0,sticky='e')
+        self.odnb = customtkinter.CTkLabel(self, text=user.order_number)
+        self.odnb.grid(row=0,column=1,sticky='w')
+        
+        self.label_pick_up = customtkinter.CTkLabel(self, text='通路：')
+        self.label_pick_up.grid(row=1,column=0,sticky='e')
+        self.pick_up = customtkinter.CTkLabel(self, text=user.pick_up)
+        self.pick_up.grid(row=1,column=1,sticky='w')
+        self.label_remark = customtkinter.CTkLabel(self, text='備註：')
+        self.label_remark.grid(row=2,column=0,sticky='e')
+        self.remark = customtkinter.CTkLabel(self, text=user.Remark)
+        self.remark.grid(row=2,column=1,sticky='w')
 class Home_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)

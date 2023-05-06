@@ -24,6 +24,9 @@ class Order(Base):
     pick_up_tf=Column(String)
     count=Column(Integer)
     Remark=Column(String)
+    pick_up_date=Column(DateTime)
+    money=Column(Integer)
+    phone=Column(String)
 
 class Member(Base):
     __tablename__ = "Member" # table name in the database

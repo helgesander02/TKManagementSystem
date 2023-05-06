@@ -47,49 +47,50 @@ class Order_Main_Frame(customtkinter.CTkFrame):
 class edit_order(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        edit_top_=edit_top(self,fg_color = ("#DDDDDD"))
-        edit_top_.pack(fill='x',padx=30,pady=5)
-        ol=order_List(self,fg_color = ("#DDDDDD"))
-        ol.pack(fill='x',padx=30,pady=5)
-class edit_top(customtkinter.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
+        
+        # self.edit_top_=edit_top(self,fg_color = ("#DDDDDD"))
+        self.edit_top_=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         for i in range(7):
-            self.columnconfigure(i,weight=1)
-        self.ph_label=customtkinter.CTkLabel(self, text="電話",text_color='black')
-        self.phone=customtkinter.CTkEntry(self, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black')
+            self.edit_top_.columnconfigure(i,weight=1)
+        self.ph_label=customtkinter.CTkLabel(self.edit_top_, text="電話",text_color='black')
+        self.phone=customtkinter.CTkEntry(self.edit_top_, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black')
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
-        self.path_label=customtkinter.CTkLabel(self, text="通路",text_color='black')
-        self.path=customtkinter.CTkComboBox(self,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path_label=customtkinter.CTkLabel(self.edit_top_, text="通路",text_color='black')
+        self.path=customtkinter.CTkComboBox(self.edit_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
         self.path_label.grid(row=1,column=0,padx=30,pady=5)
         self.path.grid(row=1,column=1,padx=30,pady=5)
-        self.pick_up_label=customtkinter.CTkLabel(self, text="取貨方式",text_color='black')
-        self.pick_up=customtkinter.CTkComboBox(self,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.pick_up_label=customtkinter.CTkLabel(self.edit_top_, text="取貨方式",text_color='black')
+        self.pick_up=customtkinter.CTkComboBox(self.edit_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
         self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
-        self.date_label=customtkinter.CTkLabel(self, text="日期",text_color='black')
-        self.date_=DateEntry(self,selectmode='day')
+        self.date_label=customtkinter.CTkLabel(self.edit_top_, text="日期",text_color='black')
+        self.date_=DateEntry(self.edit_top_,selectmode='day')
         self.date_label.grid(row=0,column=2,padx=30,pady=5)
         self.date_.grid(row=0,column=3,padx=30,pady=5)
-        self.date_1=DateEntry(self,selectmode='day')
-        self.date_1.grid(row=1,column=3,padx=30,pady=5)
-        self.money_label=customtkinter.CTkLabel(self, text="金額",text_color='black')
-        self.money=customtkinter.CTkEntry(self, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black')
-        self.money2=customtkinter.CTkEntry(self, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black')
+        self.money_label=customtkinter.CTkLabel(self.edit_top_, text="金額",text_color='black')
+        self.money=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black')
+        self.money2=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black')
         self.money_label.grid(row=0,column=4,padx=30,pady=5)
         self.money.grid(row=0,column=5,padx=30,pady=5)
         self.money2.grid(row=1,column=5,padx=30,pady=5)
-        reset_bt=customtkinter.CTkButton(self,text='重新設定', width=150, height=40,
+        reset_bt=customtkinter.CTkButton(self.edit_top_,text='重新設定', width=150, height=40,
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),
                                                         )
         reset_bt.grid(row=0,column=6,padx=30,pady=5)
-        search=customtkinter.CTkButton(self,text='確定查詢', width=150, height=40,
+        search=customtkinter.CTkButton(self.edit_top_,text='確定查詢', width=150, height=40,
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),
-                                                        )
-        search.grid(row=1,column=6,padx=30,pady=5)
+                                                        command=lambda: self.search_od_list(phone=self.phone.get(),pick_up=self.pick_up.get(),date_=self.date_.get(),money1=self.money.get(),money2=self.money2.get()))
+        search.grid(row=1,column=6,padx=30,pady=5)       
+        self.edit_top_.pack(fill='x',padx=30,pady=5)
+        self.ol=order_List(self,fg_color = ("#DDDDDD"))
+        self.ol.pack(fill='x',padx=30,pady=5)
+    def search_od_list(self,phone,pick_up,date_,money1,money2):
+        a=search_od_(db=Session(engine),phone=phone,pick_up=pick_up,date_=date_,money1=money1,money2=money2)
+        for i in a:
+            print(i.pick_up)
 class finish_frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -226,7 +227,7 @@ class input_order(customtkinter.CTkFrame):
         self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "取貨2"],fg_color = ("#DDDDDD"),text_color='black')
         self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
-        self.date_label=customtkinter.CTkLabel(self.input_top_, text="日期",text_color='black')
+        self.date_label=customtkinter.CTkLabel(self.input_top_, text="取貨日期",text_color='black')
         self.date_=DateEntry(self.input_top_,selectmode='day')
         self.date_label.grid(row=0,column=2,padx=30,pady=5)
         self.date_.grid(row=0,column=3,padx=30,pady=5)
@@ -248,7 +249,7 @@ class input_order(customtkinter.CTkFrame):
         
         self.product_=customtkinter.CTkFrame(self, fg_color = ("#DDDDDD"))
         prodcuts=get_all_products(Session(engine))
-        
+        self.toplevel_window = None
         self.bt_group={}
         self.buy_list={}
         self.a_frame=customtkinter.CTkFrame(self.product_,fg_color = ("#DDDDDD"))
@@ -276,7 +277,15 @@ class input_order(customtkinter.CTkFrame):
         # self.product_=product_Frame(self, fg_color = ("#DDDDDD"))
         self.product_.pack(fill='both',expand=1,padx=30,pady=5)
     def add_od(self):
-        add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1')
+        add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date())
+        self.sum_frame_.pack_forget()
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.pack(side='right',anchor='n',fill='both')
+        # if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+        #     self.toplevel_window = message_window(self)  # create window if its None or destroyed
+        # else:
+        #     self.toplevel_window.focus()  # if window exists focus it 
     def buy_bt_click(self,a):
         self.sum_frame_.pack_forget()
         self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
@@ -292,6 +301,13 @@ class input_order(customtkinter.CTkFrame):
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
+class message_window(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
+
+        self.label = customtkinter.CTkLabel(self, text="訂單成立")
+        self.label.pack(padx=20, pady=20)
 # https://gist.github.com/apua/e43f007fbc9813ae97f7831ed25bb62b
 class sum_Frame(customtkinter.CTkFrame):
     def __init__(self, master,a,buy_list,bt_group, **kwargs):
