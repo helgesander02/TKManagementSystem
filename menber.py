@@ -3,8 +3,11 @@ import customtkinter
 from sqlalchemy.orm import Session
 from sql_app.database import engine
 from sql_app.crud import get_user,save_change,add_data
-
+from sql_app.crud import *
 from tkinter import *
+from tkcalendar import DateEntry
+from order import edit_ToplevelWindow as edit_ToplevelWindow_
+
 # Menber () 會員
 class Menber_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -27,10 +30,10 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
 
         bt_group=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         # bt_group.columnconfigure((0,1,2),weight=1)
-        confirm_bt=customtkinter.CTkButton(bt_group,text='確認')
+        
         edit_bt=customtkinter.CTkButton(bt_group,text='編輯',command=self.open_edit_toplevel)
         add_bt=customtkinter.CTkButton(bt_group,text='新增',command=self.open_add_toplevel)
-        confirm_bt.grid(row=0,column=0,padx=10)
+        
         edit_bt.grid(row=0,column=1,padx=10)
         add_bt.grid(row=0,column=2,padx=10)
 
@@ -46,28 +49,53 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
 
         member_frame.grid(row=0,column=1,rowspan=2,sticky='w')
 
-        history_label=customtkinter.CTkLabel(self,text='歷史紀錄',text_color='black')
-        history_label.grid(row=3,column=0,sticky='w',padx=30,pady=50)
-        history_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
-        history_frame.columnconfigure((0,2,3,4),weight=1)
-        history_frame.columnconfigure(1,weight=3)
-        order_n=customtkinter.CTkLabel(history_frame,text='訂單編號',text_color='black')
-        order_n1=customtkinter.CTkLabel(history_frame,text='訂單項目',text_color='black')
-        order_n2=customtkinter.CTkLabel(history_frame,text='金額',text_color='black')
-        order_n3=customtkinter.CTkLabel(history_frame,text='編輯',text_color='black')
-        order_n4=customtkinter.CTkLabel(history_frame,text='刪除',text_color='black')
+        self.history_label=customtkinter.CTkLabel(self,text='歷史紀錄',text_color='black')
+        self.history_label.grid(row=3,column=0,sticky='w',padx=30,pady=50)
+        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
+        self.history_frame.columnconfigure((0,2,3,4),weight=1)
+        self.history_frame.columnconfigure(1,weight=3)
+        order_n=customtkinter.CTkLabel(self.history_frame,text='訂單編號',text_color='black')
+        order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單項目',text_color='black')
+        order_n2=customtkinter.CTkLabel(self.history_frame,text='金額',text_color='black')
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black')
+        order_n4=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black')
         order_n.grid(row=0,column=0)
         order_n1.grid(row=0,column=1,sticky='w')
         order_n2.grid(row=0,column=2)
         order_n3.grid(row=0,column=3)
         order_n4.grid(row=0,column=4)
-        history_frame.grid(row=4,column=0,columnspan=5,sticky='ew')
+        self.history_frame.grid(row=4,column=0,columnspan=5,sticky='ew')
         self.toplevel_window = None
-        
+        self.od_l={}
     def button_click(self):
         print("button click")
     def member_search_click(self):
         user=get_user(Session(engine),self.search.get())
+        try:
+            self.od_l={}
+            for i in user.orders:
+                if i.order_number in self.od_l:
+                    self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
+                else:
+                    self.od_l[i.order_number]=[i.order_number,i.p_ID_.product_Name,i.money,user.Name]
+        except:
+            self.od_l={}
+        print(self.od_l)
+        def gen_cmd1(i,l):return lambda:self.edit_(i,l)
+        def gen_cmd(i):return lambda:self.delete(i)
+        i=1
+        for key,value in self.od_l.items():
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[0]}',fg_color = ("#EEEEEE"),text_color='black')
+            a.grid(row=i,column=0)
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',fg_color = ("#EEEEEE"),text_color='black')
+            a.grid(row=i,column=1)
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',fg_color = ("#EEEEEE"),text_color='black')
+            a.grid(row=i,column=2) 
+            a=customtkinter.CTkButton(self.history_frame,text='編輯',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd1(key,value[3]))
+            a.grid(row=i,column=3)
+            a=customtkinter.CTkButton(self.history_frame,text='刪除',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(key))
+            a.grid(row=i,column=4)
+            i+=1
         try:
             self.user_id=user.Phone
             self.member_label.configure(text=f'會員編號：{user.ID}')
@@ -80,14 +108,58 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
     def open_edit_toplevel(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = edit_ToplevelWindow(self,user_id=self.user_id)
+            self.toplevel_window.attributes('-topmost','true')
         else:
             self.toplevel_window.focus()  
     def open_add_toplevel(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = add_ToplevelWindow(self)        
+            self.toplevel_window = add_ToplevelWindow(self)   
+            self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus()
-          
+    def edit_(self,i,l):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = edit_ToplevelWindow_(self,key=i,M_Name=l)   
+            self.toplevel_window.attributes('-topmost','true')   
+        else:
+            self.toplevel_window.focus()
+    def delete(self,i):
+        delete_od(Session(engine),i)
+        del self.od_l[i]
+        self.history_frame.pack_forget()
+        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
+        for i in range(9):
+            self.history_frame.columnconfigure(i,weight=1)
+        self.history_frame.columnconfigure(4,weight=2)
+        a=customtkinter.CTkLabel(self.history_frame,text='訂單編號',fg_color = ("#DDDDDD"),text_color='black')
+        a.grid(row=0,column=1)
+        a=customtkinter.CTkLabel(self.history_frame,text='訂單項目',fg_color = ("#DDDDDD"),text_color='black')
+        a.grid(row=0,column=4)
+        a=customtkinter.CTkLabel(self.history_frame,text='金額',fg_color = ("#DDDDDD"),text_color='black')
+        a.grid(row=0,column=6)
+        a=customtkinter.CTkLabel(self.history_frame,text='編輯',fg_color = ("#DDDDDD"),text_color='black')
+        a.grid(row=0,column=7)
+        a=customtkinter.CTkLabel(self.history_frame,text='刪除',fg_color = ("#DDDDDD"),text_color='black')
+        a.grid(row=0,column=8)
+        
+        i=1
+        def gen_cmd1(i,l):return lambda:self.edit_(i,l)
+        def gen_cmd(i):return lambda:self.delete(i)
+        for key,value in self.od_l.items():
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[0]}',fg_color = ("#DDDDDD"),text_color='black')
+            a.grid(row=i,column=0)
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',fg_color = ("#DDDDDD"),text_color='black')
+            a.grid(row=i,column=1)
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black')
+            a.grid(row=i,column=2) 
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[3]}',fg_color = ("#DDDDDD"),text_color='black')
+            a.grid(row=i,column=3) 
+            a=customtkinter.CTkButton(self.history_frame,text='編輯',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(key,value[3]))
+            a.grid(row=i,column=7)
+            a=customtkinter.CTkButton(self.history_frame,text='刪除',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(key))
+            a.grid(row=i,column=8)
+            i+=1
+        self.c.pack(fill='x')       
 class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,user_id:str, **kwargs):
         super().__init__(*args, **kwargs)
