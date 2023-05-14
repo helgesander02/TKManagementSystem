@@ -1,2 +1,6 @@
 tk
 customtkinter
+SQLAlchemy
+tkcalendar
+typing
+psycopg2
