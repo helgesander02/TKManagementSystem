@@ -1,2 +1,5 @@
 tk
 customtkinter
+pandas
+Pillow
+tkcalendar
