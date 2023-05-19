@@ -6,11 +6,11 @@ from order import Order_Main_Frame
 from menber import Menber_Main_Frame
 from goods import Goods_Main_Frame
 from data import Data_Main_Frame
-
+from tkcalendar import DateEntry
 from sql_app.crud import *
 from sqlalchemy.orm import Session
 from sql_app.database import engine,SessionLocal
-
+from PIL import Image, ImageTk
 # https://steam.oxxostudio.tw/category/python/tkinter/grid.html
 # .grid 詳細解釋
 # https://vocus.cc/article/62577184fd89780001e55c39
@@ -89,11 +89,16 @@ class Search_Frame(customtkinter.CTkFrame):
                                                         font=("microsoft yahei", 18, 'bold'))
 
         self.menber_button.place(relx=0.9, rely=0.5, anchor=tk.CENTER)
-    
-class Schedule_Frame(customtkinter.CTkFrame):
-    def __init__(self, master,user_name, **kwargs):
-        super().__init__(master, **kwargs)
 
+class Schedule_Frame(customtkinter.CTkFrame):
+    def __init__(self, master,date_, **kwargs):
+        super().__init__(master, **kwargs)
+        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
+                                  dark_image=Image.open("image\\user.png"),
+                                  size=(30, 30))
+        self.info = customtkinter.CTkImage(light_image=Image.open("image\\information-button.png"),
+                                  dark_image=Image.open("image\\information-button.png"),
+                                  size=(30, 30))
         for i in range(7):
             self.columnconfigure(i,weight=1)
         self.columnconfigure(4,weight=2)
@@ -113,21 +118,21 @@ class Schedule_Frame(customtkinter.CTkFrame):
         a.grid(row=0,column=6)
         self.toplevel_window = None
         def gen_cmd(i):return lambda:self.od_info(i)
-        if user_name!='':
-            user=get_user(Session(engine),user_name)
+        def get_user(i):return lambda:self.get_u(i)
+        if date_!='':
             od_l={}
-            order_list=get_od(Session(engine),user_id=user.ID)
+            order_list=home_search_date(db=Session(engine),date_=date_)
             for i in order_list:
                 if i.order_number in od_l:
                     od_l[i.order_number][4]+=f',{i.p_ID_.product_Name}'
                     od_l[i.order_number][6]+=i.count*i.p_ID_.product_Price
                 else:
-                    od_l[i.order_number]=[i.M_ID_.Name,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
+                    od_l[i.order_number]=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
             i=1
             for key,value in od_l.items():
-                a=customtkinter.CTkLabel(self,text=f'{value[0]}',fg_color = ("#DDDDDD"),text_color='black')
+                a=customtkinter.CTkButton(self,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
                 a.grid(row=i,column=0)
-                a=customtkinter.CTkButton(self,text=f'{key}',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(key))
+                a=customtkinter.CTkButton(self,image=self.info,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[1]))
                 a.grid(row=i,column=1)
                 a=customtkinter.CTkLabel(self,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black')
                 a.grid(row=i,column=2) 
@@ -142,45 +147,100 @@ class Schedule_Frame(customtkinter.CTkFrame):
                 i+=1
     def od_info(self,a):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = info_window(self,a=a)  # create window if its None or destroyed
+            self.toplevel_window = info_window(self,a=a)
+            self.toplevel_window.attributes('-topmost','true')# create window if its None or destroyed
         else:
             self.toplevel_window.focus()  # if window exists focus it
+    def get_u(self,i):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = profile_ToplevelWindow(self,phone=i)  
+            self.toplevel_window.attributes('-topmost','true')   
+        else:
+            self.toplevel_window.focus()
+class profile_ToplevelWindow(customtkinter.CTkToplevel):
+    def __init__(self, *args,phone, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
+                                  dark_image=Image.open("image\\user.png"),
+                                  size=(100, 100))
+        self.geometry("400x500")
+        self.columnconfigure((0,1),weight=1)
+        self.rowconfigure((3,4),weight=2)
+        bt=customtkinter.CTkLabel(self,image=self.image,text='')
+        user=get_user(db=Session(engine),user_phone=phone)    
+        edit_n=customtkinter.CTkLabel(self,text='會員編號：',text_color='black')
+        edit_n1=customtkinter.CTkLabel(self,text='會員姓名：',text_color='black')
+        edit_n2=customtkinter.CTkLabel(self,text='地址：',text_color='black')
+        edit_n3=customtkinter.CTkLabel(self,text='備註：',text_color='black')
+        # edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
+        edit_nL=customtkinter.CTkLabel(self,text=f'{user.ID}',text_color='black')
+        edit_n1L=customtkinter.CTkLabel(self,text=f'{user.Name}',text_color='black')
+        edit_n2L=customtkinter.CTkLabel(self,text=f'{user.Address}',text_color='black')
+        edit_n3L=customtkinter.CTkLabel(self,text=f'{user.Remark}',text_color='black')
+        bt.grid(row=0,column=0,columnspan=2,pady=20)
+        edit_n.grid(row=1,column=0)#姓名
+        edit_n1.grid(row=2,column=0)#電話
+        edit_n2.grid(row=3,column=0)#地址
+        edit_n3.grid(row=4,column=0)#備註
+        
+        edit_nL.grid(row=1,column=1)#姓名
+        edit_n1L.grid(row=2,column=1)#電話
+        edit_n2L.grid(row=3,column=1)#地址
+        edit_n3L.grid(row=4,column=1)#備註  
 class info_window(customtkinter.CTkToplevel):
     def __init__(self, *args,a, **kwargs):
         super().__init__(*args, **kwargs)
-        self.geometry("200x300")
+        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
+                                  dark_image=Image.open("image\\user.png"),
+                                  size=(100, 100))
+        self.geometry("400x500")
         self.columnconfigure((0,1),weight=1)
-        user=get_od_info(Session(engine),od_nb=a)
-        self.label_odnb = customtkinter.CTkLabel(self, text='訂單編號：')
-        self.label_odnb.grid(row=0,column=0,sticky='e')
-        self.odnb = customtkinter.CTkLabel(self, text=user.order_number)
-        self.odnb.grid(row=0,column=1,sticky='w')
+        self.rowconfigure((3,4),weight=2)
+        bt=customtkinter.CTkLabel(self,image=self.image,text='')
         
-        self.label_pick_up = customtkinter.CTkLabel(self, text='通路：')
-        self.label_pick_up.grid(row=1,column=0,sticky='e')
-        self.pick_up = customtkinter.CTkLabel(self, text=user.pick_up)
-        self.pick_up.grid(row=1,column=1,sticky='w')
-        self.label_remark = customtkinter.CTkLabel(self, text='備註：')
-        self.label_remark.grid(row=2,column=0,sticky='e')
-        self.remark = customtkinter.CTkLabel(self, text=user.Remark)
-        self.remark.grid(row=2,column=1,sticky='w')
+        od_=get_od_info(Session(engine),od_nb=a)    
+        edit_n=customtkinter.CTkLabel(self,text='訂單編號：',text_color='black')
+        edit_n1=customtkinter.CTkLabel(self,text='通路：',text_color='black')
+        edit_n2=customtkinter.CTkLabel(self,text='備註：',text_color='black')
+        
+        # edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
+        edit_nL=customtkinter.CTkLabel(self,text=f'{od_.od_id}',text_color='black')
+        edit_n1L=customtkinter.CTkLabel(self,text=f'{od_.pick_up}',text_color='black')
+        edit_n2L=customtkinter.CTkLabel(self,text=f'{od_.Remark}',text_color='black')
+        
+        bt.grid(row=0,column=0,columnspan=2,pady=20)
+        edit_n.grid(row=1,column=0)#姓名
+        edit_n1.grid(row=2,column=0)#電話
+        edit_n2.grid(row=3,column=0)#地址
+        
+        
+        edit_nL.grid(row=1,column=1)#姓名
+        edit_n1L.grid(row=2,column=1)#電話
+        edit_n2L.grid(row=3,column=1)#地址
 class Home_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         #Search_Frame
         self.Search_Frame_ = Search_Frame(self,  fg_color = ("#DDDDDD"))
-        self.Search_Frame_.MS_button.configure(command=lambda: self.search_user(self.Search_Frame_.MS_entry.get()))
+        # self.Search_Frame_.MS_button.configure(command=lambda: self.search_user(self.Search_Frame_.MS_entry.get()))
         self.Search_Frame_.pack(pady=30,padx=30,fill='x')
-        
+        self.se_date=customtkinter.CTkFrame(self,  fg_color = ("#DDDDDD"))
+        self.date_=DateEntry(self.se_date,selectmode='day')
+        self.date_MS_button = customtkinter.CTkButton(self.se_date, text="Q", width=20, height=20,
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 14, 'bold'),command=self.search_date)
+                
+        self.date_.grid(row=0,column=0)
+        self.date_MS_button.grid(row=0,column=1)
+        self.se_date.pack(anchor='w',padx=30)
         #Schedule_Frame
-        self.Schedule_Frame_ = Schedule_Frame(self,user_name='',  fg_color = ("#DDDDDD"))
+        self.Schedule_Frame_ = Schedule_Frame(self,date_='',  fg_color = ("#DDDDDD"))
         
         self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30)
-        
-    def search_user(self,user_name):
+    def search_date(self):
         self.Schedule_Frame_.pack_forget()
-        self.Schedule_Frame_=Schedule_Frame(self,user_name=user_name,  fg_color = ("#DDDDDD"))
-        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30)
+        self.Schedule_Frame_=Schedule_Frame(self,date_=self.date_.get_date(),  fg_color = ("#DDDDDD"))
+        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30)    
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()

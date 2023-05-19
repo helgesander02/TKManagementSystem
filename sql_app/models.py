@@ -27,7 +27,7 @@ class Order(Base):
     pick_up_date=Column(DateTime)
     money=Column(Integer)
     phone=Column(String)
-    collect_money=Column(Integer)
+    collect_money=Column(Integer,default=0)
 class Member(Base):
     __tablename__ = "Member" # table name in the database
 

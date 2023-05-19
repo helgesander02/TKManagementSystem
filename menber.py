@@ -7,11 +7,17 @@ from sql_app.crud import *
 from tkinter import *
 from tkcalendar import DateEntry
 from order import edit_ToplevelWindow as edit_ToplevelWindow_
-
+from PIL import Image
 # Menber () 會員
 class Menber_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.edit_photo = customtkinter.CTkImage(light_image=Image.open("image\\pencil.png"),
+                                  dark_image=Image.open("image\\pencil.png"),
+                                  size=(30, 30))
+        self.delete_photo = customtkinter.CTkImage(light_image=Image.open("image\\close.png"),
+                                  dark_image=Image.open("image\\close.png"),
+                                  size=(30, 30))         
         self.user_id=''
         self.columnconfigure((0,1,2,3),weight=1)
         search_=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
@@ -31,8 +37,12 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         bt_group=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         # bt_group.columnconfigure((0,1,2),weight=1)
         
-        edit_bt=customtkinter.CTkButton(bt_group,text='編輯',command=self.open_edit_toplevel)
-        add_bt=customtkinter.CTkButton(bt_group,text='新增',command=self.open_add_toplevel)
+        edit_bt=customtkinter.CTkButton(bt_group,text='編輯',
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.open_edit_toplevel)
+        add_bt=customtkinter.CTkButton(bt_group,text='新增',
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.open_add_toplevel)
         
         edit_bt.grid(row=0,column=1,padx=10)
         add_bt.grid(row=0,column=2,padx=10)
@@ -70,6 +80,21 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
     def button_click(self):
         print("button click")
     def member_search_click(self):
+        self.history_frame.grid_forget()
+        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
+        self.history_frame.columnconfigure((0,2,3,4),weight=1)
+        self.history_frame.columnconfigure(1,weight=3)
+        order_n=customtkinter.CTkLabel(self.history_frame,text='訂單編號',text_color='black')
+        order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單項目',text_color='black')
+        order_n2=customtkinter.CTkLabel(self.history_frame,text='金額',text_color='black')
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black')
+        order_n4=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black')
+        order_n.grid(row=0,column=0)
+        order_n1.grid(row=0,column=1,sticky='w')
+        order_n2.grid(row=0,column=2)
+        order_n3.grid(row=0,column=3)
+        order_n4.grid(row=0,column=4)
+        self.history_frame.grid(row=4,column=0,columnspan=5,sticky='ew')        
         user=get_user(Session(engine),self.search.get())
         try:
             self.od_l={}
@@ -77,10 +102,9 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
                 if i.order_number in self.od_l:
                     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
                 else:
-                    self.od_l[i.order_number]=[i.order_number,i.p_ID_.product_Name,i.money,user.Name]
+                    self.od_l[i.order_number]=[i.order_number,i.p_ID_.product_Name,i.money,user.Phone]
         except:
             self.od_l={}
-        print(self.od_l)
         def gen_cmd1(i,l):return lambda:self.edit_(i,l)
         def gen_cmd(i):return lambda:self.delete(i)
         i=1
@@ -91,9 +115,9 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             a.grid(row=i,column=1)
             a=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',fg_color = ("#EEEEEE"),text_color='black')
             a.grid(row=i,column=2) 
-            a=customtkinter.CTkButton(self.history_frame,text='編輯',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd1(key,value[3]))
+            a=customtkinter.CTkButton(self.history_frame,image=self.edit_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd1(key,value[3]))
             a.grid(row=i,column=3)
-            a=customtkinter.CTkButton(self.history_frame,text='刪除',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(key))
+            a=customtkinter.CTkButton(self.history_frame,image=self.delete_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(key))
             a.grid(row=i,column=4)
             i+=1
         try:
@@ -154,9 +178,9 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             a.grid(row=i,column=2) 
             a=customtkinter.CTkLabel(self.history_frame,text=f'{value[3]}',fg_color = ("#DDDDDD"),text_color='black')
             a.grid(row=i,column=3) 
-            a=customtkinter.CTkButton(self.history_frame,text='編輯',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(key,value[3]))
+            a=customtkinter.CTkButton(self.history_frame,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(key,value[3]))
             a.grid(row=i,column=7)
-            a=customtkinter.CTkButton(self.history_frame,text='刪除',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(key))
+            a=customtkinter.CTkButton(self.history_frame,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(key))
             a.grid(row=i,column=8)
             i+=1
         self.c.pack(fill='x')       
@@ -223,22 +247,22 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             self.edit_entry_n1=customtkinter.CTkEntry(self)
             self.edit_entry_n2=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
             self.edit_entry_n3=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
-            self.edit_entry_n4=customtkinter.CTkEntry(self)
-            
+
             self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click)
             confirm_bt=customtkinter.CTkButton(self,text='確定更改',command=self.confirm_edit)
             self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
             confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
             # edit_n4.grid(row=0,column=0)
-            edit_n.grid(row=1,column=0)
-            edit_n1.grid(row=2,column=0)
-            edit_n2.grid(row=3,column=0)
-            edit_n3.grid(row=4,column=0)
+            edit_n.grid(row=1,column=0)#姓名
+            edit_n1.grid(row=2,column=0)#電話
+            edit_n2.grid(row=3,column=0)#地址
+            edit_n3.grid(row=4,column=0)#備註
+            
             self.edit_entry_n.grid(row=1,column=1,sticky='ew',padx=10,pady=10)
             self.edit_entry_n1.grid(row=2,column=1,sticky='ew',padx=10,pady=10)
             self.edit_entry_n2.grid(row=3,column=1,sticky='nsew',padx=10,pady=10)
             self.edit_entry_n3.grid(row=4,column=1,sticky='nsew',padx=10,pady=10)
-            self.edit_entry_n4.grid(row=0,column=1,sticky='nsew',padx=10,pady=10)
+            
         except:
             error_label=customtkinter.CTkLabel(self,text='查詢失敗，請回上層進行查詢')
             error_bt=customtkinter.CTkButton(self,text='回上層',command=self.cancel_click)
@@ -247,8 +271,12 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
     def cancel_click(self):
         self.destroy()
     def confirm_edit(self):
-        add_data(Session(engine),name=self.edit_entry_n.get(),phone=self.edit_entry_n1.get(),address=self.edit_entry_n2.get(1.0,END),remark=self.edit_entry_n3.get(1.0,END),user_id=self.edit_entry_n4.get())
-        self.destroy()
+        try:
+            add_data(Session(engine),name=self.edit_entry_n.get(),phone=self.edit_entry_n1.get(),address=self.edit_entry_n2.get(1.0,END),remark=self.edit_entry_n3.get(1.0,END))
+            self.destroy()
+            tk.messagebox.showinfo(title='新增成功', message="新增成功", )
+        except:
+            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
 
 
         

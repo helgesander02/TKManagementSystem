@@ -5,6 +5,9 @@ from typing import Callable
 from sqlalchemy.orm import Session
 from sql_app.database import engine
 from sql_app.crud import *
+import pandas as pd
+import os
+from PIL import Image
 # Goods () 品項
 class Goods_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -36,6 +39,9 @@ class add_frame(customtkinter.CTkFrame):
 class goods_frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.delete_photo = customtkinter.CTkImage(light_image=Image.open("image\\close.png"),
+                                  dark_image=Image.open("image\\close.png"),
+                                  size=(30, 30))        
         self.toplevel_window = None
         a=customtkinter.CTkFrame(self,fg_color=("#EEEEEE"))
         search_label=customtkinter.CTkLabel(a,text='品項查詢',fg_color = ("#EEEEEE"),text_color='black')
@@ -48,8 +54,12 @@ class goods_frame(customtkinter.CTkFrame):
                                                         command=self.search_)
         self.search.pack(side='left')
         self.search_bt.pack(side='left')
-        bt1=customtkinter.CTkButton(a,text='新增單個品項',command=self.add_product)
-        bt2=customtkinter.CTkButton(a,text='匯出品項資料')
+        bt1=customtkinter.CTkButton(a,text='新增單個品項',
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.add_product)
+        bt2=customtkinter.CTkButton(a,text='匯出品項資料',
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.output_excel)
         bt1.pack(anchor='e',padx=30,pady=5)
         bt2.pack(anchor='e',padx=30,pady=5)
         a.pack(anchor='n',fill='x',padx=30,pady=5)
@@ -76,7 +86,7 @@ class goods_frame(customtkinter.CTkFrame):
             order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{"" if i.content==None else i.content}',text_color='black')
             order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Weight}',text_color='black')
             order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Price}',text_color='black')
-            order_n4=customtkinter.CTkButton(self.history_frame,text='刪除',text_color='black',command=gen_cmd(i.prodcut_ID))
+            order_n4=customtkinter.CTkButton(self.history_frame,image=self.delete_photo, fg_color = ("#EEEEEE"),hover=False,text='',text_color='black',command=gen_cmd(i.prodcut_ID))
             order_n.grid(row=l,column=0,sticky='w')
             order_n1.grid(row=l,column=1,sticky='w')
             order_n2.grid(row=l,column=2)
@@ -155,7 +165,17 @@ class goods_frame(customtkinter.CTkFrame):
             self.toplevel_window = add_product_ToplevelWindow(self)   
             self.toplevel_window.attributes('-topmost','true')   
         else:
-            self.toplevel_window.focus()   
+            self.toplevel_window.focus()
+    def output_excel(self):
+        try:
+            query = 'SELECT * FROM product'
+            df = pd.read_sql_query(query, engine)
+            df.to_excel('output_good.xlsx', index=False)
+            current_directory = os.getcwd()
+            print(current_directory)
+            tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{current_directory}\\output_good.xlsx", )              
+        except:
+            tk.messagebox.showinfo(title='匯出失敗', message="匯出失敗", )
 class add_product_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -204,6 +224,9 @@ class button_Frame(customtkinter.CTkFrame):
 class product_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.buy_photo = customtkinter.CTkImage(light_image=Image.open("image\\cart.png"),
+                                  dark_image=Image.open("image\\cart.png"),
+                                  size=(30, 30))        
         self.product_=customtkinter.CTkFrame(self, fg_color = ("#EEEEEE"))
         prodcuts=get_all_products(Session(engine))
         self.toplevel_window = None
@@ -224,7 +247,7 @@ class product_Frame(customtkinter.CTkFrame):
             spinbox_1 = FloatSpinbox(self.a_frame, width=150, step_size=1)
             self.bt_group[prodcuts[i].product_Name]=[spinbox_1,prodcuts[i].product_Price]
             spinbox_1.grid(row=i,column=4,pady=0)
-            buy_button=customtkinter.CTkButton(self.a_frame, text="buy",command=gen_cmd(prodcuts[i].product_Name))
+            buy_button=customtkinter.CTkButton(self.a_frame,image=self.buy_photo, text="",  fg_color = ("#EEEEEE"),command=gen_cmd(prodcuts[i].product_Name))
             buy_button.grid(row=i,column=5, padx=30, pady=0)
             
         self.a_frame.pack(side='left',anchor='n',fill='x',expand=1)
