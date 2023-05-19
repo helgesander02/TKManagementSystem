@@ -38,7 +38,6 @@ class Order_Main_Frame(customtkinter.CTkFrame):
             self.bt_frame.finish_button.configure(fg_color = ("#5b5a5a"),text_color='white')
             self.input_order_.pack_forget()
             self.input_order_=finish_frame(self,  fg_color = ("#DDDDDD"))
-            self.input_order_.search.search_bt.configure(command=bt)
             self.input_order_.pack(fill='both',expand=1,pady=20,padx=30,anchor='nw')
         self.bt_frame.input_button.bind("<Button-1>", input_button_click)
         self.bt_frame.edit_button.bind("<Button-1>", edit_button_click)
@@ -91,9 +90,6 @@ class edit_order(customtkinter.CTkFrame):
         self.ol.pack(fill='x',padx=30,pady=5)
     def search_od_list(self,phone,pick_up,date_,money1,money2):
         self.ol.pack_forget()
-        # order_list=search_od_(db=Session(engine),phone=phone,pick_up=pick_up,date_=date_,money1=money1,money2=money2)
-        # for i in order_list:
-        #     print(i)
         self.ol=order_List(self,phone=phone,pick_up=pick_up,date_=date_,money1=money1,money2=money2,fg_color = ("#DDDDDD"))
         self.ol.pack(fill='x',padx=30,pady=5)
     def delete_(self):
@@ -103,65 +99,110 @@ class finish_frame(customtkinter.CTkFrame):
         super().__init__(master, **kwargs)
         self.search=finish_search_fame(self,fg_color = ("#DDDDDD"))
         self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
-        search1=finish_frame2(self,fg_color = ("#DDDDDD"))
-        search1.pack(fill='both',side='left',expand=1,padx=15,pady=5)
-class finish_frame2(customtkinter.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.columnconfigure(0,weight=1)
-        self.order_number=customtkinter.CTkLabel(self,text='訂單編號',fg_color = ("#DDDDDD"),text_color='black')
-        self.order_number.grid(row=0,column=0,sticky='w')
-        self.order_item=customtkinter.CTkLabel(self,text='訂單品項',fg_color = ("#DDDDDD"),text_color='black')
-        self.order_item.grid(row=1,column=0,sticky='w')
-        self.p_1=customtkinter.CTkScrollableFrame(self)
-        self.p_1.grid(row=2,column=0,sticky='ew')
-        self.bt_group=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
-        self.up_bt=customtkinter.CTkButton(self.bt_group,text='up', width=40,corner_radius=0)
-        self.reset_bt=customtkinter.CTkButton(self.bt_group,text='re', width=40,corner_radius=0)
-        self.down_bt=customtkinter.CTkButton(self.bt_group,text='do', width=40,corner_radius=0)
-        self.up_bt.grid(row=3,column=0,padx=5,pady=5)
-        self.reset_bt.grid(row=3,column=1,padx=5,pady=5)
-        self.down_bt.grid(row=3,column=2,padx=5,pady=5)
-        self.bt_group.grid(row=3)
-        self.p_2=customtkinter.CTkScrollableFrame(self)
-        self.p_2.grid(row=4,column=0,sticky='ew')
-        self.down_bt_group=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
-        self.down_bt_group.columnconfigure((0,1),weight=1)
-        self.edit_bt=customtkinter.CTkButton(self.down_bt_group,text='編輯訂單', width=40,corner_radius=0)
-        self.cancel_bt=customtkinter.CTkButton(self.down_bt_group,text='取消訂單', width=40,corner_radius=0)
-        self.partially_completed_bt=customtkinter.CTkButton(self.down_bt_group,text='完成部分訂單', width=40,corner_radius=0)
-        self.finish_bt=customtkinter.CTkButton(self.down_bt_group,text='完成訂單', width=40,corner_radius=0)
-        self.edit_bt.grid(row=0,column=0,padx=5,pady=5,sticky='ew')
-        self.cancel_bt.grid(row=0,column=1,padx=5,pady=5,sticky='ew')
-        self.partially_completed_bt.grid(row=1,column=0,padx=5,pady=5,sticky='ew')
-        self.finish_bt.grid(row=1,column=1,padx=5,pady=5,sticky='ew')
-        self.down_bt_group.grid(row=5,column=0,sticky='ew')          
+        # search1=finish_frame2(self,fg_color = ("#DDDDDD"))
+        # search1.pack(fill='both',side='left',expand=1,padx=15,pady=5)       
 class finish_search_fame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.columnconfigure(0,weight=1)
-        self.columnconfigure(1,weight=2)
-        search_label=customtkinter.CTkLabel(self,text='訂單編號查詢',fg_color = ("#DDDDDD"),text_color='black')
-        search_label.grid(row=0,column=0,padx=10,pady=5,sticky='ew')
-        search=customtkinter.CTkEntry(self,fg_color = ("#DDDDDD"),text_color='black')
-        self.search_bt=customtkinter.CTkButton(self, text="Q", width=40,
+        self.toplevel_window = None
+        a=customtkinter.CTkFrame(self,fg_color=("#DDDDDD"))
+        search_label=customtkinter.CTkLabel(a,text='訂單查詢',fg_color = ("#DDDDDD"),text_color='black')
+        # search_label.grid(row=0,column=0,padx=30,pady=5,sticky='ew')
+        search_label.pack(side='left')
+        self.search=customtkinter.CTkEntry(a,fg_color = ("#DDDDDD"),text_color='black')
+        self.search_bt=customtkinter.CTkButton(a, text="Q", width=40,
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 14, 'bold'))
-        self.search_bt.grid(row=0,column=2,sticky='ew')
-        search.grid(row=0,column=1,sticky='ew',pady=5)
-        f_order_list=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
-        for i in range(3):
-            f_order_list.columnconfigure(i,weight=1)
+                                                        font=("microsoft yahei", 14, 'bold'),
+                                                        command=self.search_A)
+        self.search.pack(side='left')
+        self.search_bt.pack(side='left')
+        a.pack(anchor='n',fill='x',padx=30,pady=5)
         
-        a=customtkinter.CTkLabel(f_order_list,text='訂單編號',fg_color = ("#DDDDDD"),text_color='black')
-        a.grid(row=0,column=0)
-        a1=customtkinter.CTkLabel(f_order_list,text='取貨日期',fg_color = ("#DDDDDD"),text_color='black')
-        a1.grid(row=0,column=1)
-        a2=customtkinter.CTkLabel(f_order_list,text='取貨方式',fg_color = ("#DDDDDD"),text_color='black')
-        a2.grid(row=0,column=2) 
-        a3=customtkinter.CTkLabel(f_order_list,text='是否取貨',fg_color = ("#DDDDDD"),text_color='black')
-        a3.grid(row=0,column=3)   
-        f_order_list.grid(row=3,column=0,columnspan=2,sticky='ew',pady=30)              
+        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
+        self.history_frame.columnconfigure((0,2,3,4),weight=1)
+        self.history_frame.columnconfigure(1,weight=3)
+        order_n=customtkinter.CTkLabel(self.history_frame,text='廠商資訊',text_color='black')
+        order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單內容',text_color='black')
+        order_n2=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black')
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='',text_color='black')
+        order_n.grid(row=0,column=0,sticky='w')
+        order_n1.grid(row=0,column=1,sticky='w')
+        order_n2.grid(row=0,column=2)
+        order_n3.grid(row=0,column=3)
+        self.toplevel_window = None
+        self.history_frame.pack(fill='x',anchor='n',pady=40,padx=30)
+    def search_A(self):
+        try:
+            self.od_l={}
+            user=get_user(Session(engine),user_phone=self.search.get())
+            for i in user.orders:
+                if i.order_number in self.od_l:
+                    self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
+                else:
+                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money]
+        except:
+            self.od_l={}        
+        self.history_frame.pack_forget()
+        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
+        self.history_frame.columnconfigure((0,2,3,4),weight=1)
+        self.history_frame.columnconfigure(1,weight=3)
+        order_n=customtkinter.CTkLabel(self.history_frame,text='廠商資訊',text_color='black')
+        order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單內容',text_color='black')
+        order_n2=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black')
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='',text_color='black')
+        order_n.grid(row=0,column=0,sticky='w')
+        order_n1.grid(row=0,column=1,sticky='w')
+        order_n2.grid(row=0,column=2)
+        order_n3.grid(row=0,column=3)
+        
+        self.history_frame.pack(fill='x',anchor='n',pady=40,padx=30)
+        l=1
+        def gen_cmd(i,l):return lambda:self.update_(i,l)
+        for key,value in self.od_l.items():
+            order_n=customtkinter.CTkLabel(self.history_frame,text=f'{value[0]}',text_color='black')
+            order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',text_color='black')
+            order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',text_color='black')
+            order_n4=customtkinter.CTkButton(self.history_frame,text='確認入賬',text_color='black',command=gen_cmd(key,value[0]))
+            order_n.grid(row=l,column=0,sticky='w')
+            order_n1.grid(row=l,column=1,sticky='w')
+            order_n2.grid(row=l,column=2)
+            order_n4.grid(row=l,column=3)
+            l+=1
+    def update_(self,key,m_id):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = cm_ToplevelWindow(self,key=key,m_id=m_id)   
+            self.toplevel_window.attributes('-topmost','true')   
+        else:
+            self.toplevel_window.focus() 
+class cm_ToplevelWindow(customtkinter.CTkToplevel):
+    def __init__(self, *args,key,m_id, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
+        self.columnconfigure((0,1),weight=1)
+        self.rowconfigure((3,4),weight=2)
+        self.key=key
+        self.m_id=m_id
+        edit_n=customtkinter.CTkLabel(self,text='剩餘金額',text_color='black')
+        edit_n1=customtkinter.CTkLabel(self,text='入帳金額',text_color='black')
+        money=customtkinter.CTkLabel(self,text=f'{get_balance(db=Session(engine),od_nb=key,m_id=m_id)}')
+        self.edit_entry_n=customtkinter.CTkEntry(self)
+        self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click)
+        confirm_bt=customtkinter.CTkButton(self,text='確定入賬',command=self.confirm_edit)
+        self.cancel_bt.grid(row=3,column=0,sticky='e',padx=30,pady=10)
+        confirm_bt.grid(row=3,column=1,sticky='e',padx=30,pady=10)
+        edit_n.grid(row=1,column=0)
+        edit_n1.grid(row=2,column=0)
+        self.edit_entry_n.grid(row=2,column=1,sticky='ew',padx=10,pady=10)
+        money.grid(row=1,column=1)
+    def cancel_click(self):
+        self.destroy()
+    def confirm_edit(self):
+        try:
+            update_balance(db=Session(engine),od_nb=self.key,m_id=self.m_id,cm=self.edit_entry_n.get())
+            tk.messagebox.showinfo(title='入賬成功', message="入賬成功", )
+            self.destroy()
+        except:
+            tk.messagebox.showinfo(title='入賬失敗', message="入賬失敗", )
 class order_List(customtkinter.CTkFrame):
     def __init__(self, master,phone,pick_up,date_,money1,money2, **kwargs):
         super().__init__(master, **kwargs)
@@ -327,7 +368,6 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         self.buy_list={}
         for i in od:
             self.buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
-        print(self.buy_list)
         self.a_frame=customtkinter.CTkFrame(self.product_,fg_color = ("#DDDDDD"))
         for i in range(len(prodcuts)):
             self.a_frame.columnconfigure(i,weight=1)
@@ -497,19 +537,6 @@ class input_order(customtkinter.CTkFrame):
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
-class message_window(customtkinter.CTkToplevel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.geometry("400x300")
-
-        self.label = customtkinter.CTkLabel(self, text="訂單成立")
-        self.label.pack(padx=20, pady=20)
-class delete_window(customtkinter.CTkToplevel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.geometry("400x300")
-        self.label = customtkinter.CTkLabel(self, text="確定刪除")
-        self.label.pack(padx=20, pady=20)
 # https://gist.github.com/apua/e43f007fbc9813ae97f7831ed25bb62b
 class sum_Frame(customtkinter.CTkFrame):
     def __init__(self, master,a,buy_list,bt_group, **kwargs):

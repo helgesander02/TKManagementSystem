@@ -22,37 +22,33 @@ from sql_app.database import engine,SessionLocal
 class Select_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        for i in range(5):
+            self.rowconfigure(i,weight=1)
+        self.btn_home = customtkinter.CTkButton(self ,text="home" ,text_color='black',fg_color=("#EEEEEE"),corner_radius=0)
+        
+        self.btn_home.grid(row=0, column=0,sticky='nsew')
 
-        self.btn_home = customtkinter.CTkButton(self ,text="home" ,width=160 ,height=160 ,
-                                                                fg_color=("#5b5a5a"),corner_radius=0)
-        self.btn_home.grid(row=0, column=0)
+        self.btn_order = customtkinter.CTkButton(self ,text="Order",fg_color=("#5b5a5a"),corner_radius=0)
+        self.btn_order.grid(row=1, column=0,sticky='nsew')
 
-        self.btn_order = customtkinter.CTkButton(self ,text="Order" ,width=160 ,height=160 ,
-                                                                fg_color=("#5b5a5a"),corner_radius=0)
-        self.btn_order.grid(row=1, column=0)
+        self.btn_menber = customtkinter.CTkButton(self ,text="Menber",fg_color=("#5b5a5a"),corner_radius=0)
+        self.btn_menber.grid(row=2, column=0,sticky='nsew')
 
-        self.btn_menber = customtkinter.CTkButton(self ,text="Menber" ,width=160 ,height=160 ,
-                                                                fg_color=("#5b5a5a"),corner_radius=0)
-        self.btn_menber.grid(row=2, column=0)
+        self.btn_goods = customtkinter.CTkButton(self ,text="Goods",fg_color=("#5b5a5a"),corner_radius=0)
+        self.btn_goods.grid(row=3, column=0,sticky='nsew')
 
-        self.btn_goods = customtkinter.CTkButton(self ,text="Goods" ,width=160 ,height=160 ,
-                                                                fg_color=("#5b5a5a"),corner_radius=0)
-        self.btn_goods.grid(row=3, column=0)
-
-        self.btn_data = customtkinter.CTkButton(self ,text="Data" ,width=160 ,height=160 ,
-                                                                fg_color=("#5b5a5a"),corner_radius=0)
-        self.btn_data.grid(row=4, column=0)
-
-        self.btn_other = customtkinter.CTkButton(self ,text="" ,width=160 ,height=160 ,
-                                                                fg_color=("#5b5a5a"),corner_radius=0)
-        self.btn_other.grid(row=5, column=0)
+        self.btn_data = customtkinter.CTkButton(self ,text="Data",fg_color=("#5b5a5a"),corner_radius=0)
+        self.btn_data.grid(row=4, column=0,sticky='nsew')
+        
+        # self.btn_other = customtkinter.CTkButton(self ,text="",fg_color=("#5b5a5a"),corner_radius=0)
+        # self.btn_other.grid(row=5, column=0,sticky='nsew')
     def reset_(self):
         self.btn_home.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_order.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_menber.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_goods.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_data.configure(fg_color = "#5b5a5a",text_color='white')
-        self.btn_other.configure(fg_color = "#5b5a5a",text_color='white')
+        # self.btn_other.configure(fg_color = "#5b5a5a",text_color='white')
 # Home_Main_Frame (Search_Frame, Schedule_Frame) 主頁
 class Search_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -189,60 +185,61 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         #Define System  
-        width = 1440
-        height = 960
-        self.geometry(f'{width}x{height}+{int((self.winfo_screenwidth() - width)/2)}+{int((self.winfo_screenheight() - height)/2)}')
         self.title("美而香管理系統")
+        
         customtkinter.set_appearance_mode("light")
         #Define Home
         #Select_Frame
-        self.grid_columnconfigure(0, weight=0)
+        # for i in range(5):
+        #     self.rowconfigure(i,weight=1)
+        self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1) 
         self.Select_Frame = Select_Frame(self,  fg_color = ("#5b5a5a"))
-        self.Select_Frame.grid(row=0, column=0,sticky='nsew')
+        # self.Select_Frame.grid(row=0, column=0,sticky='nsew')
+        self.Select_Frame.pack(fill='both',side='left')
         #Main_Frame
         self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-        self.Main_Frame.grid(row=0, column=1,sticky='nsew')
-
+        # self.Main_Frame.grid(row=0, column=1,sticky='nsew')
+        self.Main_Frame.pack(fill='both',expand=1)
         #關掉主要的Frame開啟對應btn的Frame
         #隱藏的方法 https://www.delftstack.com/zh-tw/howto/python-tkinter/how-to-hide-recover-and-delete-tkinter-widgets/
         def open_home (event):   
-            self.Main_Frame.grid_forget()
+            self.Main_Frame.pack_forget()
             self.Select_Frame.reset_()
             self.Select_Frame.btn_home.configure(fg_color = "#EEEEEE",text_color='black')
             self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.grid(row=0, column=1,sticky='nsew')
+            self.Main_Frame.pack(fill='both',expand=1)
 
         def open_order (event):
-            self.Main_Frame.grid_forget()
+            self.Main_Frame.pack_forget()
             self.Select_Frame.reset_()
             self.Select_Frame.btn_order.configure(fg_color = "#EEEEEE",text_color='black')
             self.Main_Frame = Order_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0)
-            self.Main_Frame.grid(row=0, column=1,sticky='nsew')
+            self.Main_Frame.pack(fill='both',expand=1)
 
         def open_menber (event):
-            self.Main_Frame.grid_forget()
+            self.Main_Frame.pack_forget()
             self.Select_Frame.reset_()
             self.Select_Frame.btn_menber.configure(fg_color = "#EEEEEE",text_color='black')
             self.Main_Frame = Menber_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.grid(row=0, column=1,sticky='nsew')
+            self.Main_Frame.pack(fill='both',expand=1)
 
         def open_goods (event):
-            self.Main_Frame.grid_forget()
+            self.Main_Frame.pack_forget()
             self.Select_Frame.reset_()
             self.Select_Frame.btn_goods.configure(fg_color = "#EEEEEE",text_color='black')
             self.Main_Frame = Goods_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.grid(row=0, column=1,sticky='nsew')
+            self.Main_Frame.pack(fill='both',expand=1)
 
         def open_data (event):
-            self.Main_Frame.grid_forget()
+            self.Main_Frame.pack_forget()
             self.Select_Frame.reset_()
             self.Select_Frame.btn_data.configure(fg_color = "#EEEEEE",text_color='black')
             self.Main_Frame = Data_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.grid(row=0, column=1,sticky='nsew')
+            self.Main_Frame.pack(fill='both',expand=1)
 
         def clear_main (event):
-            self.Main_Frame.grid_forget()
+            self.Main_Frame.pack_forget()
 
         #切換功能
         #btn事件教學 https://ithelp.ithome.com.tw/articles/10275712?sc=iThomeR
@@ -253,4 +250,5 @@ class App(customtkinter.CTk):
         self.Select_Frame.btn_data.bind("<Button-1>", open_data)
 
 app = App()
+app.after(0, lambda: app.wm_state('zoomed'))
 app.mainloop()

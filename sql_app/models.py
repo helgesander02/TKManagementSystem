@@ -27,7 +27,7 @@ class Order(Base):
     pick_up_date=Column(DateTime)
     money=Column(Integer)
     phone=Column(String)
-
+    collect_money=Column(Integer)
 class Member(Base):
     __tablename__ = "Member" # table name in the database
 
@@ -47,4 +47,5 @@ class product(Base):
     product_Weight = Column(String)
     product_Price = Column(String, default=True)
     orders = relationship('Order', back_populates='p_ID_')
+    content=Column(String)
     # orders = relationship('Order', secondary=association_table, back_populates='p_ID_',overlaps="M_ID")

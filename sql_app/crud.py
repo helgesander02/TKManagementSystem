@@ -64,6 +64,38 @@ def edit_order_(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:di
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
+def delete_product(db:Session,p_id:int):
+    db.query(models.product).filter(models.product.prodcut_ID == p_id).delete()
+    db.commit()
+def add_pd(db:Session,p_name:str,p_weight:str,p_price:int):
+    new_pd=models.product(product_Name=p_name,product_Weight=p_weight,product_Price=p_price)
+    db.add(new_pd)
+    db.commit()
+    db.refresh(new_pd)
+def search_pd(db:Session,pd_name:str):
+    if pd_name!="":
+        return db.query(models.product).filter(models.product.product_Name==pd_name)
+    return get_all_products(db=db)
+def add_gift_box(db:Session,pd:dict,name:str,weight:str,price:int):
+    content_=''
+    i=1
+    for key,value in pd.items():
+        if i==1:
+            content_+=f'{key}'
+            i+=1
+        else:content_+=f',{key}'
+    new_pd=models.product(product_Name=name,product_Weight=weight,product_Price=price,content=content_)
+    db.add(new_pd)
+    db.commit()
+    db.refresh(new_pd)
+def get_balance(db:Session,od_nb:int,m_id:int):
+    od=db.query(models.Order).filter(models.Order.M_ID==m_id,models.Order.order_number==od_nb).first()
+    return od.money-od.collect_money
+def update_balance(db:Session,od_nb:int,m_id:int,cm:int):
+    od=db.query(models.Order).filter(models.Order.M_ID==m_id,models.Order.order_number==od_nb)
+    for i in od:
+        i.collect_money+=int(cm)
+    db.commit()
     # return db.query(models.Order).filter(models.Order.money.between(money1,money2))
 # ,len(models.product.__table__.columns)
 # [product.__dict__ for product in products]
