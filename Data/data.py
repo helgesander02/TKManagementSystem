@@ -26,6 +26,7 @@ class Data_Main_Frame(customtkinter.CTkFrame):
         label2.grid(row=0,column=1,sticky='nw')
         label3.grid(row=1,column=0,sticky='nw')
         label4.grid(row=1,column=1,sticky='nw')
+        
         b.pack(anchor='w',padx=30,pady=30,fill='both',expand=1)
 class button_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):

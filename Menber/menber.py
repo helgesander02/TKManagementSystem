@@ -6,7 +6,7 @@ from sql_app.crud import get_user,save_change,add_data
 from sql_app.crud import *
 from tkinter import *
 from tkcalendar import DateEntry
-from order import edit_ToplevelWindow as edit_ToplevelWindow_
+from Order.order import edit_ToplevelWindow as edit_ToplevelWindow_
 from PIL import Image
 # Menber () 會員
 class Menber_Main_Frame(customtkinter.CTkFrame):

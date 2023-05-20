@@ -10,10 +10,16 @@ from sqlalchemy.orm import Session
 from sql_app.database import engine,SessionLocal
 from tkinter import *
 from PIL import Image, ImageTk
+
+#from .orderfnish import finish_frame
+#from .orderedit import edit_button
+#from .orderinput import input_order
+
 # Order () 訂單
 phone_data=''
 pick_up_data=''
 remark_data=''
+
 class Order_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -45,6 +51,7 @@ class Order_Main_Frame(customtkinter.CTkFrame):
         self.bt_frame.finish_button.bind("<Button-1>", finish_button_click)
         def bt():
             print('s')
+
 class edit_order(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -95,13 +102,15 @@ class edit_order(customtkinter.CTkFrame):
         self.ol.pack(fill='x',padx=30,pady=5)
     def delete_(self):
         pass
+
 class finish_frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.search=finish_search_fame(self,fg_color = ("#DDDDDD"))
         self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
         # search1=finish_frame2(self,fg_color = ("#DDDDDD"))
-        # search1.pack(fill='both',side='left',expand=1,padx=15,pady=5)       
+        # search1.pack(fill='both',side='left',expand=1,padx=15,pady=5) 
+
 class finish_search_fame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -175,6 +184,7 @@ class finish_search_fame(customtkinter.CTkFrame):
             self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus() 
+
 class cm_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,key,m_id, **kwargs):
         super().__init__(*args, **kwargs)
@@ -204,6 +214,7 @@ class cm_ToplevelWindow(customtkinter.CTkToplevel):
             self.destroy()
         except:
             tk.messagebox.showinfo(title='入賬失敗', message="入賬失敗", )
+
 class order_List(customtkinter.CTkFrame):
     def __init__(self, master,phone,pick_up,date_,money1,money2, **kwargs):
         super().__init__(master, **kwargs)
@@ -353,6 +364,7 @@ class order_List(customtkinter.CTkFrame):
             a.grid(row=i,column=8)
             i+=1
         self.c.pack(fill='x')
+
 class info_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,od, **kwargs):
         super().__init__(*args, **kwargs)
@@ -413,7 +425,8 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
         edit_nL.grid(row=1,column=1)#姓名
         edit_n1L.grid(row=2,column=1)#電話
         edit_n2L.grid(row=3,column=1)#地址
-        edit_n3L.grid(row=4,column=1)#備註          
+        edit_n3L.grid(row=4,column=1)#備註  
+
 class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,key,M_Name, **kwargs):
         super().__init__(*args, **kwargs)
@@ -508,7 +521,8 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
-        self.sum_frame_.pack(side='right',anchor='n',fill='both')         
+        self.sum_frame_.pack(side='right',anchor='n',fill='both') 
+
 class button_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -536,6 +550,7 @@ class button_Frame(customtkinter.CTkFrame):
         self.input_button.configure(fg_color = ("#EEEEEE"),text_color='black')
         self.edit_button.configure(fg_color = ("#EEEEEE"),text_color='black')
         self.finish_button.configure(fg_color = ("#EEEEEE"),text_color='black')
+
 class input_order(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -628,6 +643,7 @@ class input_order(customtkinter.CTkFrame):
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
+
 # https://gist.github.com/apua/e43f007fbc9813ae97f7831ed25bb62b
 class sum_Frame(customtkinter.CTkFrame):
     def __init__(self, master,a,buy_list,bt_group, **kwargs):
@@ -666,12 +682,13 @@ class sum_Frame(customtkinter.CTkFrame):
         self.discount_frame.pack(anchor='s')
         self.confirm_bt=customtkinter.CTkButton(self,text='確定下單',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 18, 'bold'),width=300)
+                                                        font=("microsoft yahei", 16, 'bold'), width=180)
         self.reset_bt=customtkinter.CTkButton(self,text='重設訂單',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 18, 'bold'),width=300)
+                                                        font=("microsoft yahei", 16, 'bold'), width=180)
         self.confirm_bt.pack(pady=10)
         self.reset_bt.pack()
+
 class sum_list(customtkinter.CTkFrame):
     def __init__(self, master,a,buy_list,bt_group, **kwargs):
         super().__init__(master, **kwargs)

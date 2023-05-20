@@ -2,15 +2,16 @@
 import tkinter as tk
 import customtkinter
 
-from order import Order_Main_Frame
-from menber import Menber_Main_Frame
-from goods import Goods_Main_Frame
-from data import Data_Main_Frame
+from Order.order import Order_Main_Frame
+from Menber.menber import Menber_Main_Frame
+from Goods.goods import Goods_Main_Frame
+from Data.data import Data_Main_Frame
 from tkcalendar import DateEntry
 from sql_app.crud import *
 from sqlalchemy.orm import Session
 from sql_app.database import engine,SessionLocal
 from PIL import Image, ImageTk
+
 # https://steam.oxxostudio.tw/category/python/tkinter/grid.html
 # .grid 詳細解釋
 # https://vocus.cc/article/62577184fd89780001e55c39
@@ -49,6 +50,7 @@ class Select_Frame(customtkinter.CTkFrame):
         self.btn_goods.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_data.configure(fg_color = "#5b5a5a",text_color='white')
         # self.btn_other.configure(fg_color = "#5b5a5a",text_color='white')
+
 # Home_Main_Frame (Search_Frame, Schedule_Frame) 主頁
 class Search_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -102,19 +104,19 @@ class Schedule_Frame(customtkinter.CTkFrame):
         for i in range(7):
             self.columnconfigure(i,weight=1)
         self.columnconfigure(4,weight=2)
-        a=customtkinter.CTkLabel(self,text='會員資訊',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self,text='會員資訊',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=0)
-        a=customtkinter.CTkLabel(self,text='訂單資訊',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self,text='訂單資訊',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=1)
-        a=customtkinter.CTkLabel(self,text='取貨日期',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self,text='取貨日期',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=2) 
-        a=customtkinter.CTkLabel(self,text='取貨方式',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self,text='取貨方式',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=3) 
-        a=customtkinter.CTkLabel(self,text='訂單項目',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self,text='訂單項目',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=4)
-        a=customtkinter.CTkLabel(self,text='是否取貨',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self,text='是否取貨',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=5)
-        a=customtkinter.CTkLabel(self,text='金額',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self,text='金額',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=6)
         self.toplevel_window = None
         def gen_cmd(i):return lambda:self.od_info(i)
@@ -157,6 +159,7 @@ class Schedule_Frame(customtkinter.CTkFrame):
             self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus()
+
 class profile_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,phone, **kwargs):
         super().__init__(*args, **kwargs)
@@ -187,6 +190,7 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
         edit_n1L.grid(row=2,column=1)#電話
         edit_n2L.grid(row=3,column=1)#地址
         edit_n3L.grid(row=4,column=1)#備註  
+
 class info_window(customtkinter.CTkToplevel):
     def __init__(self, *args,a, **kwargs):
         super().__init__(*args, **kwargs)
@@ -217,6 +221,7 @@ class info_window(customtkinter.CTkToplevel):
         edit_nL.grid(row=1,column=1)#姓名
         edit_n1L.grid(row=2,column=1)#電話
         edit_n2L.grid(row=3,column=1)#地址
+
 class Home_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -225,10 +230,11 @@ class Home_Main_Frame(customtkinter.CTkFrame):
         # self.Search_Frame_.MS_button.configure(command=lambda: self.search_user(self.Search_Frame_.MS_entry.get()))
         self.Search_Frame_.pack(pady=30,padx=30,fill='x')
         self.se_date=customtkinter.CTkFrame(self,  fg_color = ("#DDDDDD"))
-        self.date_=DateEntry(self.se_date,selectmode='day')
+        # DateEntry https://tkcalendar.readthedocs.io/en/stable/_modules/tkcalendar/dateentry.html#DateEntry.configure
+        self.date_=DateEntry(self.se_date,selectmode='day', width=20)
         self.date_MS_button = customtkinter.CTkButton(self.se_date, text="Q", width=20, height=20,
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 14, 'bold'),command=self.search_date)
+                                                        font=("microsoft yahei", 10, 'bold'),command=self.search_date)
                 
         self.date_.grid(row=0,column=0)
         self.date_MS_button.grid(row=0,column=1)
@@ -240,7 +246,8 @@ class Home_Main_Frame(customtkinter.CTkFrame):
     def search_date(self):
         self.Schedule_Frame_.pack_forget()
         self.Schedule_Frame_=Schedule_Frame(self,date_=self.date_.get_date(),  fg_color = ("#DDDDDD"))
-        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30)    
+        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30) 
+
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
