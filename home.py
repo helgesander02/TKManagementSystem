@@ -51,9 +51,6 @@ class Select_Frame(customtkinter.CTkFrame):
         Redataimg = customtkinter.CTkImage(dataimg,size=(70,100))
         self.btn_data = customtkinter.CTkButton(self ,image=Redataimg ,text="" ,fg_color = "#5b5a5a" ,corner_radius=0)
         self.btn_data.grid(row=4, column=0,sticky='nsew')
-        
-        # self.btn_other = customtkinter.CTkButton(self ,text="",fg_color=("#5b5a5a"),corner_radius=0)
-        # self.btn_other.grid(row=5, column=0,sticky='nsew')
     def reset_(self):
         self.btn_home.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_order.configure(fg_color = "#5b5a5a",text_color='white')
@@ -186,7 +183,7 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
         edit_n1=customtkinter.CTkLabel(self,text='會員姓名：',text_color='black')
         edit_n2=customtkinter.CTkLabel(self,text='地址：',text_color='black')
         edit_n3=customtkinter.CTkLabel(self,text='備註：',text_color='black')
-        # edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
+        
         edit_nL=customtkinter.CTkLabel(self,text=f'{user.ID}',text_color='black')
         edit_n1L=customtkinter.CTkLabel(self,text=f'{user.Name}',text_color='black')
         edit_n2L=customtkinter.CTkLabel(self,text=f'{user.Address}',text_color='black')
@@ -268,8 +265,6 @@ class App(customtkinter.CTk):
         customtkinter.set_appearance_mode("light")
         #Define Home
         #Select_Frame
-        # for i in range(5):
-        #     self.rowconfigure(i,weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1) 
         self.Select_Frame = Select_Frame(self,  fg_color = ("#5b5a5a"))
@@ -283,36 +278,31 @@ class App(customtkinter.CTk):
         #隱藏的方法 https://www.delftstack.com/zh-tw/howto/python-tkinter/how-to-hide-recover-and-delete-tkinter-widgets/
         def open_home (event):   
             self.Main_Frame.pack_forget()
-            self.Select_Frame.reset_()
-            self.Select_Frame.btn_home.configure(fg_color = "#EEEEEE",text_color='black')
+
             self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
             self.Main_Frame.pack(fill='both',expand=1)
 
         def open_order (event):
             self.Main_Frame.pack_forget()
-            self.Select_Frame.reset_()
-            self.Select_Frame.btn_order.configure(fg_color = "#EEEEEE",text_color='black')
+  
             self.Main_Frame = Order_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0)
             self.Main_Frame.pack(fill='both',expand=1)
 
         def open_menber (event):
             self.Main_Frame.pack_forget()
-            self.Select_Frame.reset_()
-            self.Select_Frame.btn_menber.configure(fg_color = "#EEEEEE",text_color='black')
+   
             self.Main_Frame = Menber_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
             self.Main_Frame.pack(fill='both',expand=1)
 
         def open_goods (event):
             self.Main_Frame.pack_forget()
-            self.Select_Frame.reset_()
-            self.Select_Frame.btn_goods.configure(fg_color = "#EEEEEE",text_color='black')
+
             self.Main_Frame = Goods_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
             self.Main_Frame.pack(fill='both',expand=1)
 
         def open_data (event):
             self.Main_Frame.pack_forget()
-            self.Select_Frame.reset_()
-            self.Select_Frame.btn_data.configure(fg_color = "#EEEEEE",text_color='black')
+
             self.Main_Frame = Data_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
             self.Main_Frame.pack(fill='both',expand=1)
 
@@ -326,7 +316,7 @@ class App(customtkinter.CTk):
         self.Select_Frame.btn_menber.bind("<Button-1>", open_menber)
         self.Select_Frame.btn_goods.bind("<Button-1>", open_goods)
         self.Select_Frame.btn_data.bind("<Button-1>", open_data)
-
-app = App()
-app.after(0, lambda: app.wm_state('zoomed'))
-app.mainloop()
+if __name__ == "__main__":
+    app = App()
+    app.after(0, lambda: app.wm_state('zoomed'))
+    app.mainloop()
