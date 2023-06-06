@@ -100,7 +100,7 @@ class Search_Frame(customtkinter.CTkFrame):
 
         self.menber_button.place(relx=0.9, rely=0.5, anchor=tk.CENTER)
 
-class Schedule_Frame(customtkinter.CTkFrame):
+class Schedule_Frame(customtkinter.CTkScrollableFrame):
     def __init__(self, master,date_, **kwargs):
         super().__init__(master, **kwargs)
         self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),

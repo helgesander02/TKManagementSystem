@@ -15,7 +15,7 @@ class Goods_Main_Frame(customtkinter.CTkFrame):
         self.bt_frame=button_Frame(self,fg_color=("#EEEEEE"))
         self.bt_frame.pack(pady=40,padx=40,anchor='nw')
         self.goods_F=goods_frame(self,fg_color=("#EEEEEE"))
-        self.goods_F.pack(pady=20,padx=40,anchor='nw',fill='x')
+        self.goods_F.pack(pady=20,padx=40,anchor='nw',fill='both',expand=1)
         
         def input_button_click(event):
             self.bt_frame.reset_color()
@@ -63,8 +63,7 @@ class goods_frame(customtkinter.CTkFrame):
         bt1.pack(anchor='e',padx=30,pady=5)
         bt2.pack(anchor='e',padx=30,pady=5)
         a.pack(anchor='n',fill='x',padx=30,pady=5)
-        
-        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
+        self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
         self.history_frame.columnconfigure((0,2,3,4),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
         order_n=customtkinter.CTkLabel(self.history_frame,text='品項名稱',text_color='black')
@@ -77,7 +76,8 @@ class goods_frame(customtkinter.CTkFrame):
         order_n2.grid(row=0,column=2)
         order_n3.grid(row=0,column=3)
         order_n4.grid(row=0,column=4)
-        self.history_frame.pack(fill='x',anchor='n',pady=40,padx=30)
+        
+        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
         prodcuts=get_all_products(Session(engine))
         l=1
         def gen_cmd(i):return lambda:self.delete(i)
@@ -109,7 +109,7 @@ class goods_frame(customtkinter.CTkFrame):
         order_n2.grid(row=0,column=2)
         order_n3.grid(row=0,column=3)
         order_n4.grid(row=0,column=4)
-        self.history_frame.pack(fill='x',anchor='n',pady=40,padx=30)
+        self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30)
         l=1
         def gen_cmd(i):return lambda:self.delete(i)
         for i in pd:
@@ -140,7 +140,7 @@ class goods_frame(customtkinter.CTkFrame):
         order_n2.grid(row=0,column=2)
         order_n3.grid(row=0,column=3)
         order_n4.grid(row=0,column=4)
-        self.history_frame.pack(fill='x',anchor='n',pady=40,padx=30)
+        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
         
         i=1
         prodcuts=get_all_products(Session(engine))
@@ -158,7 +158,7 @@ class goods_frame(customtkinter.CTkFrame):
             order_n3.grid(row=l,column=3)
             order_n4.grid(row=l,column=4)
             l+=1
-        self.history_frame.pack(fill='x',anchor='n',pady=40,padx=30)
+        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
         
     def add_product(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -170,12 +170,13 @@ class goods_frame(customtkinter.CTkFrame):
         try:
             query = 'SELECT * FROM product'
             df = pd.read_sql_query(query, engine)
+            for index,row in df.iterrows(): 
+                if row['content']==None:df.at[index, 'content'] = row['product_Name']
             df.to_excel('output_good.xlsx', index=False)
             current_directory = os.getcwd()
-            print(current_directory)
             tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{current_directory}\\output_good.xlsx", )              
-        except:
-            tk.messagebox.showinfo(title='匯出失敗', message="匯出失敗", )
+        except Exception as e:
+            tk.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
 class add_product_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -232,7 +233,7 @@ class product_Frame(customtkinter.CTkFrame):
         self.toplevel_window = None
         self.bt_group={}
         self.buy_list={}
-        self.a_frame=customtkinter.CTkFrame(self.product_,fg_color = ("#EEEEEE"))
+        self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#EEEEEE"))
         for i in range(len(prodcuts)):
             self.a_frame.columnconfigure(i,weight=1)
         def gen_cmd(i):return lambda:self.buy_bt_click(i)
@@ -250,7 +251,7 @@ class product_Frame(customtkinter.CTkFrame):
             buy_button=customtkinter.CTkButton(self.a_frame,image=self.buy_photo, text="",  fg_color = ("#EEEEEE"),command=gen_cmd(prodcuts[i].product_Name))
             buy_button.grid(row=i,column=5, padx=30, pady=0)
             
-        self.a_frame.pack(side='left',anchor='n',fill='x',expand=1)
+        self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         # self.sum_frame_.confirm_bt.configure(command=self.add_od)
