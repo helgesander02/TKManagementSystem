@@ -48,7 +48,7 @@ class input_order(customtkinter.CTkFrame):
         self.buy_list={}
         self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#DDDDDD"))
         
-        for i in range(len(prodcuts)):
+        for i in range(5):
             self.a_frame.columnconfigure(i,weight=1)
         def gen_cmd(i):return lambda:self.buy_bt_click(i)
         for i in range(len(prodcuts)):
@@ -66,35 +66,39 @@ class input_order(customtkinter.CTkFrame):
             buy_button.grid(row=i,column=5, padx=30, pady=0)
             
         self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
-        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         # self.sum_frame_.confirm_bt.configure(command=self.add_od)
-        self.sum_frame_.pack(side='right',anchor='n',fill='both')        
+        self.sum_frame_.pack(side='right',anchor='n',fill='both')  
+        self.sum_frame_.pack_propagate(0)      
         # self.product_=product_Frame(self, fg_color = ("#DDDDDD"))
         self.product_.pack(fill='both',expand=1,padx=30,pady=5)
     def add_od(self):
         try:
             add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date())
             self.sum_frame_.pack_forget()
-            self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+            self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
             self.sum_frame_.reset_bt.configure(command=self.reset_)
             self.sum_frame_.pack(side='right',anchor='n',fill='both')
+            self.sum_frame_.pack_propagate(0)
             tk.messagebox.showinfo(title='新增成功', message="新增成功", )            
         except:
             tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
     def buy_bt_click(self,a):
         self.sum_frame_.pack_forget()
-        self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
+        self.sum_frame_.pack_propagate(0)
         self.buy_list=self.sum_frame_.buy_list
         
     def reset_(self):
         self.buy_list={}
         self.sum_frame_.pack_forget()
-        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
+        self.sum_frame_.pack_propagate(0)
 

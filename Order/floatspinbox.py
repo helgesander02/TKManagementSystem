@@ -68,6 +68,8 @@ class FloatSpinbox(customtkinter.CTkFrame):
         else: 
             self.entry.insert(0, str(float(value)))
 class sum_Frame(customtkinter.CTkFrame):
+    # def __init__(self, master,*args,width: int = 300,a,buy_list,bt_group, **kwargs):
+    #     super().__init__(master,*args,width=width, **kwargs)
     def __init__(self, master,a,buy_list,bt_group, **kwargs):
         super().__init__(master, **kwargs)
         self.a=a

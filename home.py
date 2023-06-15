@@ -239,7 +239,7 @@ class Home_Main_Frame(customtkinter.CTkFrame):
         self.Search_Frame_.pack(pady=30,padx=30,fill='x')
         self.se_date=customtkinter.CTkFrame(self,  fg_color = ("#DDDDDD"))
         # DateEntry https://tkcalendar.readthedocs.io/en/stable/_modules/tkcalendar/dateentry.html#DateEntry.configure
-        self.date_=DateEntry(self.se_date,selectmode='day', width=20)
+        self.date_=DateEntry(self.se_date,selectmode='day', width=20,font=("microsoft yahei", 10, 'bold'))
         self.date_MS_button = customtkinter.CTkButton(self.se_date, text="Q", width=20, height=20,
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 10, 'bold'),command=self.search_date)

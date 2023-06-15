@@ -234,7 +234,7 @@ class product_Frame(customtkinter.CTkFrame):
         self.bt_group={}
         self.buy_list={}
         self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#EEEEEE"))
-        for i in range(len(prodcuts)):
+        for i in range(5):
             self.a_frame.columnconfigure(i,weight=1)
         def gen_cmd(i):return lambda:self.buy_bt_click(i)
         for i in range(len(prodcuts)):
