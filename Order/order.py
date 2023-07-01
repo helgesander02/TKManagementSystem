@@ -14,6 +14,7 @@ remark_data=''
 class Order_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        
         self.bt_frame=button_Frame(self,  fg_color = ("#EEEEEE") ,)
         self.bt_frame.pack(pady=40,padx=40,anchor='nw')
         self.input_order_=input_order(self,  fg_color = ("#DDDDDD"))

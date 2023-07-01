@@ -4,15 +4,17 @@ from sql_app.crud import *
 import pandas as pd
 import os
 
-
-try:
-    query = 'SELECT * FROM product'
-    df = pd.read_sql_query(query, engine)
-    for index, row in df.iterrows(): 
-        if row['content']==None:df.at[index, 'content'] = row['product_Name']    
-    print(df)         
-except:
-    print('a')
+# user=get_user(Session(engine),user_phone='0988635291')
+# print(user.Address)
+# print(user.orders)
+# # try:
+#     query = 'SELECT * FROM product'
+#     df = pd.read_sql_query(query, engine)
+#     for index, row in df.iterrows(): 
+#         if row['content']==None:df.at[index, 'content'] = row['product_Name']    
+#     print(df)         
+# except:
+#     print('a')
 # mouse wheel scrolling with reduced speed
 # def on_mouse_wheel(event):
 #     canvas.yview('scroll', int(-1 * event.delta / 120), 'units')

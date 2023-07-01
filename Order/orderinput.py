@@ -5,6 +5,7 @@ from sql_app.crud import *
 from sqlalchemy.orm import Session
 from sql_app.database import engine
 from .floatspinbox import FloatSpinbox,sum_Frame
+
 class input_order(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)

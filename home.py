@@ -261,7 +261,7 @@ class App(customtkinter.CTk):
         super().__init__()
         #Define System  
         self.title("美而香管理系統")
-        
+        self.prodcuts=get_all_products(Session(engine))
         customtkinter.set_appearance_mode("light")
         #Define Home
         #Select_Frame
