@@ -10,8 +10,8 @@ from Data.data import Data_Main_Frame
 from tkcalendar import DateEntry
 from sql_app.crud import *
 from sqlalchemy.orm import Session
-from sql_app.database import engine,SessionLocal
-from PIL import Image, ImageTk
+from sql_app.database import engine
+from PIL import Image
 
 # https://steam.oxxostudio.tw/category/python/tkinter/grid.html
 # .grid 詳細解釋
@@ -63,7 +63,7 @@ class Select_Frame(customtkinter.CTkFrame):
 class Search_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-
+        self.toplevel_window = None
         #會員查詢
         # #relx/rely range[0.0, 1,0]
         self.MS_label = customtkinter.CTkLabel(self, text="會員查詢" ,font=("microsoft yahei", 35, 'bold'),text_color='black')
@@ -79,7 +79,7 @@ class Search_Frame(customtkinter.CTkFrame):
         
         self.MS_button = customtkinter.CTkButton(self, text="Q", width=40, height=40,
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 14, 'bold'))
+                                                        font=("microsoft yahei", 14, 'bold'),command=lambda:self.confirm_user(self.MS_entry.get()))
 
         self.MS_button.place(relx=0.42, rely=0.5, anchor=tk.CENTER)
 
@@ -96,10 +96,67 @@ class Search_Frame(customtkinter.CTkFrame):
 
         self.menber_button = customtkinter.CTkButton(self, text="新增會員", width=150, height=40,
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 18, 'bold'))
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.open_add_toplevel)
 
         self.menber_button.place(relx=0.9, rely=0.5, anchor=tk.CENTER)
+    def confirm_user(self,phone):
+        yes_or_no='有此會員' if get_user(Session(engine),user_phone=phone)!=None else '沒有此會員'
+        self.tf_label.configure(text=yes_or_no)
+    def open_add_toplevel(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = add_ToplevelWindow(self)   
+            self.toplevel_window.attributes('-topmost','true')   
+        else:
+            self.toplevel_window.focus()
+class add_ToplevelWindow(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x500")
+        self.title('新增會員')
+        try:
+            self.title('新增會員')
+            self.columnconfigure((0,1),weight=1)
+            self.rowconfigure((3,4),weight=2)
+            
+            edit_n=customtkinter.CTkLabel(self,text='姓名',text_color='black')
+            edit_n1=customtkinter.CTkLabel(self,text='電話',text_color='black')
+            edit_n2=customtkinter.CTkLabel(self,text='地址',text_color='black')
+            edit_n3=customtkinter.CTkLabel(self,text='備註',text_color='black')
+            # edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
+            self.edit_entry_n=customtkinter.CTkEntry(self)
+            self.edit_entry_n1=customtkinter.CTkEntry(self)
+            self.edit_entry_n2=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
+            self.edit_entry_n3=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
 
+            self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click)
+            confirm_bt=customtkinter.CTkButton(self,text='確定更改',command=self.confirm_edit)
+            self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
+            confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
+            # edit_n4.grid(row=0,column=0)
+            edit_n.grid(row=1,column=0)#姓名
+            edit_n1.grid(row=2,column=0)#電話
+            edit_n2.grid(row=3,column=0)#地址
+            edit_n3.grid(row=4,column=0)#備註
+            
+            self.edit_entry_n.grid(row=1,column=1,sticky='ew',padx=10,pady=10)
+            self.edit_entry_n1.grid(row=2,column=1,sticky='ew',padx=10,pady=10)
+            self.edit_entry_n2.grid(row=3,column=1,sticky='nsew',padx=10,pady=10)
+            self.edit_entry_n3.grid(row=4,column=1,sticky='nsew',padx=10,pady=10)
+            
+        except:
+            error_label=customtkinter.CTkLabel(self,text='查詢失敗，請回上層進行查詢')
+            error_bt=customtkinter.CTkButton(self,text='回上層',command=self.cancel_click)
+            error_label.pack(anchor='center',fill='y',pady=30)
+            error_bt.pack(anchor='center',fill='y',pady=10)
+    def cancel_click(self):
+        self.destroy()
+    def confirm_edit(self):
+        try:
+            add_data(Session(engine),name=self.edit_entry_n.get(),phone=self.edit_entry_n1.get(),address=self.edit_entry_n2.get(1.0,tk.END),remark=self.edit_entry_n3.get(1.0,tk.END))
+            self.destroy()
+            tk.messagebox.showinfo(title='新增成功', message="新增成功", )
+        except:
+            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
 class Schedule_Frame(customtkinter.CTkScrollableFrame):
     def __init__(self, master,date_, **kwargs):
         super().__init__(master, **kwargs)
@@ -272,14 +329,17 @@ class App(customtkinter.CTk):
         self.Select_Frame.pack(fill='both',side='left')
         #Main_Frame
         self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+        self.Main_Frame.Search_Frame_.order_button.configure(command=self.open_order_)
         # self.Main_Frame.grid(row=0, column=1,sticky='nsew')
         self.Main_Frame.pack(fill='both',expand=1)
         #關掉主要的Frame開啟對應btn的Frame
         #隱藏的方法 https://www.delftstack.com/zh-tw/howto/python-tkinter/how-to-hide-recover-and-delete-tkinter-widgets/
+
         def open_home (event):   
             self.Main_Frame.pack_forget()
 
             self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+            self.Main_Frame.Search_Frame_.order_button.configure(command=self.open_order_)
             self.Main_Frame.pack(fill='both',expand=1)
 
         def open_order (event):
@@ -316,6 +376,11 @@ class App(customtkinter.CTk):
         self.Select_Frame.btn_menber.bind("<Button-1>", open_menber)
         self.Select_Frame.btn_goods.bind("<Button-1>", open_goods)
         self.Select_Frame.btn_data.bind("<Button-1>", open_data)
+    def open_order_(self):
+        
+        self.Main_Frame.pack_forget()
+        self.Main_Frame = Order_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0)
+        self.Main_Frame.pack(fill='both',expand=1)        
 if __name__ == "__main__":
     app = App()
     app.after(0, lambda: app.wm_state('zoomed'))

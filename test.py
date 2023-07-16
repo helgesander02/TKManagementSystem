@@ -3,7 +3,11 @@ from sql_app.database import engine
 from sql_app.crud import *
 import pandas as pd
 import os
-
+import customtkinter
+import os
+from PIL import Image
+a={1:1}
+update_balance(Session(engine),selected=a,cm=1)
 # user=get_user(Session(engine),user_phone='0988635291')
 # print(user.Address)
 # print(user.orders)

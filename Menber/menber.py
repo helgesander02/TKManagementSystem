@@ -5,7 +5,6 @@ from sql_app.database import engine
 from sql_app.crud import get_user,save_change,add_data
 from sql_app.crud import *
 from tkinter import *
-from tkcalendar import DateEntry
 from Order.order import edit_ToplevelWindow as edit_ToplevelWindow_
 from PIL import Image
 # Menber () 會員
@@ -142,6 +141,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         else:
             self.toplevel_window.focus()
     def edit_(self,i,l):
+        print(l)
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = edit_ToplevelWindow_(self,key=i,M_Name=l)   
             self.toplevel_window.attributes('-topmost','true')   
@@ -188,7 +188,9 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,user_id:str, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("400x500")
+        
         try:
+            self.title('編輯會員')
             self.user_id=user_id
             self.columnconfigure((0,1),weight=1)
             self.rowconfigure((2,3),weight=2)
@@ -220,6 +222,7 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
             self.edit_entry_n2.grid(row=2,column=1,sticky='nsew',padx=10,pady=10)
             self.edit_entry_n3.grid(row=3,column=1,sticky='nsew',padx=10,pady=10)
         except:
+            self.title('錯誤')
             error_label=customtkinter.CTkLabel(self,text='查詢失敗，請回上層進行查詢')
             error_bt=customtkinter.CTkButton(self,text='回上層',command=self.cancel_click)
             error_label.pack(anchor='center',fill='y',pady=30)
@@ -233,8 +236,8 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("400x500")
-        
         try:
+            self.title('新增會員')
             self.columnconfigure((0,1),weight=1)
             self.rowconfigure((3,4),weight=2)
             

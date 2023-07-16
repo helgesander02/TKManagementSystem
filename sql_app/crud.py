@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import or_
+from sqlalchemy.sql import or_,and_
 from sqlalchemy import func,desc,delete
 from . import models
 from datetime import date
@@ -53,19 +53,16 @@ def get_edit_od(db:Session,od_nb:int,od_name:str):
     Mid=db.query(models.Member).filter(models.Member.Phone==od_name).first().ID
     return db.query(models.Order).filter(models.Order.order_number==od_nb,models.Order.M_ID==Mid)
 def edit_order_(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str):
-    Mid=db.query(models.Member).filter(models.Member.Name==M_name).first().ID
+    Mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
     db.query(models.Order).filter(models.Order.order_number==key,models.Order.M_ID==Mid).delete()
     db.commit()   
-    try:
-        max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==m_id).first().order_number
-    except:
-        max_value=0
+    now_od=key
     su=0
-    for key,value in product_.items():
-        su+=product_[key][1]
-    for key,value in product_.items():
-        pid=db.query(models.product).filter(models.product.product_Name == key ).first().prodcut_ID
-        new_od=models.Order(phone=phone,order_number=max_value+1,M_ID=m_id,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=su)
+    for key_,value in product_.items():
+        su+=product_[key_][1]
+    for key_,value in product_.items():
+        pid=db.query(models.product).filter(models.product.product_Name == key_ ).first().prodcut_ID
+        new_od=models.Order(phone=phone,order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=su)
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
@@ -96,13 +93,23 @@ def add_gift_box(db:Session,pd:dict,name:str,weight:str,price:int):
 def get_balance(db:Session,od_nb:int,m_id:int):
     od=db.query(models.Order).filter(models.Order.M_ID==m_id,models.Order.order_number==od_nb).first()
     return od.money-od.collect_money
-def update_balance(db:Session,od_nb:int,m_id:int,cm:int):
-    od=db.query(models.Order).filter(models.Order.M_ID==m_id,models.Order.order_number==od_nb)
-    for i in od:
-        i.collect_money+=int(cm)
-    db.commit()
+def update_balance(db:Session,selected,cm:int,m_way:str,remark:str,discount:int):
+    for key,value in selected.items():
+      od=models.receipt(o_id=key,m_id=value,money=cm,m_way=m_way,remark=remark,discount=discount)
+      db.add(od)  
+      db.commit()
+      db.refresh(od)
 def home_search_date(db:Session,date_:date):
     return db.query(models.Order).filter(models.Order.Date_==date_)
     # return db.query(models.Order).filter(models.Order.money.between(money1,money2))
 # ,len(models.product.__table__.columns)
 # [product.__dict__ for product in products]
+def Search_receipt(db:Session,o_id:int,m_id:str):
+    return db.query(models.receipt).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id)
+def add_receipt(db:Session,o_id:int,m_id:int,money:int,m_way:str,remark:str,discount:int):
+    new_receipt=models.receipt(o_id=o_id,m_id=m_id,money=money,m_way=m_way,remark=remark,discount=discount)
+    db.add(new_receipt)
+    db.commit()
+    db.refresh(new_receipt)
+def sum_receipt_money(db:Session,o_id:int,m_id:int):
+    return db.query(func.sum(models.receipt.money)).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id).scalar(),db.query(models.Order).filter(models.Order.order_number==o_id,models.Order.M_ID==m_id).first().money

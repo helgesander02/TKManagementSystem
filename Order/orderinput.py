@@ -51,7 +51,7 @@ class input_order(customtkinter.CTkFrame):
         
         for i in range(5):
             self.a_frame.columnconfigure(i,weight=1)
-        def gen_cmd(i):return lambda:self.buy_bt_click(i)
+        def gen_cmd(i,l):return lambda:self.buy_bt_click(i,l)
         for i in range(len(prodcuts)):
             label_Name=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Name,text_color='black')
             label_Name.grid(row=i,column=0,padx=30,sticky='w')
@@ -61,9 +61,13 @@ class input_order(customtkinter.CTkFrame):
             label_price.grid(row=i,column=2,padx=30)
             
             spinbox_1 = FloatSpinbox(self.a_frame, width=150, step_size=1)
-            self.bt_group[prodcuts[i].product_Name]=[spinbox_1,prodcuts[i].product_Price]
+            try:
+                spinbox_1.set(self.buy_list[prodcuts[i].product_Name][0])
+            except:
+                spinbox_1.set(0)
+            # self.bt_group[prodcuts[i].product_Name]=[spinbox_1,prodcuts[i].product_Price]
             spinbox_1.grid(row=i,column=4,pady=0)
-            buy_button=customtkinter.CTkButton(self.a_frame,image=self.buy_photo,hover=False,fg_color = ("#DDDDDD"), text="",command=gen_cmd(prodcuts[i].product_Name))
+            buy_button=customtkinter.CTkButton(self.a_frame,image=self.buy_photo,hover=False,fg_color = ("#DDDDDD"), text="",command=gen_cmd(prodcuts[i].product_Name,[spinbox_1,prodcuts[i].product_Price]))
             buy_button.grid(row=i,column=5, padx=30, pady=0)
             
         self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
@@ -85,15 +89,16 @@ class input_order(customtkinter.CTkFrame):
             tk.messagebox.showinfo(title='新增成功', message="新增成功", )            
         except:
             tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
-    def buy_bt_click(self,a):
+    def buy_bt_click(self,a,b):
         self.sum_frame_.pack_forget()
+        self.bt_group[a]=b
         self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
         self.sum_frame_.pack_propagate(0)
         self.buy_list=self.sum_frame_.buy_list
-        
+        self.bt_group=self.sum_frame_.bt_group        
     def reset_(self):
         self.buy_list={}
         self.sum_frame_.pack_forget()

@@ -1,15 +1,11 @@
 #-*- coding: utf-8 -*-
 import customtkinter
 from tkinter import *
-from PIL import Image
 from .orderedit import *
 from .orderfinish import *
 from .orderinput import *
-
+from .account import *
 # Order () 訂單
-phone_data=''
-pick_up_data=''
-remark_data=''
 
 class Order_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -41,8 +37,6 @@ class Order_Main_Frame(customtkinter.CTkFrame):
         self.bt_frame.input_button.bind("<Button-1>", input_button_click)
         self.bt_frame.edit_button.bind("<Button-1>", edit_button_click)
         self.bt_frame.finish_button.bind("<Button-1>", finish_button_click)
-        def bt():
-            print('s')
 
 
 
@@ -50,6 +44,12 @@ class finish_frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.search=finish_search_fame(self,fg_color = ("#DDDDDD"))
+        self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
+        self.search.ac.configure(command=lambda:self.test('123'))
+    def test(self,a):
+        selected=self.search.selected_pd
+        self.search.pack_forget()
+        self.search=acount(self,selected=selected,fg_color = ("#DDDDDD"))
         self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
 
 

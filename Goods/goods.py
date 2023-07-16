@@ -22,7 +22,7 @@ class Goods_Main_Frame(customtkinter.CTkFrame):
             self.bt_frame.input_button.configure(fg_color = ("#5b5a5a"),text_color='white')
             self.goods_F.pack_forget()
             self.goods_F=goods_frame(self,  fg_color = ("#EEEEEE"))
-            self.goods_F.pack(fill='x',pady=20,padx=30,anchor='nw')
+            self.goods_F.pack(pady=20,padx=40,anchor='nw',fill='both',expand=1)
         def add_button_click(event):
             self.bt_frame.reset_color()
             self.bt_frame.edit_button.configure(fg_color = ("#5b5a5a"),text_color='white')

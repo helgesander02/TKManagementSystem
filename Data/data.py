@@ -1,4 +1,3 @@
-import tkinter as tk
 import customtkinter
 from tkcalendar import DateEntry
 # Data () 數據

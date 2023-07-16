@@ -30,13 +30,13 @@ class FloatSpinbox(customtkinter.CTkFrame):
         self.add_button.grid(row=0, column=2, padx=(0, 3), pady=3)
 
         # default value
-        self.entry.insert(0, "0.0")
+        self.entry.insert(0, "0")
 
     def add_button_callback(self):
         if self.command is not None:
             self.command()
         try:
-            value = float(self.entry.get()) + self.step_size
+            value = int(self.entry.get()) + self.step_size
             self.entry.delete(0, "end")
             self.entry.insert(0, value)
         except ValueError:
@@ -46,10 +46,10 @@ class FloatSpinbox(customtkinter.CTkFrame):
         if self.command is not None:
             self.command()
         try:
-            value = float(self.entry.get()) - self.step_size
+            value = int(self.entry.get()) - self.step_size
             self.entry.delete(0, "end")
             if value<=0:
-                self.entry.insert(0, 0.0)
+                self.entry.insert(0, 0)
             else:
                 self.entry.insert(0, value)
         except ValueError:
@@ -57,16 +57,16 @@ class FloatSpinbox(customtkinter.CTkFrame):
 
     def get(self) -> Union[float, None]:
         try:
-            return float(self.entry.get())
+            return int(self.entry.get())
         except ValueError:
             return None
 
     def set(self, value: float):
         self.entry.delete(0, "end")
         if value<=0:
-           self.entry.insert(0, str(0.0))
+           self.entry.insert(0, str(0))
         else: 
-            self.entry.insert(0, str(float(value)))
+            self.entry.insert(0, str(int(value)))
 class sum_Frame(customtkinter.CTkFrame):
     # def __init__(self, master,*args,width: int = 300,a,buy_list,bt_group, **kwargs):
     #     super().__init__(master,*args,width=width, **kwargs)
@@ -82,7 +82,9 @@ class sum_Frame(customtkinter.CTkFrame):
         
         if self.a!='':
             self.buy_list[self.a]=[self.bt_group[self.a][0].get(),self.bt_group[self.a][1]]
-            if self.buy_list[self.a][0]==0:del self.buy_list[self.a]
+            if self.buy_list[self.a][0]==0:
+                del self.buy_list[self.a]
+                del self.bt_group[self.a]
         i=0
         for key,value in self.buy_list.items():
             name_=customtkinter.CTkLabel(self.contents_,text=f'{key}',text_color='black')

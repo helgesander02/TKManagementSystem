@@ -49,3 +49,14 @@ class product(Base):
     orders = relationship('Order', back_populates='p_ID_')
     content=Column(String)
     # orders = relationship('Order', secondary=association_table, back_populates='p_ID_',overlaps="M_ID")
+class receipt(Base):
+    __tablename__ = "receipt"
+
+    rc_id=Column(Integer, primary_key=True, index=True)
+    o_id=Column(Integer)
+    m_id=Column(ForeignKey("Member.ID"))
+    date=Column(DateTime, default=datetime.now)
+    money=Column(Integer)
+    remark=Column(String)
+    m_way=Column(String)
+    discount=Column(Integer)
