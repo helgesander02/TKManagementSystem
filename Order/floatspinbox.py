@@ -86,10 +86,12 @@ class sum_Frame(customtkinter.CTkFrame):
                 del self.buy_list[self.a]
                 del self.bt_group[self.a]
         i=0
+        s=0
         for key,value in self.buy_list.items():
             name_=customtkinter.CTkLabel(self.contents_,text=f'{key}',text_color='black')
             number_=customtkinter.CTkLabel(self.contents_,text=f'X{value[0]:5}',text_color='black')
             price_=customtkinter.CTkLabel(self.contents_,text=f'{value[0]*value[1]}',text_color='black')
+            s+=value[0]*value[1]
             name_.grid(row=i,column=0, padx=20, pady=3,sticky='nw')
             number_.grid(row=i,column=1, padx=20, pady=3,sticky='n')
             price_.grid(row=i,column=2, padx=20, pady=3,sticky='n')
@@ -100,7 +102,7 @@ class sum_Frame(customtkinter.CTkFrame):
         self.discount_label=customtkinter.CTkLabel(self.discount_frame,text='自訂優惠')
         self.discount_entry=customtkinter.CTkEntry(self.discount_frame)
         self.sum_label=customtkinter.CTkLabel(self.discount_frame,text='總計')
-        self.money_label=customtkinter.CTkLabel(self.discount_frame,text='XX元')
+        self.money_label=customtkinter.CTkLabel(self.discount_frame,text=f'{s}元')
         self.sum_label.grid(row=2,column=0,sticky='w')
         self.money_label.grid(row=2,column=1,sticky='e')
         self.discount_label.grid(row=0,column=0,sticky='w')

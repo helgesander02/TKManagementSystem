@@ -12,8 +12,8 @@ class finish_search_fame(customtkinter.CTkFrame):
         # 搜尋
         search_f=customtkinter.CTkFrame(self,fg_color=("#EEEEEE"))
 
-        self.sell_date_entry = DateEntry(search_f, selectmode='day',
-                                                    font=("microsoft yahei", 20),)        
+        # self.sell_date_entry = DateEntry(search_f, selectmode='day',
+        #                                             font=("microsoft yahei", 20),)        
         self.reset_btn = customtkinter.CTkButton(search_f,width=200,height=40,
                                                     fg_color="#3B8ED0",
                                                     text="重設查詢",
@@ -26,7 +26,7 @@ class finish_search_fame(customtkinter.CTkFrame):
                                                         font=("microsoft yahei", 20, 'bold'),
                                                         command=self.search_A)
         self.search.pack(side='top',pady=40,padx=30,fill='x')
-        self.sell_date_entry.pack(side='top',pady=40,padx=30)
+        # self.sell_date_entry.pack(side='top',pady=40,padx=30)
         self.reset_btn.pack(side='bottom',pady=20,padx=30)        
         self.search_bt.pack(side='bottom',pady=20,padx=30)
         search_f.pack(anchor='n',fill='both',side='left',padx=30,pady=5)
@@ -47,7 +47,7 @@ class finish_search_fame(customtkinter.CTkFrame):
         self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.history_frame.columnconfigure((0,2,3,4),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
-        order_n=customtkinter.CTkLabel(self.history_frame,text='廠商資訊',text_color='black')
+        order_n=customtkinter.CTkLabel(self.history_frame,text='日期',text_color='black')
         order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單內容',text_color='black')
         order_n2=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black')
         order_n3=customtkinter.CTkLabel(self.history_frame,text='',text_color='black')
@@ -73,12 +73,11 @@ class finish_search_fame(customtkinter.CTkFrame):
             self.address.configure(text=f'地址：：{user.Address}')
             self.phone.configure(text=f'　　手機：：{user.Phone}')
             self.remark.configure(text=f'備註：{user.Remark}')
-            
             for i in user.orders:
                 if i.order_number in self.od_l:
                     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
                 else:
-                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.collect_money]
+                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.collect_money,i.Date_]
         except:
             self.od_l={}
             self.customer_name.configure(text=f'客戶名稱：')
@@ -89,7 +88,7 @@ class finish_search_fame(customtkinter.CTkFrame):
         self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.history_frame.columnconfigure((0,2,3,4,5),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
-        order_n=customtkinter.CTkLabel(self.history_frame,text='廠商資訊',text_color='black')
+        order_n=customtkinter.CTkLabel(self.history_frame,text='日期',text_color='black')
         order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單內容',text_color='black')
         order_n2=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black')
         order_n3=customtkinter.CTkLabel(self.history_frame,text='已收金額',text_color='black')
@@ -104,15 +103,15 @@ class finish_search_fame(customtkinter.CTkFrame):
         self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30,expand=1)
         
         l=1
-        check_var = customtkinter.StringVar(value="off")
+        # check_var = customtkinter.StringVar(value="off")
         def gen_cmd(i,l):return lambda:self.update_(i,l)
         for key,value in self.od_l.items():
             sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=key,m_id=value[0])
-            order_n=customtkinter.CTkLabel(self.history_frame,text=f'{value[0]}',text_color='black')
+            order_n=customtkinter.CTkLabel(self.history_frame,text=f'{value[-1]}',text_color='black')
             order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',text_color='black')
             order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',text_color='black')
-            order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{sum_}',text_color='black')
-            order_n4=customtkinter.CTkLabel(self.history_frame,text=f'{sum_1-sum_}',text_color='black')
+            order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{0 if sum_==None else sum_}',text_color='black')
+            order_n4=customtkinter.CTkLabel(self.history_frame,text=f'{sum_1-(0 if sum_==None else sum_)}',text_color='black')
             order_n5=customtkinter.CTkCheckBox(self.history_frame,text='', command=gen_cmd(key,value[0]), onvalue="on", offvalue="off")
             # order_n5=customtkinter.CTkButton(self.history_frame,text='確認入賬',text_color='black',command=gen_cmd(key,value[0]))
             order_n.grid(row=l,column=0,sticky='w')

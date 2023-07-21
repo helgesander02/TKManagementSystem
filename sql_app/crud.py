@@ -29,9 +29,10 @@ def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict
     except:
         tk.messagebox.showinfo(title='失敗', message="請輸入電話", )
     try:
-        max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==m_id).first().order_number
+        max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first().order_number
     except:
         max_value=0
+    print(max_value)
     su=0
     for key,value in product_.items():
         su+=product_[key][1]
@@ -46,8 +47,8 @@ def get_od_info(db: Session, od_nb: int):
     return db.query(models.Order).filter(models.Order.od_id == od_nb).first()
 def search_od_(db:Session,phone:str,pick_up:str,date_:date,money1:int,money2:int):   
     return db.query(models.Order).filter(or_(models.Order.phone== phone,models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.money.between(money1,money2)))
-def delete_od(db:Session,od_nb:int):
-    db.query(models.Order).filter(models.Order.order_number == od_nb).delete()
+def delete_od(db:Session,od_nb:int,m_id:int):
+    db.query(models.Order).filter(models.Order.order_number == od_nb,models.Order.M_ID==m_id).delete()
     db.commit()
 def get_edit_od(db:Session,od_nb:int,od_name:str):
     Mid=db.query(models.Member).filter(models.Member.Phone==od_name).first().ID
@@ -113,3 +114,5 @@ def add_receipt(db:Session,o_id:int,m_id:int,money:int,m_way:str,remark:str,disc
     db.refresh(new_receipt)
 def sum_receipt_money(db:Session,o_id:int,m_id:int):
     return db.query(func.sum(models.receipt.money)).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id).scalar(),db.query(models.Order).filter(models.Order.order_number==o_id,models.Order.M_ID==m_id).first().money
+def ac_get_od(db:Session,o_nb,m_id):
+    return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==m_id)

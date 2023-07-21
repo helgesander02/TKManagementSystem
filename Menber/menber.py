@@ -101,11 +101,11 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
                 if i.order_number in self.od_l:
                     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
                 else:
-                    self.od_l[i.order_number]=[i.order_number,i.p_ID_.product_Name,i.money,user.Phone]
+                    self.od_l[i.order_number]=[i.order_number,i.p_ID_.product_Name,i.money,user.Phone,i.M_ID]
         except:
             self.od_l={}
         def gen_cmd1(i,l):return lambda:self.edit_(i,l)
-        def gen_cmd(i):return lambda:self.delete(i)
+        def gen_cmd(i,l):return lambda:self.delete(i,l)
         i=1
         for key,value in self.od_l.items():
             a=customtkinter.CTkLabel(self.history_frame,text=f'{value[0]}',fg_color = ("#EEEEEE"),text_color='black')
@@ -116,7 +116,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             a.grid(row=i,column=2) 
             a=customtkinter.CTkButton(self.history_frame,image=self.edit_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd1(key,value[3]))
             a.grid(row=i,column=3)
-            a=customtkinter.CTkButton(self.history_frame,image=self.delete_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(key))
+            a=customtkinter.CTkButton(self.history_frame,image=self.delete_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(key,value[-1]))
             a.grid(row=i,column=4)
             i+=1
         try:
@@ -141,49 +141,48 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         else:
             self.toplevel_window.focus()
     def edit_(self,i,l):
-        print(l)
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = edit_ToplevelWindow_(self,key=i,M_Name=l)   
             self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus()
-    def delete(self,i):
-        delete_od(Session(engine),i)
+    def delete(self,i,l):
+        delete_od(Session(engine),i,l)
         del self.od_l[i]
-        self.history_frame.pack_forget()
-        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
+        self.history_frame.grid_forget()
+        self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         for i in range(9):
             self.history_frame.columnconfigure(i,weight=1)
         self.history_frame.columnconfigure(4,weight=2)
-        a=customtkinter.CTkLabel(self.history_frame,text='訂單編號',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self.history_frame,text='訂單編號',fg_color = ("#EEEEEE"),text_color='black')
         a.grid(row=0,column=1)
-        a=customtkinter.CTkLabel(self.history_frame,text='訂單項目',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self.history_frame,text='訂單項目',fg_color = ("#EEEEEE"),text_color='black')
         a.grid(row=0,column=4)
-        a=customtkinter.CTkLabel(self.history_frame,text='金額',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self.history_frame,text='金額',fg_color = ("#EEEEEE"),text_color='black')
         a.grid(row=0,column=6)
-        a=customtkinter.CTkLabel(self.history_frame,text='編輯',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self.history_frame,text='編輯',fg_color = ("#EEEEEE"),text_color='black')
         a.grid(row=0,column=7)
-        a=customtkinter.CTkLabel(self.history_frame,text='刪除',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self.history_frame,text='刪除',fg_color = ("#EEEEEE"),text_color='black')
         a.grid(row=0,column=8)
         
         i=1
         def gen_cmd1(i,l):return lambda:self.edit_(i,l)
         def gen_cmd(i):return lambda:self.delete(i)
         for key,value in self.od_l.items():
-            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[0]}',fg_color = ("#DDDDDD"),text_color='black')
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[0]}',fg_color = ("#EEEEEE"),text_color='black')
             a.grid(row=i,column=0)
-            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',fg_color = ("#DDDDDD"),text_color='black')
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',fg_color = ("#EEEEEE"),text_color='black')
             a.grid(row=i,column=1)
-            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black')
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',fg_color = ("#EEEEEE"),text_color='black')
             a.grid(row=i,column=2) 
-            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[3]}',fg_color = ("#DDDDDD"),text_color='black')
+            a=customtkinter.CTkLabel(self.history_frame,text=f'{value[3]}',fg_color = ("#EEEEEE"),text_color='black')
             a.grid(row=i,column=3) 
-            a=customtkinter.CTkButton(self.history_frame,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(key,value[3]))
+            a=customtkinter.CTkButton(self.history_frame,image=self.edit_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd1(key,value[3]))
             a.grid(row=i,column=7)
-            a=customtkinter.CTkButton(self.history_frame,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(key))
+            a=customtkinter.CTkButton(self.history_frame,image=self.delete_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(key))
             a.grid(row=i,column=8)
             i+=1
-        self.c.pack(fill='x')       
+        self.history_frame.grid(row=4,column=0,columnspan=5,sticky='ew')        
 class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,user_id:str, **kwargs):
         super().__init__(*args, **kwargs)

@@ -81,7 +81,7 @@ class order_List(customtkinter.CTkFrame):
                     self.od_l[i.order_number+i.M_ID][4]+=f',{i.p_ID_.product_Name}'
                     self.od_l[i.order_number+i.M_ID][6]+=i.count*i.p_ID_.product_Price
                 else:
-                    self.od_l[i.order_number+i.M_ID]=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price,i.order_number]
+                    self.od_l[i.order_number+i.M_ID]=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price,i.M_ID,i.order_number]
         except:
             self.od_l={}
         self.c=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
@@ -109,7 +109,7 @@ class order_List(customtkinter.CTkFrame):
         
         i=1
         def gen_cmd1(i,l):return lambda:self.edit_(i,l)
-        def gen_cmd(i):return lambda:self.delete(i)
+        def gen_cmd(i,l):return lambda:self.delete(i,l)
         def get_user(i):return lambda:self.get_u(i)
         def get_od_(i):return lambda:self.get_o(i)
         for key,value in self.od_l.items():
@@ -130,7 +130,7 @@ class order_List(customtkinter.CTkFrame):
             a.grid(row=i,column=6)
             a=customtkinter.CTkButton(self.c,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(value[-1],value[0]))
             a.grid(row=i,column=7)
-            a=customtkinter.CTkButton(self.c,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[-1]))
+            a=customtkinter.CTkButton(self.c,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[-1],value[-2]))#訂單號碼,ID
             a.grid(row=i,column=8)
             i+=1
         self.c.pack(fill='x')
@@ -154,9 +154,9 @@ class order_List(customtkinter.CTkFrame):
             self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus()        
-    def delete(self,i):
-        delete_od(Session(engine),i)
-        del self.od_l[i]
+    def delete(self,i,l):
+        delete_od(Session(engine),i,l)
+        del self.od_l[i+l]
         self.c.pack_forget()
         self.c=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         for i in range(9):
@@ -183,7 +183,7 @@ class order_List(customtkinter.CTkFrame):
         
         i=1
         def gen_cmd1(i,l):return lambda:self.edit_(i,l)
-        def gen_cmd(i):return lambda:self.delete(i)
+        def gen_cmd(i,l):return lambda:self.delete(i,l)
         def get_user(i):return lambda:self.get_u(i)
         def get_od_(i):return lambda:self.get_o(i)
         for key,value in self.od_l.items():
@@ -201,9 +201,9 @@ class order_List(customtkinter.CTkFrame):
             a.grid(row=i,column=5)
             a=customtkinter.CTkLabel(self.c,text=f'{value[6]}',fg_color = ("#DDDDDD"),text_color='black')
             a.grid(row=i,column=6)
-            a=customtkinter.CTkButton(self.c,text='編輯',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(key,value[0]))
+            a=customtkinter.CTkButton(self.c,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(value[-1],value[0]))
             a.grid(row=i,column=7)
-            a=customtkinter.CTkButton(self.c,text='刪除',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(key))
+            a=customtkinter.CTkButton(self.c,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[-1],value[-2]))
             a.grid(row=i,column=8)
             i+=1
         self.c.pack(fill='x')
@@ -268,8 +268,9 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
         edit_n2L.grid(row=3,column=1)#地址
         edit_n3L.grid(row=4,column=1)#備註
 class edit_ToplevelWindow(customtkinter.CTkToplevel):
-    def __init__(self, *args,key,M_Name, **kwargs):
+    def __init__(self,master, *args,key,M_Name, **kwargs):
         super().__init__(*args, **kwargs)
+        self.master=master
         self.buy_photo = customtkinter.CTkImage(light_image=Image.open("image\\cart.png"),
                                   dark_image=Image.open("image\\cart.png"),
                                   size=(30, 30))        

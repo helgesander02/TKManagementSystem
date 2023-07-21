@@ -273,7 +273,7 @@ class info_window(customtkinter.CTkToplevel):
         edit_n2=customtkinter.CTkLabel(self,text='備註：',text_color='black')
         
         # edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
-        edit_nL=customtkinter.CTkLabel(self,text=f'{od_.od_id}',text_color='black')
+        edit_nL=customtkinter.CTkLabel(self,text=f'{od_.order_number+od_.M_ID}',text_color='black')
         edit_n1L=customtkinter.CTkLabel(self,text=f'{od_.pick_up}',text_color='black')
         edit_n2L=customtkinter.CTkLabel(self,text=f'{od_.Remark}',text_color='black')
         
