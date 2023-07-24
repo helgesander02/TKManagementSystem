@@ -47,10 +47,13 @@ class finish_frame(customtkinter.CTkFrame):
         self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
         self.search.ac.configure(command=lambda:self.test('123'))
     def test(self,a):
-        selected=self.search.selected_pd
-        self.search.pack_forget()
-        self.search=acount(self,selected=selected,fg_color = ("#DDDDDD"))
-        self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
+        if len(self.search.selected_pd)!=0:
+            selected=self.search.selected_pd
+            self.search.pack_forget()
+            self.search=acount(self,selected=selected,fg_color = ("#DDDDDD"))
+            self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
+        else:
+            tk.messagebox.showinfo(title='失敗', message="請勾選想要入帳的訂單", )
 
 
 class button_Frame(customtkinter.CTkFrame):

@@ -135,11 +135,14 @@ class finish_search_fame(customtkinter.CTkFrame):
         else:
             self.selected_pd[key]=m_id
     def once_ac(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = cm_ToplevelWindow(self,selected=self.selected_pd)   
-            self.toplevel_window.attributes('-topmost','true')   
+        if len(self.selected_pd)!=0:
+            if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+                self.toplevel_window = cm_ToplevelWindow(self,selected=self.selected_pd)   
+                self.toplevel_window.attributes('-topmost','true')   
+            else:
+                self.toplevel_window.focus()
         else:
-            self.toplevel_window.focus()
+            tk.messagebox.showinfo(title='失敗', message="請勾選想要入帳的訂單", )
 class cm_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,selected, **kwargs):
         super().__init__(*args, **kwargs)

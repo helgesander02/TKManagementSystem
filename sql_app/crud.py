@@ -45,8 +45,13 @@ def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict
 def get_od_info(db: Session, od_nb: int):
     # return db.query(models.Member).filter(models.Order.order_number == od_nb).first()
     return db.query(models.Order).filter(models.Order.od_id == od_nb).first()
-def search_od_(db:Session,phone:str,pick_up:str,date_:date,money1:int,money2:int):   
-    return db.query(models.Order).filter(or_(models.Order.phone== phone,models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.money.between(money1,money2)))
+def search_od_(db:Session,phone:str,pick_up:str,date_:date,money1:int,money2:int):
+    
+    if phone=='':
+        return db.query(models.Order).filter(or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.money.between(money1,money2)))
+    else:
+        mid=db.query(models.Member).filter(models.Member.Phone==phone).first().ID
+        return db.query(models.Order).filter(models.Order.M_ID== mid,or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.money.between(money1,money2)))
 def delete_od(db:Session,od_nb:int,m_id:int):
     db.query(models.Order).filter(models.Order.order_number == od_nb,models.Order.M_ID==m_id).delete()
     db.commit()

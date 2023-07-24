@@ -7,6 +7,9 @@ import customtkinter
 import os
 from PIL import Image
 from tkinter import *
+a=search_od_(Session(engine),phone='',money1=1,money2=11111,pick_up='',date_=',2023-7-21')
+for i in a:
+    print(i.order_number,i.M_ID)
 # class App:
 #     def __init__(self, master):
 #         self.master = master

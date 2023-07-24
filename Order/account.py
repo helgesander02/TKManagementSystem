@@ -107,63 +107,87 @@ class acount(customtkinter.CTkFrame):
         self.bt.pack(side='bottom',anchor='e')
     def reset(self):
         self.ac_now_input_2.delete(0,tk.END)
-        self.ac_now_input_3.delete(0,tk.END)
-        self.ac_now_input_4.delete(0,tk.END)
+        self.ac_now_input_3.configure(textvariable=customtkinter.IntVar(value=0))
+        self.ac_now_input_4.configure(textvariable=customtkinter.IntVar(value=0))
         self.ac_now_input_5.delete(0,tk.END)
     def next_(self):
-        if len(self.selected)>self.i:self.i+=1
-        self.index_info.configure(text=f'{self.i+1}/{len(self.selected)}')
-        sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
-        self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
-        self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
-        self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
-        self.ac_history.pack_forget()
-        self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
-        self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
-        recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
-        l=0
-        for i in recipit_:
-            ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
-            ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
-            ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
-            ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
-            ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
-            ac_title_1.grid(row=l,column=0)
-            ac_title_2.grid(row=l,column=1)
-            ac_title_3.grid(row=l,column=2)
-            ac_title_4.grid(row=l,column=3)
-            ac_title_5.grid(row=l,column=4)
-            l+=1
-        self.ac_history.pack(fill='both',expand=1)        
+        if self.i>len(self.selected):
+            self.i+=1
+            self.index_info.configure(text=f'{self.i+1}/{len(self.selected)}')
+            sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
+            self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
+            self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
+            self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
+            self.ac_history.pack_forget()
+            self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
+            self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
+            recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
+            l=0
+            for i in recipit_:
+                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
+                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
+                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
+                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
+                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
+                ac_title_1.grid(row=l,column=0)
+                ac_title_2.grid(row=l,column=1)
+                ac_title_3.grid(row=l,column=2)
+                ac_title_4.grid(row=l,column=3)
+                ac_title_5.grid(row=l,column=4)
+                l+=1
+            self.ac_history.pack(fill='both',expand=1)        
     def previous_(self):
-        if 0<self.i:self.i-=1
-        self.index_info.configure(text=f'{self.i+1}/{len(self.selected)}')
-        sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
-        self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
-        self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
-        self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
-        self.ac_history.pack_forget()
-        self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
-        self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
-        recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
-        l=0
-        for i in recipit_:
-            ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
-            ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
-            ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
-            ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
-            ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
-            ac_title_1.grid(row=l,column=0)
-            ac_title_2.grid(row=l,column=1)
-            ac_title_3.grid(row=l,column=2)
-            ac_title_4.grid(row=l,column=3)
-            ac_title_5.grid(row=l,column=4)
-            l+=1
-        self.ac_history.pack(fill='both',expand=1)
+        if self.i>0:
+            self.i-=1
+            self.index_info.configure(text=f'{self.i+1}/{len(self.selected)}')
+            sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
+            self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
+            self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
+            self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
+            self.ac_history.pack_forget()
+            self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
+            self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
+            recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
+            l=0
+            for i in recipit_:
+                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
+                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
+                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
+                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
+                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
+                ac_title_1.grid(row=l,column=0)
+                ac_title_2.grid(row=l,column=1)
+                ac_title_3.grid(row=l,column=2)
+                ac_title_4.grid(row=l,column=3)
+                ac_title_5.grid(row=l,column=4)
+                l+=1
+            self.ac_history.pack(fill='both',expand=1)
     def add_rc_(self,m_way,money,discount,remark):
         try:           
             add_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]],m_way=m_way,money=money,discount=discount,remark=remark)
             tk.messagebox.showinfo(title='入賬成功', message="入賬成功", )
+            sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
+            self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
+            self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
+            self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
+            self.ac_history.pack_forget()
+            self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
+            self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
+            recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
+            l=0
+            for i in recipit_:
+                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
+                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
+                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
+                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
+                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
+                ac_title_1.grid(row=l,column=0)
+                ac_title_2.grid(row=l,column=1)
+                ac_title_3.grid(row=l,column=2)
+                ac_title_4.grid(row=l,column=3)
+                ac_title_5.grid(row=l,column=4)
+                l+=1
+            self.ac_history.pack(fill='both',expand=1)
         except:
             tk.messagebox.showinfo(title='入賬失敗', message="入賬失敗", )
     def od_info(self):
