@@ -100,7 +100,7 @@ class Search_Frame(customtkinter.CTkFrame):
 
         self.menber_button.place(relx=0.9, rely=0.5, anchor=tk.CENTER)
     def confirm_user(self,phone):
-        yes_or_no='有此會員' if get_user(Session(engine),user_phone=phone)!=None else '沒有此會員'
+        yes_or_no='有此會員' if get_user(Session(engine),user_phone=phone.strip())!=None else '沒有此會員'
         self.tf_label.configure(text=yes_or_no)
     def open_add_toplevel(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -129,7 +129,7 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             self.edit_entry_n3=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
 
             self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click)
-            confirm_bt=customtkinter.CTkButton(self,text='確定更改',command=self.confirm_edit)
+            confirm_bt=customtkinter.CTkButton(self,text='確定新增',command=self.confirm_edit)
             self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
             confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
             # edit_n4.grid(row=0,column=0)

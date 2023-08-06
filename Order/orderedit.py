@@ -85,7 +85,7 @@ class order_List(customtkinter.CTkFrame):
         except:
             self.od_l={}
         self.c=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
-        for i in range(9):
+        for i in range(10):
             self.c.columnconfigure(i,weight=1)
         self.c.columnconfigure(4,weight=2)
         a=customtkinter.CTkLabel(self.c,text='會員資訊',fg_color = ("#DDDDDD"),text_color='black')
@@ -104,19 +104,22 @@ class order_List(customtkinter.CTkFrame):
         a.grid(row=0,column=6)
         a=customtkinter.CTkLabel(self.c,text='編輯',fg_color = ("#DDDDDD"),text_color='black')
         a.grid(row=0,column=7)
-        a=customtkinter.CTkLabel(self.c,text='刪除',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self.c,text='拆單',fg_color = ("#DDDDDD"),text_color='black')
         a.grid(row=0,column=8)
+        a=customtkinter.CTkLabel(self.c,text='刪除',fg_color = ("#DDDDDD"),text_color='black')
+        a.grid(row=0,column=9)
         
         i=1
+        def split_bill(i,l):return lambda:self.split_bill_(i,l)
         def gen_cmd1(i,l):return lambda:self.edit_(i,l)
         def gen_cmd(i,l):return lambda:self.delete(i,l)
         def get_user(i):return lambda:self.get_u(i)
         def get_od_(i):return lambda:self.get_o(i)
         for key,value in self.od_l.items():
-            a=customtkinter.CTkButton(self.c,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
+            a=customtkinter.CTkButton(self.c,width=30,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
             # a=customtkinter.CTkLabel(self.c,text=f'{value[0]}',fg_color = ("#DDDDDD"),text_color='black')
             a.grid(row=i,column=0)
-            a=customtkinter.CTkButton(self.c,image=self.info,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_od_(value[1]))
+            a=customtkinter.CTkButton(self.c,width=30,image=self.info,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_od_(value[1]))
             a.grid(row=i,column=1)
             a=customtkinter.CTkLabel(self.c,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black')
             a.grid(row=i,column=2) 
@@ -128,10 +131,12 @@ class order_List(customtkinter.CTkFrame):
             a.grid(row=i,column=5)
             a=customtkinter.CTkLabel(self.c,text=f'{value[6]}',fg_color = ("#DDDDDD"),text_color='black')
             a.grid(row=i,column=6)
-            a=customtkinter.CTkButton(self.c,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(value[-1],value[0]))
+            a=customtkinter.CTkButton(self.c,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(value[-1],value[0]))
             a.grid(row=i,column=7)
-            a=customtkinter.CTkButton(self.c,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[-1],value[-2]))#訂單號碼,ID
+            a=customtkinter.CTkButton(self.c,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=split_bill(value[-1],value[0]))
             a.grid(row=i,column=8)
+            a=customtkinter.CTkButton(self.c,width=30,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[-1],value[-2]))#訂單號碼,ID
+            a.grid(row=i,column=9)
             i+=1
         self.c.pack(fill='x')
         self.toplevel_window = None
@@ -147,7 +152,13 @@ class order_List(customtkinter.CTkFrame):
             self.toplevel_window = profile_ToplevelWindow(self,phone=i)  
             self.toplevel_window.attributes('-topmost','true')   
         else:
-            self.toplevel_window.focus()        
+            self.toplevel_window.focus()
+    def split_bill_(self,i,l):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = split_bill_ToplevelWindow(self,key=i,M_Name=l)   
+            self.toplevel_window.attributes('-topmost','true')   
+        else:
+            self.toplevel_window.focus()          
     def edit_(self,i,l):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = edit_ToplevelWindow(self,key=i,M_Name=l)   
@@ -159,7 +170,7 @@ class order_List(customtkinter.CTkFrame):
         del self.od_l[i+l]
         self.c.pack_forget()
         self.c=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
-        for i in range(9):
+        for i in range(10):
             self.c.columnconfigure(i,weight=1)
         self.c.columnconfigure(4,weight=2)
         a=customtkinter.CTkLabel(self.c,text='會員資訊',fg_color = ("#DDDDDD"),text_color='black')
@@ -178,18 +189,21 @@ class order_List(customtkinter.CTkFrame):
         a.grid(row=0,column=6)
         a=customtkinter.CTkLabel(self.c,text='編輯',fg_color = ("#DDDDDD"),text_color='black')
         a.grid(row=0,column=7)
-        a=customtkinter.CTkLabel(self.c,text='刪除',fg_color = ("#DDDDDD"),text_color='black')
+        a=customtkinter.CTkLabel(self.c,text='拆單',fg_color = ("#DDDDDD"),text_color='black')
         a.grid(row=0,column=8)
+        a=customtkinter.CTkLabel(self.c,text='刪除',fg_color = ("#DDDDDD"),text_color='black')
+        a.grid(row=0,column=9)
         
         i=1
+        def split_bill(i,l):return lambda:self.edit_(i,l)
         def gen_cmd1(i,l):return lambda:self.edit_(i,l)
         def gen_cmd(i,l):return lambda:self.delete(i,l)
         def get_user(i):return lambda:self.get_u(i)
         def get_od_(i):return lambda:self.get_o(i)
         for key,value in self.od_l.items():
-            a=customtkinter.CTkButton(self.c,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
+            a=customtkinter.CTkButton(self.c,width=30,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
             a.grid(row=i,column=0)
-            a=customtkinter.CTkButton(self.c,image=self.info,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_od_(value[1]))
+            a=customtkinter.CTkButton(self.c,width=30,image=self.info,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_od_(value[1]))
             a.grid(row=i,column=1)
             a=customtkinter.CTkLabel(self.c,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black')
             a.grid(row=i,column=2) 
@@ -201,10 +215,12 @@ class order_List(customtkinter.CTkFrame):
             a.grid(row=i,column=5)
             a=customtkinter.CTkLabel(self.c,text=f'{value[6]}',fg_color = ("#DDDDDD"),text_color='black')
             a.grid(row=i,column=6)
-            a=customtkinter.CTkButton(self.c,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(value[-1],value[0]))
+            a=customtkinter.CTkButton(self.c,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(value[-1],value[0]))
             a.grid(row=i,column=7)
-            a=customtkinter.CTkButton(self.c,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[-1],value[-2]))
+            a=customtkinter.CTkButton(self.c,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=split_bill(value[-1],value[0]))
             a.grid(row=i,column=8)
+            a=customtkinter.CTkButton(self.c,width=30,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[-1],value[-2]))
+            a.grid(row=i,column=9)
             i+=1
         self.c.pack(fill='x')
 class info_ToplevelWindow(customtkinter.CTkToplevel):
@@ -270,6 +286,7 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
 class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self,master, *args,key,M_Name, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title('編輯訂單')
         self.master=master
         self.buy_photo = customtkinter.CTkImage(light_image=Image.open("image\\cart.png"),
                                   dark_image=Image.open("image\\cart.png"),
@@ -285,7 +302,7 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
             self.columnconfigure(i,weight=1)
         self.ph_label=customtkinter.CTkLabel(self.input_top_, text="電話",text_color='black')
         self.phone=customtkinter.CTkEntry(self.input_top_, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black')
-        self.phone.insert(tk.END,'' if od[0].phone==None else od[0].phone)
+        self.phone.insert(tk.END,od[0].M_ID_.Phone)
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
         self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black')
@@ -320,7 +337,7 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
             self.buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
             self.original_buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
         self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#DDDDDD"))
-        for i in range(len(prodcuts)):
+        for i in range(6):
             self.a_frame.columnconfigure(i,weight=1)
         def gen_cmd(i,l):return lambda:self.buy_bt_click(i,l)
         for i in range(len(prodcuts)):
@@ -351,6 +368,120 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def add_od(self):
         try:
             edit_order_(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name)
+            self.sum_frame_.pack_forget()
+            self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+            self.sum_frame_.reset_bt.configure(command=self.reset_)
+            self.sum_frame_.pack(side='right',anchor='n',fill='both')
+            self.destroy()
+            tk.messagebox.showinfo(title='修改成功', message="修改成功", )
+        except:
+            tk.messagebox.showinfo(title='修改失敗', message="修改失敗", )
+
+    def buy_bt_click(self,a,b):
+        self.sum_frame_.pack_forget()
+        self.bt_group[a]=b
+        self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.confirm_bt.configure(command=self.add_od)
+        self.sum_frame_.pack(side='right',anchor='n',fill='both')
+        self.buy_list=self.sum_frame_.buy_list
+        self.bt_group=self.sum_frame_.bt_group 
+    def reset_(self):
+        self.buy_list=self.original_buy_list
+        self.sum_frame_.pack_forget()
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.original_buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.confirm_bt.configure(command=self.add_od)
+        self.sum_frame_.pack(side='right',anchor='n',fill='both')
+class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
+    def __init__(self,master, *args,key,M_Name, **kwargs):#M_Name==Phone
+        super().__init__(*args, **kwargs)
+        self.title('拆單')
+        self.master=master
+        self.buy_photo = customtkinter.CTkImage(light_image=Image.open("image\\cart.png"),
+                                  dark_image=Image.open("image\\cart.png"),
+                                  size=(30, 30))        
+        od=get_edit_od(Session(engine),key,M_Name)
+        self.key=key
+        self.M_Name=M_Name
+        self.geometry("1600x900")
+        self.columnconfigure((0,1),weight=1)
+        self.input_top_=customtkinter.CTkFrame(self, fg_color = ("#DDDDDD"))
+        self.input_top_.columnconfigure(5,weight=5)
+        for i in range(6):
+            self.columnconfigure(i,weight=1)
+        self.ph_label=customtkinter.CTkLabel(self.input_top_, text="電話",text_color='black')
+        self.phone=customtkinter.CTkEntry(self.input_top_, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black')
+        self.phone.insert(tk.END,od[0].M_ID_.Phone)
+        self.ph_label.grid(row=0,column=0,padx=30,pady=5)
+        self.phone.grid(row=0, column=1,padx=30,pady=5)
+        self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black')
+        self.path=customtkinter.CTkComboBox(self.input_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path_label.grid(row=1,column=0,padx=30,pady=5)
+        self.path.grid(row=1,column=1,padx=30,pady=5)
+        self.pick_up_label=customtkinter.CTkLabel(self.input_top_, text="取貨方式",text_color='black')
+        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "取貨2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.pick_up.set(od[0].pick_up)
+        self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
+        self.pick_up.grid(row=2,column=1,padx=30,pady=5)
+        self.date_label=customtkinter.CTkLabel(self.input_top_, text="取貨日期",text_color='black')
+        self.date_=DateEntry(self.input_top_,selectmode='day')
+        self.date_.set_date(od[0].pick_up_date)
+        self.date_label.grid(row=0,column=2,padx=30,pady=5)
+        self.date_.grid(row=0,column=3,padx=30,pady=5)
+        self.Remark_label=customtkinter.CTkLabel(self.input_top_, text="備註",text_color='black')
+        self.Remark_label.grid(row=0,column=4,padx=30,pady=5)
+        self.Remark_textbox = customtkinter.CTkTextbox(self.input_top_, corner_radius=0,fg_color='white',border_color='black',text_color='black',border_width=1)
+        self.Remark_textbox.insert(tk.END,'' if od[0].Remark==None else od[0].Remark)
+        self.Remark_textbox.grid(row=0, column=5,rowspan=3,padx=30,pady=5,sticky='we')        
+        # self.input_top_=input_top(self, fg_color = ("#DDDDDD")) 
+        self.input_top_.pack(fill='x',padx=30,pady=5)
+        
+        self.product_=customtkinter.CTkFrame(self, fg_color = ("#DDDDDD"))
+        prodcuts=spilt_bill_pd(Session(engine),self.key,self.M_Name)
+        self.toplevel_window = None
+        self.bt_group={}
+        self.buy_list={}
+        self.original_buy_list={}
+        for i in od:
+            self.buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
+            self.original_buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
+        self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#DDDDDD"))
+        for i in range(6):
+            self.a_frame.columnconfigure(i,weight=1)
+        def gen_cmd(i,l):return lambda:self.buy_bt_click(i,l)
+        l=0
+        for i in prodcuts:
+            label_Name=customtkinter.CTkLabel(self.a_frame,text=i.p_ID_.product_Name,text_color='black')
+            label_Name.grid(row=l,column=0,padx=30,sticky='w')
+            label_Weight=customtkinter.CTkLabel(self.a_frame,text=i.p_ID_.product_Weight,text_color='black')
+            label_Weight.grid(row=l,column=1,padx=30)
+            label_price=customtkinter.CTkLabel(self.a_frame,text=f'{i.p_ID_.product_Price}元',text_color='black')
+            label_price.grid(row=l,column=2,padx=30)
+            
+            spinbox_1 = FloatSpinbox(self.a_frame, width=150, step_size=1)
+            try:
+                spinbox_1.set(self.buy_list[i.p_ID_.product_Name][0])
+            except:
+                spinbox_1.set(0)
+            # self.bt_group[prodcuts[i].product_Name]=[spinbox_1,prodcuts[i].product_Price]
+            spinbox_1.grid(row=l,column=4,pady=0)
+            buy_button=customtkinter.CTkButton(self.a_frame,image=self.buy_photo,hover=False,  fg_color = ("#DDDDDD"), text="",command=gen_cmd(i.p_ID_.product_Name,[spinbox_1,i.p_ID_.product_Price]))
+            buy_button.grid(row=l,column=5, padx=30, pady=0)
+            l+=1
+            
+        self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.confirm_bt.configure(command=self.add_od)
+        self.sum_frame_.pack(side='right',anchor='n',fill='both')        
+        # self.product_=product_Frame(self, fg_color = ("#DDDDDD"))
+        self.product_.pack(fill='both',expand=1,padx=30,pady=5)
+    def add_od(self):
+        # spilt_bill_add(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name,original=self.original_buy_list)
+
+        try:
+            spilt_bill_add(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name)
             self.sum_frame_.pack_forget()
             self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
             self.sum_frame_.reset_bt.configure(command=self.reset_)

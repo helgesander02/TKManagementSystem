@@ -45,7 +45,7 @@ class product(Base):
     prodcut_ID = Column(Integer, primary_key=True, index=True)
     product_Name = Column(String, unique=True, index=True)
     product_Weight = Column(String)
-    product_Price = Column(String, default=True)
+    product_Price = Column(Integer, default=True)
     orders = relationship('Order', back_populates='p_ID_')
     content=Column(String)
     # orders = relationship('Order', secondary=association_table, back_populates='p_ID_',overlaps="M_ID")

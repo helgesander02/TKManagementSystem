@@ -79,7 +79,6 @@ class sum_Frame(customtkinter.CTkFrame):
         # self.contents_.pack(fill='both',expand=1)
         self.contents_=customtkinter.CTkFrame(self,  fg_color = ("#EEEEEE"))
         self.contents_.rowconfigure(len(buy_list),weight=1)
-        
         if self.a!='':
             self.buy_list[self.a]=[self.bt_group[self.a][0].get(),self.bt_group[self.a][1]]
             if self.buy_list[self.a][0]==0:

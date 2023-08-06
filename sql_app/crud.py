@@ -82,7 +82,7 @@ def add_pd(db:Session,p_name:str,p_weight:str,p_price:int):
     db.refresh(new_pd)
 def search_pd(db:Session,pd_name:str):
     if pd_name!="":
-        return db.query(models.product).filter(models.product.product_Name==pd_name)
+        return db.query(models.product).filter(models.product.product_Name.like(f'%{pd_name}%'))
     return get_all_products(db=db)
 def add_gift_box(db:Session,pd:dict,name:str,weight:str,price:int):
     content_=''
@@ -121,3 +121,30 @@ def sum_receipt_money(db:Session,o_id:int,m_id:int):
     return db.query(func.sum(models.receipt.money)).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id).scalar(),db.query(models.Order).filter(models.Order.order_number==o_id,models.Order.M_ID==m_id).first().money
 def ac_get_od(db:Session,o_nb,m_id):
     return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==m_id)
+def spilt_bill_pd(db:Session,o_nb:int,phone:str):
+    mid=db.query(models.Member).filter(models.Member.Phone==phone).first().ID
+    return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==mid)
+def spilt_bill_add(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str):
+    #刪除原本的產品
+    mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
+    for i in product_.keys():
+        pid=db.query(models.product).filter(models.product.product_Name == i ).first().prodcut_ID
+        db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).delete()
+        db.commit()
+    try:
+        mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
+    except:
+        tk.messagebox.showinfo(title='失敗', message="請輸入電話", )
+    try:
+        max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first().order_number
+    except:
+        max_value=0
+    su=0
+    for key,value in product_.items():
+        su+=product_[key][1]
+    for key,value in product_.items():
+        pid=db.query(models.product).filter(models.product.product_Name == key ).first().prodcut_ID
+        new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=su)
+        db.add(new_od)
+        db.commit()
+        db.refresh(new_od)
