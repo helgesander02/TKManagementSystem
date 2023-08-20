@@ -111,7 +111,7 @@ class acount(customtkinter.CTkFrame):
         self.ac_now_input_4.configure(textvariable=customtkinter.IntVar(value=0))
         self.ac_now_input_5.delete(0,tk.END)
     def next_(self):
-        if self.i<len(self.selected):
+        if self.i<len(self.selected)-1:
             self.i+=1
             self.index_info.configure(text=f'{self.i+1}/{len(self.selected)}')
             sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])

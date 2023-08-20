@@ -23,11 +23,11 @@ class input_order(customtkinter.CTkFrame):
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
         self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black')
-        self.path=customtkinter.CTkComboBox(self.input_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path=customtkinter.CTkComboBox(self.input_top_,values=["現場", "網站"],fg_color = ("#DDDDDD"),text_color='black')
         self.path_label.grid(row=1,column=0,padx=30,pady=5)
         self.path.grid(row=1,column=1,padx=30,pady=5)
         self.pick_up_label=customtkinter.CTkLabel(self.input_top_, text="取貨方式",text_color='black')
-        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "取貨2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "宅配"],fg_color = ("#DDDDDD"),text_color='black')
         self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
         self.date_label=customtkinter.CTkLabel(self.input_top_, text="取貨日期",text_color='black')
@@ -80,7 +80,7 @@ class input_order(customtkinter.CTkFrame):
         self.product_.pack(fill='both',expand=1,padx=30,pady=5)
     def add_od(self):
         try:
-            add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date())
+            add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),path=self.path.get(),discount=self.sum_frame_.discount_entry.get())
             self.sum_frame_.pack_forget()
             self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
             self.sum_frame_.reset_bt.configure(command=self.reset_)

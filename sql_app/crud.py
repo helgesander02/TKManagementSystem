@@ -23,42 +23,45 @@ def get_all_products(db:Session):
 def get_od(db: Session, user_id: int):
     # return db.query(models.Member).filter(models.Order.order_number == od_nb).first()
     return db.query(models.Order).filter(models.Order.M_ID == user_id)
-def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date):
+def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,path:str,discount:int):
     try:
-        mid=db.query(models.Member).filter(models.Member.Phone==phone).first().ID
+        mid=db.query(models.Member).filter(models.Member.Phone==phone.strip()).first().ID
     except:
-        tk.messagebox.showinfo(title='失敗', message="請輸入電話", )
+        tk.messagebox.showinfo(title='失敗', message="未輸入電話或電話輸入錯誤", )
     try:
         max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first().order_number
     except:
         max_value=0
-    print(max_value)
     su=0
+    i=0
     for key,value in product_.items():
         su+=product_[key][1]
     for key,value in product_.items():
         pid=db.query(models.product).filter(models.product.product_Name == key ).first().prodcut_ID
-        new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=su)
+        if i==0:
+            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,discount=discount,total=su)
+            i+=1
+        else:
+            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,total=su)
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
 def get_od_info(db: Session, od_nb: int):
     # return db.query(models.Member).filter(models.Order.order_number == od_nb).first()
     return db.query(models.Order).filter(models.Order.od_id == od_nb).first()
-def search_od_(db:Session,phone:str,pick_up:str,date_:date,money1:int,money2:int):
-    
+def search_od_(db:Session,phone:str,pick_up:str,date_:date,money1:int,money2:int,path:str):
     if phone=='':
-        return db.query(models.Order).filter(or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.money.between(money1,money2)))
+        return db.query(models.Order).filter(or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.path==path),models.Order.total.between(money1,money2))
     else:
-        mid=db.query(models.Member).filter(models.Member.Phone==phone).first().ID
-        return db.query(models.Order).filter(models.Order.M_ID== mid,or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.money.between(money1,money2)))
+        mid=db.query(models.Member).filter(models.Member.Phone==phone.strip()).first().ID
+        return db.query(models.Order).filter(models.Order.M_ID== mid,or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.total.between(money1,money2),models.Order.path==path))
 def delete_od(db:Session,od_nb:int,m_id:int):
     db.query(models.Order).filter(models.Order.order_number == od_nb,models.Order.M_ID==m_id).delete()
     db.commit()
 def get_edit_od(db:Session,od_nb:int,od_name:str):
     Mid=db.query(models.Member).filter(models.Member.Phone==od_name).first().ID
     return db.query(models.Order).filter(models.Order.order_number==od_nb,models.Order.M_ID==Mid)
-def edit_order_(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str):
+def edit_order_(db:Session,phone:str,Pick_up:str,path:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str):
     Mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
     db.query(models.Order).filter(models.Order.order_number==key,models.Order.M_ID==Mid).delete()
     db.commit()   
@@ -68,7 +71,7 @@ def edit_order_(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:di
         su+=product_[key_][1]
     for key_,value in product_.items():
         pid=db.query(models.product).filter(models.product.product_Name == key_ ).first().prodcut_ID
-        new_od=models.Order(phone=phone,order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=su)
+        new_od=models.Order(phone=phone,order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=su,path=path)
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
@@ -124,13 +127,19 @@ def ac_get_od(db:Session,o_nb,m_id):
 def spilt_bill_pd(db:Session,o_nb:int,phone:str):
     mid=db.query(models.Member).filter(models.Member.Phone==phone).first().ID
     return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==mid)
-def spilt_bill_add(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str):
-    #刪除原本的產品
+def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str):
+    #刪除原本的產品 product_ {'產品':[數量,價錢]}
     mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
     for i in product_.keys():
         pid=db.query(models.product).filter(models.product.product_Name == i ).first().prodcut_ID
-        db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).delete()
-        db.commit()
+        od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
+        if (od.count-product_[i][0])==0:
+            db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).delete()
+            db.commit()
+        else:
+            od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
+            od.count-=product_[i][0]
+            db.commit()
     try:
         mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
     except:
@@ -148,3 +157,36 @@ def spilt_bill_add(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
+def date_search(db:Session,date1,date2):
+    od_count=db.query(models.Order.order_number,models.Order.M_ID).filter(models.Order.Date_.between(date1,date2)).distinct().count()
+    pd_count=db.query(func.sum(models.Order.count)).filter(models.Order.Date_.between(date1,date2)).first()[0]
+    p_count=db.query(models.Order.M_ID).filter(models.Order.Date_.between(date1,date2)).distinct().count()
+    sum_money=db.query(func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2)).first()[0]
+    sum_discount=db.query(func.sum(models.Order.discount)).filter(models.Order.Date_.between(date1,date2)).first()[0]
+    sum_profit=sum_money-sum_discount
+
+    on_site=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.pick_up=='現場')[0]
+    home_delivery=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.pick_up=='宅配')[0]
+
+    p_on_site=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.path=='現場')[0]
+    p_internet=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.path=='網站')[0]
+    return od_count,pd_count,p_count,sum_money,sum_discount,sum_profit,on_site,home_delivery,p_on_site,p_internet
+def pd_Analysis(db:Session,date1,date2):
+    pd_1=db.query(models.Order).filter(models.Order.Date_.between(date1,date2))
+    x=db.query(models.Order.p_ID).filter(models.Order.Date_.between(date1,date2))
+    z=[]
+    for i in x:
+        z.append(i[0])
+    pd_2=db.query(models.product).filter(models.product.prodcut_ID.not_in(z))
+    pd_3={}
+    for i in pd_1:#[數量,價錢]
+        if i.p_ID_.product_Name in pd_3:
+            pd_3[i.p_ID_.product_Name][0]+=i.count
+            pd_3[i.p_ID_.product_Name][1]+=i.count*i.p_ID_.product_Price
+        else:
+            pd_3[i.p_ID_.product_Name]=[i.count,i.count*i.p_ID_.product_Price]
+    for i in pd_2:
+        pd_3[i.product_Name]=[0,0]
+    return pd_3
+def test(db:Session,money1:int,money2:int):
+    return db.query(models.Order.M_ID,models.Order.order_number).filter(models.Order.total.between(money1,money2),).distinct()

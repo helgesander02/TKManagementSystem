@@ -7,9 +7,21 @@ import customtkinter
 import os
 from PIL import Image
 from tkinter import *
-od=get_edit_od(Session(engine),5,'077423866')
-for i in od:
-    print(i.M_ID_.Phone)
+# user=get_user(Session(engine),user_phone='0988635291')
+# for i in user.orders:
+#     print(i.od_id)
+od_l={}
+order_list=search_od_(db=Session(engine),path='現場',phone='',pick_up='現場',date_='2023-8-17',money1=0,money2=99999)
+for i in order_list:
+    if f'{i.order_number}{i.M_ID}' in od_l:
+        od_l[f'{i.order_number}{i.M_ID}'][4]+=f',{i.p_ID_.product_Name}'
+        od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
+    else:
+        od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price,i.M_ID,i.order_number]
+print(od_l.keys())
+# od=get_edit_od(Session(engine),5,'077423866')
+# for i in od:
+#     print(i.M_ID_.Phone)
 # a=spilt_bill_pd(Session(engine),4,'077423866')
 # print(a.count())
 # a=search_od_(Session(engine),phone='',money1=1,money2=11111,pick_up='',date_=',2023-7-21')
@@ -75,8 +87,9 @@ for i in od:
 #         tk.Label(inside_frame, text=f'{y}:{x}', borderwidth=1, relief=tk.SOLID, width=10).grid(column=x, row=y)
         
 # root.mainloop()
-# order_list=search_od_(db=Session(engine),phone='phone',pick_up='pick_up',date_='2000/01/01',money1=1,money2=1111)
-
+# order_list=search_od_(db=Session(engine),phone='077423866',pick_up='pick_up',date_='2000/01/01',money1=1,money2=1111)
+# for i in order_list:
+#     print(i.M_ID_.Name)
 # try:
 #             od_l={}
 #             order_list=search_od_(db=Session(engine),phone='phone',pick_up='pick_up',date_='2000/01/01',money1=1,money2=1111)

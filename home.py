@@ -190,11 +190,11 @@ class Schedule_Frame(customtkinter.CTkScrollableFrame):
             od_l={}
             order_list=home_search_date(db=Session(engine),date_=date_)
             for i in order_list:
-                if i.order_number in od_l:
-                    od_l[i.order_number][4]+=f',{i.p_ID_.product_Name}'
-                    od_l[i.order_number][6]+=i.count*i.p_ID_.product_Price
+                if f'{i.order_number}{i.M_ID}' in od_l:
+                    od_l[f'{i.order_number}{i.M_ID}'][4]+=f',{i.p_ID_.product_Name}'
+                    od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
                 else:
-                    od_l[i.order_number]=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
+                    od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
             i=1
             for key,value in od_l.items():
                 a=customtkinter.CTkButton(self,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))

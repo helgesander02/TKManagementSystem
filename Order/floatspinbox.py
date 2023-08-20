@@ -99,7 +99,7 @@ class sum_Frame(customtkinter.CTkFrame):
         self.discount_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         self.discount_frame.columnconfigure((0,1),weight=1)
         self.discount_label=customtkinter.CTkLabel(self.discount_frame,text='自訂優惠')
-        self.discount_entry=customtkinter.CTkEntry(self.discount_frame)
+        self.discount_entry=customtkinter.CTkEntry(self.discount_frame,textvariable=customtkinter.IntVar(value=0))
         self.sum_label=customtkinter.CTkLabel(self.discount_frame,text='總計')
         self.money_label=customtkinter.CTkLabel(self.discount_frame,text=f'{s}元')
         self.sum_label.grid(row=2,column=0,sticky='w')

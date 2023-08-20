@@ -21,11 +21,11 @@ class edit_order(customtkinter.CTkFrame):
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
         self.path_label=customtkinter.CTkLabel(self.edit_top_, text="通路",text_color='black')
-        self.path=customtkinter.CTkComboBox(self.edit_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path=customtkinter.CTkComboBox(self.edit_top_,values=["現場", "網站"],fg_color = ("#DDDDDD"),text_color='black')
         self.path_label.grid(row=1,column=0,padx=30,pady=5)
         self.path.grid(row=1,column=1,padx=30,pady=5)
         self.pick_up_label=customtkinter.CTkLabel(self.edit_top_, text="取貨方式",text_color='black')
-        self.pick_up=customtkinter.CTkComboBox(self.edit_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.pick_up=customtkinter.CTkComboBox(self.edit_top_,values=["現場", "宅配"],fg_color = ("#DDDDDD"),text_color='black')
         self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
         self.date_label=customtkinter.CTkLabel(self.edit_top_, text="日期",text_color='black')
@@ -33,8 +33,8 @@ class edit_order(customtkinter.CTkFrame):
         self.date_label.grid(row=0,column=2,padx=30,pady=5)
         self.date_.grid(row=0,column=3,padx=30,pady=5)
         self.money_label=customtkinter.CTkLabel(self.edit_top_, text="金額",text_color='black')
-        self.money=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black')
-        self.money2=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black')
+        self.money=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black',textvariable=customtkinter.IntVar(value=0))
+        self.money2=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black',textvariable=customtkinter.IntVar(value=99999))
         self.money_label.grid(row=0,column=4,padx=30,pady=5)
         self.money.grid(row=0,column=5,padx=30,pady=5)
         self.money2.grid(row=1,column=5,padx=30,pady=5)
@@ -46,20 +46,20 @@ class edit_order(customtkinter.CTkFrame):
         search=customtkinter.CTkButton(self.edit_top_,text='確定查詢', width=150, height=40,
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),
-                                                        command=lambda: self.search_od_list(phone=self.phone.get(),pick_up=self.pick_up.get(),date_=self.date_.get_date(),money1=self.money.get(),money2=self.money2.get()))
+                                                        command=lambda: self.search_od_list(phone=self.phone.get(),pick_up=self.pick_up.get(),date_=self.date_.get_date(),money1=self.money.get(),money2=self.money2.get(),path=self.path.get()))
         search.grid(row=1,column=6,padx=30,pady=5)  
      
         self.edit_top_.pack(fill='x',padx=30,pady=5)
-        self.ol=order_List(self,phone='',pick_up='',date_='',money1='',money2='',fg_color = ("#DDDDDD"))
+        self.ol=order_List(self,phone='',path='',pick_up='',date_='',money1='',money2='',fg_color = ("#DDDDDD"))
         self.ol.pack(fill='x',padx=30,pady=5)
-    def search_od_list(self,phone,pick_up,date_,money1,money2):
+    def search_od_list(self,phone,path,pick_up,date_,money1,money2):
         self.ol.pack_forget()
-        self.ol=order_List(self,phone=phone,pick_up=pick_up,date_=date_,money1=money1,money2=money2,fg_color = ("#DDDDDD"))
+        self.ol=order_List(self,phone=phone,path=path,pick_up=pick_up,date_=date_,money1=money1,money2=money2,fg_color = ("#DDDDDD"))
         self.ol.pack(fill='x',padx=30,pady=5)
     def delete_(self):
         pass
 class order_List(customtkinter.CTkFrame):
-    def __init__(self, master,phone,pick_up,date_,money1,money2, **kwargs):
+    def __init__(self, master,phone,path,pick_up,date_,money1,money2, **kwargs):
         super().__init__(master, **kwargs)
         self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
                                   dark_image=Image.open("image\\user.png"),
@@ -75,13 +75,13 @@ class order_List(customtkinter.CTkFrame):
                                   size=(30, 30))        
         try:
             self.od_l={}
-            order_list=search_od_(db=Session(engine),phone=phone,pick_up=pick_up,date_=date_,money1=money1,money2=money2)
+            order_list=search_od_(db=Session(engine),path=path,phone=phone,pick_up=pick_up,date_=date_,money1=money1,money2=money2)
             for i in order_list:
-                if i.order_number+i.M_ID in self.od_l:
-                    self.od_l[i.order_number+i.M_ID][4]+=f',{i.p_ID_.product_Name}'
-                    self.od_l[i.order_number+i.M_ID][6]+=i.count*i.p_ID_.product_Price
+                if f'{i.order_number}{i.M_ID}' in self.od_l:
+                    self.od_l[f'{i.order_number}{i.M_ID}'][4]+=f',{i.p_ID_.product_Name}'
+                    self.od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
                 else:
-                    self.od_l[i.order_number+i.M_ID]=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price,i.M_ID,i.order_number]
+                    self.od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price,i.M_ID,i.order_number]
         except:
             self.od_l={}
         self.c=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
@@ -226,6 +226,7 @@ class order_List(customtkinter.CTkFrame):
 class info_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,od, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title('訂單資訊')
         self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
                                   dark_image=Image.open("image\\user.png"),
                                   size=(100, 100))
@@ -256,6 +257,7 @@ class info_ToplevelWindow(customtkinter.CTkToplevel):
 class profile_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,phone, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title('會員資訊')
         self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
                                   dark_image=Image.open("image\\user.png"),
                                   size=(100, 100))
@@ -306,11 +308,12 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
         self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black')
-        self.path=customtkinter.CTkComboBox(self.input_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path=customtkinter.CTkComboBox(self.input_top_,values=["現場", "網站"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path.set(od[0].path)
         self.path_label.grid(row=1,column=0,padx=30,pady=5)
         self.path.grid(row=1,column=1,padx=30,pady=5)
         self.pick_up_label=customtkinter.CTkLabel(self.input_top_, text="取貨方式",text_color='black')
-        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "取貨2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "宅配"],fg_color = ("#DDDDDD"),text_color='black')
         self.pick_up.set(od[0].pick_up)
         self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
@@ -367,7 +370,7 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         self.product_.pack(fill='both',expand=1,padx=30,pady=5)
     def add_od(self):
         try:
-            edit_order_(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name)
+            edit_order_(db=Session(engine),phone=self.phone.get(),path=self.path.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name)
             self.sum_frame_.pack_forget()
             self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
             self.sum_frame_.reset_bt.configure(command=self.reset_)
@@ -416,11 +419,12 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
         self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black')
-        self.path=customtkinter.CTkComboBox(self.input_top_,values=["option 1", "option 2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path=customtkinter.CTkComboBox(self.input_top_,values=["現場", "網站"],fg_color = ("#DDDDDD"),text_color='black')
+        self.path.set(od[0].path)
         self.path_label.grid(row=1,column=0,padx=30,pady=5)
         self.path.grid(row=1,column=1,padx=30,pady=5)
         self.pick_up_label=customtkinter.CTkLabel(self.input_top_, text="取貨方式",text_color='black')
-        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "取貨2"],fg_color = ("#DDDDDD"),text_color='black')
+        self.pick_up=customtkinter.CTkComboBox(self.input_top_,values=["現場", "宅配"],fg_color = ("#DDDDDD"),text_color='black')
         self.pick_up.set(od[0].pick_up)
         self.pick_up_label.grid(row=2,column=0,padx=30,pady=5)
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
@@ -481,7 +485,7 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
         # spilt_bill_add(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name,original=self.original_buy_list)
 
         try:
-            spilt_bill_add(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name)
+            spilt_bill_add(db=Session(engine),phone=self.phone.get(),path=self.path.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name)
             self.sum_frame_.pack_forget()
             self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
             self.sum_frame_.reset_bt.configure(command=self.reset_)

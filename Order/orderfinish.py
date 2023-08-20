@@ -50,11 +50,15 @@ class finish_search_fame(customtkinter.CTkFrame):
         order_n=customtkinter.CTkLabel(self.history_frame,text='日期',text_color='black')
         order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單內容',text_color='black')
         order_n2=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black')
-        order_n3=customtkinter.CTkLabel(self.history_frame,text='',text_color='black')
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='已收金額',text_color='black')
+        order_n4=customtkinter.CTkLabel(self.history_frame,text='餘額',text_color='black')
+        order_n5=customtkinter.CTkLabel(self.history_frame,text='',text_color='black')
         order_n.grid(row=0,column=0,sticky='w')
         order_n1.grid(row=0,column=1,sticky='w')
         order_n2.grid(row=0,column=2)
         order_n3.grid(row=0,column=3)
+        order_n4.grid(row=0,column=4)
+        order_n5.grid(row=0,column=5)
         self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30,expand=1)
         self.ac_fame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.ac_fame.pack(fill='both',side='bottom',pady=40,padx=30)
@@ -76,14 +80,16 @@ class finish_search_fame(customtkinter.CTkFrame):
             for i in user.orders:
                 if i.order_number in self.od_l:
                     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
+                    if i.discount!=None:self.od_l[i.order_number][3]=i.discount
                 else:
-                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.collect_money,i.Date_]
+                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.discount,i.Date_]
         except:
             self.od_l={}
             self.customer_name.configure(text=f'客戶名稱：')
             self.address.configure(text=f'地址：')
             self.phone.configure(text=f'　　手機：')
-            self.remark.configure(text=f'備註：')        
+            self.remark.configure(text=f'備註：')
+        print(self.od_l)    
         self.history_frame.pack_forget()
         self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.history_frame.columnconfigure((0,2,3,4,5),weight=1)
