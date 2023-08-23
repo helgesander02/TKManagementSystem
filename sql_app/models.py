@@ -1,6 +1,6 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Table,DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Table,DateTime,Date
 from sqlalchemy.orm import relationship,session,Mapped,mapped_column
-from datetime import datetime
+import datetime as dt
 from .database import Base
 # association_table=Table(
 #     "association_table",
@@ -12,19 +12,18 @@ from .database import Base
 
 class Order(Base):
     __tablename__ = "order"
-    od_id=Column(Integer, primary_key=True)
+    od_id=Column(Integer, primary_key=True,autoincrement=True)
     order_number=Column(Integer)
     M_ID=Column(ForeignKey("Member.ID"))
     p_ID=Column(ForeignKey("product.prodcut_ID"))
     M_ID_=relationship('Member', back_populates='orders')
     p_ID_=relationship('product', back_populates='orders')
-    # p_ID_=relationship('product', secondary=association_table, back_populates='orders',overlaps='M_ID')
-    Date_=Column(DateTime, default=datetime.now)
+    Date_=Column(Date, default=dt.datetime.today())
     pick_up=Column(String)
     pick_up_tf=Column(String)
     count=Column(Integer)
     Remark=Column(String)
-    pick_up_date=Column(DateTime)
+    pick_up_date=Column(Date)
     money=Column(Integer)
     path=Column(String)
     discount=Column(Integer,default=None)
@@ -32,7 +31,7 @@ class Order(Base):
 class Member(Base):
     __tablename__ = "Member" # table name in the database
 
-    ID = Column(Integer, primary_key=True, index=True)
+    ID = Column(Integer, primary_key=True, index=True,autoincrement=True)
     Name = Column(String, unique=True, index=True)
     Address = Column(String)
     Remark = Column(String, default=True)
@@ -43,7 +42,7 @@ class Member(Base):
 class product(Base):
     __tablename__ = "product" # table name in the database
 
-    prodcut_ID = Column(Integer, primary_key=True, index=True)
+    prodcut_ID = Column(Integer, primary_key=True, index=True,autoincrement=True)
     product_Name = Column(String, unique=True, index=True)
     product_Weight = Column(String)
     product_Price = Column(Integer, default=True)
@@ -53,10 +52,10 @@ class product(Base):
 class receipt(Base):
     __tablename__ = "receipt"
 
-    rc_id=Column(Integer, primary_key=True, index=True)
+    rc_id=Column(Integer, primary_key=True, index=True,autoincrement=True)
     o_id=Column(Integer)
     m_id=Column(ForeignKey("Member.ID"))
-    date=Column(DateTime, default=datetime.now)
+    date=Column(Date, default=dt.datetime.today())
     money=Column(Integer)
     remark=Column(String)
     m_way=Column(String)

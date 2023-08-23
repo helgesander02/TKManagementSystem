@@ -1,6 +1,6 @@
 import customtkinter
 import datetime
-from sql_app.crud import Search_receipt,add_receipt,sum_receipt_money,get_edit_od,ac_get_od
+from sql_app.crud import Search_receipt,add_receipt,sum_receipt_money,get_edit_od,ac_get_od,ac_us
 from sqlalchemy.orm import Session
 from sql_app.database import engine
 import tkinter as tk
@@ -12,11 +12,13 @@ class acount(customtkinter.CTkFrame):
         self.i=0
         self.toplevel_window = None
         recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
+        u=ac_us(Session(engine),self.selected[self.key_[self.i]])
+        self.name=u.Name
         self.left=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
-        self.o_id_=customtkinter.CTkLabel(self.left,text=f'訂單編號{self.key_[self.i]}')
-        self.m_id_=customtkinter.CTkLabel(self.left,text=f'會員編號{self.selected[self.key_[self.i]]}')
+        self.o_id_=customtkinter.CTkLabel(self.left,text=f'訂單編號：{self.key_[self.i]}',font=("microsoft yahei", 18, 'bold'))
+        self.m_id_=customtkinter.CTkLabel(self.left,text=f'會員名稱：{self.name}',font=("microsoft yahei", 18, 'bold'))
         o_bt=customtkinter.CTkButton(self.left,text='查看訂單細節',command=self.od_info)
-        self.index_info=customtkinter.CTkLabel(self.left,text=f'{self.i+1}/{len(self.selected)}')
+        self.index_info=customtkinter.CTkLabel(self.left,text=f'{self.i+1}/{len(self.selected)}',font=("microsoft yahei", 18, 'bold'))
         
         self.bt=customtkinter.CTkFrame(self.left)
         next_bt=customtkinter.CTkButton(self.bt,text='下一筆',command=self.next_)
@@ -35,24 +37,26 @@ class acount(customtkinter.CTkFrame):
         self.ac_now_=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.ac_now_.columnconfigure((0,1,2,3,4),weight=1)
         self.ac_now_.pack(fill='x')
-        ac_now_title_1=customtkinter.CTkLabel(self.ac_now_,text='收款日期')
-        ac_now_title_2=customtkinter.CTkLabel(self.ac_now_,text='收款方式')
-        ac_now_title_3=customtkinter.CTkLabel(self.ac_now_,text='收款金額')
-        ac_now_title_4=customtkinter.CTkLabel(self.ac_now_,text='折讓')
-        ac_now_title_5=customtkinter.CTkLabel(self.ac_now_,text='收款備註')
+        ac_now_title_1=customtkinter.CTkLabel(self.ac_now_,text='收款日期',font=("microsoft yahei", 18, 'bold'))
+        ac_now_title_2=customtkinter.CTkLabel(self.ac_now_,text='收款方式',font=("microsoft yahei", 18, 'bold'))
+        ac_now_title_3=customtkinter.CTkLabel(self.ac_now_,text='收款金額',font=("microsoft yahei", 18, 'bold'))
+        ac_now_title_4=customtkinter.CTkLabel(self.ac_now_,text='折讓',font=("microsoft yahei", 18, 'bold'))
+        ac_now_title_5=customtkinter.CTkLabel(self.ac_now_,text='收款備註',font=("microsoft yahei", 18, 'bold'))
         ac_now_title_1.grid(row=0,column=0)
         ac_now_title_2.grid(row=0,column=1)
         ac_now_title_3.grid(row=0,column=2)
         ac_now_title_4.grid(row=0,column=3)
         ac_now_title_5.grid(row=0,column=4)
         check_var = customtkinter.StringVar(value=datetime.date.today())
-        self.ac_now=customtkinter.CTkScrollableFrame(self,fg_color = ("#DDDDDD"))
+        self.ac_now=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.ac_now.columnconfigure((0,1,2,3,4),weight=1)
         self.ac_now.pack(fill='both',expand=1)
-        self.ac_now_input_1=customtkinter.CTkEntry(self.ac_now,textvariable=check_var,state='disabled')
-        self.ac_now_input_2=customtkinter.CTkEntry(self.ac_now)
-        self.ac_now_input_3=customtkinter.CTkEntry(self.ac_now,textvariable=customtkinter.IntVar(value=0))
-        self.ac_now_input_4=customtkinter.CTkEntry(self.ac_now,textvariable=customtkinter.IntVar(value=0))
+        self.ac_now_input_1=customtkinter.CTkEntry(self.ac_now,textvariable=check_var,state='disabled',font=("microsoft yahei", 18, 'bold'))
+        self.ac_now_input_2=customtkinter.CTkEntry(self.ac_now,font=("microsoft yahei", 18, 'bold'))
+        self.ac_now_input_3=customtkinter.CTkEntry(self.ac_now,font=("microsoft yahei", 18, 'bold'))
+        self.ac_now_input_4=customtkinter.CTkEntry(self.ac_now,font=("microsoft yahei", 18, 'bold'))
+        self.ac_now_input_3.insert(customtkinter.END,0)
+        self.ac_now_input_4.insert(customtkinter.END,0)
         self.ac_now_input_5=customtkinter.CTkEntry(self.ac_now)
         self.ac_now_input_1.grid(row=0,column=0,sticky='ew')
         self.ac_now_input_2.grid(row=0,column=1,sticky='ew')
@@ -62,11 +66,11 @@ class acount(customtkinter.CTkFrame):
 
         self.ac_history_=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.ac_history_.columnconfigure((0,1,2,3,4),weight=1)
-        ac_title_1=customtkinter.CTkLabel(self.ac_history_,text='收款日期')
-        ac_title_2=customtkinter.CTkLabel(self.ac_history_,text='收款方式')
-        ac_title_3=customtkinter.CTkLabel(self.ac_history_,text='收款金額')
-        ac_title_4=customtkinter.CTkLabel(self.ac_history_,text='折讓')
-        ac_title_5=customtkinter.CTkLabel(self.ac_history_,text='收款備註')
+        ac_title_1=customtkinter.CTkLabel(self.ac_history_,text='收款日期',font=("microsoft yahei", 18, 'bold'))
+        ac_title_2=customtkinter.CTkLabel(self.ac_history_,text='收款方式',font=("microsoft yahei", 18, 'bold'))
+        ac_title_3=customtkinter.CTkLabel(self.ac_history_,text='收款金額',font=("microsoft yahei", 18, 'bold'))
+        ac_title_4=customtkinter.CTkLabel(self.ac_history_,text='折讓',font=("microsoft yahei", 18, 'bold'))
+        ac_title_5=customtkinter.CTkLabel(self.ac_history_,text='收款備註',font=("microsoft yahei", 18, 'bold'))
         ac_title_1.grid(row=0,column=0)
         ac_title_2.grid(row=0,column=1)
         ac_title_3.grid(row=0,column=2)
@@ -81,11 +85,11 @@ class acount(customtkinter.CTkFrame):
         self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
         l=0
         for i in recipit_:
-            ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
-            ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
-            ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
-            ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
-            ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
+            ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}',font=("microsoft yahei", 18, 'bold'))
+            ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}',font=("microsoft yahei", 18, 'bold'))
+            ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}',font=("microsoft yahei", 18, 'bold'))
+            ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}',font=("microsoft yahei", 18, 'bold'))
+            ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}',font=("microsoft yahei", 18, 'bold'))
             ac_title_1.grid(row=l,column=0)
             ac_title_2.grid(row=l,column=1)
             ac_title_3.grid(row=l,column=2)
@@ -96,7 +100,7 @@ class acount(customtkinter.CTkFrame):
         self.ac_history.pack(fill='both',expand=1)
 
 
-        self.sum_=customtkinter.CTkLabel(self,text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
+        self.sum_=customtkinter.CTkLabel(self,text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}',font=("microsoft yahei", 18, 'bold'))
         self.sum_.pack()
         self.bt=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
 
@@ -106,29 +110,31 @@ class acount(customtkinter.CTkFrame):
         self.reset_ac_bt.pack(side='right',padx=10)
         self.bt.pack(side='bottom',anchor='e')
     def reset(self):
-        self.ac_now_input_2.delete(0,tk.END)
-        self.ac_now_input_3.configure(textvariable=customtkinter.IntVar(value=0))
-        self.ac_now_input_4.configure(textvariable=customtkinter.IntVar(value=0))
-        self.ac_now_input_5.delete(0,tk.END)
+        self.ac_now_input_2.delete(0,customtkinter.END)
+        self.ac_now_input_3.delete(0,customtkinter.END)
+        self.ac_now_input_4.delete(0,customtkinter.END)
+        self.ac_now_input_3.insert(customtkinter.END,0)
+        self.ac_now_input_4.insert(customtkinter.END,0)
+        self.ac_now_input_5.delete(0,customtkinter.END)
     def next_(self):
         if self.i<len(self.selected)-1:
             self.i+=1
             self.index_info.configure(text=f'{self.i+1}/{len(self.selected)}')
             sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
             self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
-            self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
-            self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
+            self.o_id_.configure(text=f'訂單編號：{self.key_[self.i]}')
+            self.m_id_.configure(text=f'會員名稱：{self.name}')
             self.ac_history.pack_forget()
             self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
             self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
             recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
             l=0
             for i in recipit_:
-                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
-                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
-                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
-                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
-                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
+                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}',font=("microsoft yahei", 18, 'bold'))
                 ac_title_1.grid(row=l,column=0)
                 ac_title_2.grid(row=l,column=1)
                 ac_title_3.grid(row=l,column=2)
@@ -142,19 +148,19 @@ class acount(customtkinter.CTkFrame):
             self.index_info.configure(text=f'{self.i+1}/{len(self.selected)}')
             sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
             self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
-            self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
-            self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
+            self.o_id_.configure(text=f'訂單編號：{self.key_[self.i]}')
+            self.m_id_.configure(text=f'會員名稱：{self.name}')
             self.ac_history.pack_forget()
             self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
             self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
             recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
             l=0
             for i in recipit_:
-                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
-                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
-                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
-                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
-                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
+                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}',font=("microsoft yahei", 18, 'bold'))
                 ac_title_1.grid(row=l,column=0)
                 ac_title_2.grid(row=l,column=1)
                 ac_title_3.grid(row=l,column=2)
@@ -168,19 +174,19 @@ class acount(customtkinter.CTkFrame):
             tk.messagebox.showinfo(title='入賬成功', message="入賬成功", )
             sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
             self.sum_.configure(text=f'總計：{0 if sum_==None else sum_}         餘額：{sum_1-(0 if sum_==None else sum_)}')
-            self.o_id_.configure(text=f'訂單編號{self.key_[self.i]}')
-            self.m_id_.configure(text=f'會員編號{self.selected[self.key_[self.i]]}')
+            self.o_id_.configure(text=f'訂單編號：{self.key_[self.i]}')
+            self.m_id_.configure(text=f'會員名稱：{self.name}')
             self.ac_history.pack_forget()
             self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
             self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
             recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
             l=0
             for i in recipit_:
-                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}')
-                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}')
-                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}')
-                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}')
-                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}')
+                ac_title_1=customtkinter.CTkLabel(self.ac_history,text=f'{i.date}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_2=customtkinter.CTkLabel(self.ac_history,text=f'{i.m_way}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_3=customtkinter.CTkLabel(self.ac_history,text=f'{i.money}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_4=customtkinter.CTkLabel(self.ac_history,text=f'{i.discount}',font=("microsoft yahei", 18, 'bold'))
+                ac_title_5=customtkinter.CTkLabel(self.ac_history,text=f'{i.remark}',font=("microsoft yahei", 18, 'bold'))
                 ac_title_1.grid(row=l,column=0)
                 ac_title_2.grid(row=l,column=1)
                 ac_title_3.grid(row=l,column=2)
@@ -201,19 +207,11 @@ class od_info_ToplevelWindow(customtkinter.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.title('訂單資訊')
         self.geometry('1000x600')
-        # self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
-        #                           dark_image=Image.open("image\\user.png"),
-        #                           size=(30, 30))
-        # self.info = customtkinter.CTkImage(light_image=Image.open("image\\information-button.png"),
-        #                           dark_image=Image.open("image\\information-button.png"),
-        #                           size=(30, 30))
+
         for i in range(4):
             self.columnconfigure(i,weight=1)
         self.columnconfigure(4,weight=2)
-        # a=customtkinter.CTkLabel(self,text='會員資訊',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        # a.grid(row=0,column=0)
-        # a=customtkinter.CTkLabel(self,text='訂單資訊',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        # a.grid(row=0,column=1)
+
         a=customtkinter.CTkLabel(self,text='取貨日期',text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=0) 
         a=customtkinter.CTkLabel(self,text='取貨方式',text_color='black',font=("microsoft yahei", 16, 'bold'))
@@ -237,18 +235,15 @@ class od_info_ToplevelWindow(customtkinter.CTkToplevel):
                 od_l[i.order_number]=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
             i=1
         for key,value in od_l.items():
-            # a=customtkinter.CTkButton(self,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
-            # a.grid(row=i,column=0)
-            # a=customtkinter.CTkButton(self,image=self.info,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(value[1]))
-            # a.grid(row=i,column=1)
-            a=customtkinter.CTkLabel(self,text=f'{value[2]}',text_color='black')
+
+            a=customtkinter.CTkLabel(self,text=f'{value[2]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=0) 
-            a=customtkinter.CTkLabel(self,text=f'{value[3]}',text_color='black')
+            a=customtkinter.CTkLabel(self,text=f'{value[3]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=1) 
-            a=customtkinter.CTkLabel(self,text=f'{value[4]}',text_color='black')
+            a=customtkinter.CTkLabel(self,text=f'{value[4]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=2,sticky='w')
-            a=customtkinter.CTkLabel(self,text=f'{value[5]}',text_color='black')
+            a=customtkinter.CTkLabel(self,text=f'{value[5]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=3)
-            a=customtkinter.CTkLabel(self,text=f'{value[6]}',text_color='black')
+            a=customtkinter.CTkLabel(self,text=f'{value[6]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=4)
             i+=1    
