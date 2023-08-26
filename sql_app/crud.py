@@ -122,7 +122,7 @@ def add_receipt(db:Session,o_id:int,m_id:int,money:int,m_way:str,remark:str,disc
     db.commit()
     db.refresh(new_receipt)
 def sum_receipt_money(db:Session,o_id:int,m_id:int):
-    return db.query(func.sum(models.receipt.money)).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id).scalar(),db.query(models.Order).filter(models.Order.order_number==o_id,models.Order.M_ID==m_id).first().money
+    return db.query(func.sum(models.receipt.money)).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id).scalar(),db.query(models.Order).filter(models.Order.order_number==o_id,models.Order.M_ID==m_id).first().total
 def ac_get_od(db:Session,o_nb,m_id):
     return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==m_id)
 def spilt_bill_pd(db:Session,o_nb:int,phone:str):

@@ -57,7 +57,7 @@ class acount(customtkinter.CTkFrame):
         self.ac_now_input_4=customtkinter.CTkEntry(self.ac_now,font=("microsoft yahei", 18, 'bold'))
         self.ac_now_input_3.insert(customtkinter.END,0)
         self.ac_now_input_4.insert(customtkinter.END,0)
-        self.ac_now_input_5=customtkinter.CTkEntry(self.ac_now)
+        self.ac_now_input_5=customtkinter.CTkEntry(self.ac_now,font=("microsoft yahei", 18, 'bold'))
         self.ac_now_input_1.grid(row=0,column=0,sticky='ew')
         self.ac_now_input_2.grid(row=0,column=1,sticky='ew')
         self.ac_now_input_3.grid(row=0,column=2,sticky='ew')

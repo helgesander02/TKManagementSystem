@@ -59,7 +59,6 @@ class Select_Frame(customtkinter.CTkFrame):
         self.btn_menber.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_goods.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_data.configure(fg_color = "#5b5a5a",text_color='white')
-        # self.btn_other.configure(fg_color = "#5b5a5a",text_color='white')
 
 # Home_Main_Frame (Search_Frame, Schedule_Frame) 主頁
 class Search_Frame(customtkinter.CTkFrame):

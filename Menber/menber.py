@@ -252,7 +252,6 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             confirm_bt=customtkinter.CTkButton(self,text='確定新增',command=self.confirm_edit,font=("microsoft yahei", 18, 'bold'))
             self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
             confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
-            # edit_n4.grid(row=0,column=0)
             edit_n.grid(row=1,column=0)#姓名
             edit_n1.grid(row=2,column=0)#電話
             edit_n2.grid(row=3,column=0)#地址

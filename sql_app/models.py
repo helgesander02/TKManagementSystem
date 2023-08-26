@@ -2,13 +2,7 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Table,DateTi
 from sqlalchemy.orm import relationship,session,Mapped,mapped_column
 import datetime as dt
 from .database import Base
-# association_table=Table(
-#     "association_table",
-#     Base.metadata,
-#     Column("M_id", Integer, ForeignKey("Member.ID")),
-#     Column("p_id", Integer, ForeignKey("product.prodcut_ID")),
-#     Column('od_ID', Integer, ForeignKey('order.od_ID'))
-# )
+
 
 class Order(Base):
     __tablename__ = "order"

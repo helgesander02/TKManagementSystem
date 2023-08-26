@@ -48,7 +48,6 @@ class goods_frame(customtkinter.CTkFrame):
         self.toplevel_window = None
         a=customtkinter.CTkFrame(self,fg_color=("#EEEEEE"))
         search_label=customtkinter.CTkLabel(a,text='品項查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-        # search_label.grid(row=0,column=0,padx=30,pady=5,sticky='ew')
         search_label.pack(side='left')
         self.search=customtkinter.CTkEntry(a,fg_color = ("#EEEEEE"),text_color='black')
         self.search_bt=customtkinter.CTkButton(a, text="Q", width=40,
@@ -268,7 +267,6 @@ class add_product_ToplevelWindow(customtkinter.CTkToplevel):
 class button_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        #5b5a5afg_color = ("#5b5a5a"),text_color='white'
         self.input_button = customtkinter.CTkButton(self, text="品項管理", width=150, height=40,
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),
@@ -318,9 +316,7 @@ class product_Frame(customtkinter.CTkFrame):
         self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
-        # self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')        
-        # self.product_=product_Frame(self, fg_color = ("#DDDDDD"))
         self.product_.pack(fill='both',expand=1,pady=5)
     def buy_bt_click(self,a):
         name=self.sum_frame_.name_entry.get()
@@ -329,7 +325,6 @@ class product_Frame(customtkinter.CTkFrame):
         self.sum_frame_.pack_forget()
         self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,name=name,weight=weight,price=price,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
-        # self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
         self.buy_list=self.sum_frame_.buy_list
         
@@ -338,16 +333,7 @@ class product_Frame(customtkinter.CTkFrame):
         self.sum_frame_.pack_forget()
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
-        # self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
-    def add_od(self):
-        print('ok')
-        pass
-        # add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date())
-        # self.sum_frame_.pack_forget()
-        # self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
-        # self.sum_frame_.reset_bt.configure(command=self.reset_)
-        # self.sum_frame_.pack(side='right',anchor='n',fill='both')
 class sum_Frame(customtkinter.CTkFrame):
     def __init__(self, master,a,buy_list,bt_group,name='',weight='',price='', **kwargs):
         super().__init__(master, **kwargs)
@@ -401,7 +387,6 @@ class sum_Frame(customtkinter.CTkFrame):
         self.confirm_bt.pack(pady=20)
         self.reset_bt.pack()
     def add_gift_box_(self,pd):
-        # add_gift_box(db=Session(engine),pd=pd,name=self.name_entry.get(),weight=self.weight_entry.get(),price=self.price_entry.get())
         try:
             add_gift_box(db=Session(engine),pd=pd,name=self.name_entry.get(),weight=self.weight_entry.get(),price=self.price_entry.get())
             tk.messagebox.showinfo(title='新增成功', message="新增成功", )

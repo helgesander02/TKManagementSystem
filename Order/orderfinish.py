@@ -110,7 +110,7 @@ class finish_search_fame(customtkinter.CTkFrame):
             sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=key,m_id=value[0])
             order_n=customtkinter.CTkLabel(self.history_frame,text=f'{value[-1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{value[2]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{0 if sum_1==None else sum_1}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{0 if sum_==None else sum_}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n4=customtkinter.CTkLabel(self.history_frame,text=f'{sum_1-(0 if sum_==None else sum_)}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n5=customtkinter.CTkCheckBox(self.history_frame,text='', command=gen_cmd(key,value[0]), onvalue="on", offvalue="off")
