@@ -5,16 +5,16 @@ from . import models
 from datetime import date
 import tkinter as tk
 def get_user(db: Session, user_phone: str):
-    return db.query(models.Member).filter(models.Member.Phone == user_phone).first()
+    return db.query(models.member).filter(models.member.Phone == user_phone).first()
 def save_change(db:Session,name:str,address:str,phone:str,remark:str,user_id:str):
-    user=db.query(models.Member).filter(models.Member.Name == user_id).first()
+    user=db.query(models.member).filter(models.member.Phone == user_id).first()
     user.Name=name
     user.Address=address
     user.Phone=phone
     user.Remark=remark
     db.commit()
 def add_data(db:Session,name:str,address:str,phone:str,remark:str):
-    new_member=models.Member(Name=name,Address=address,Phone=phone,Remark=remark)
+    new_member=models.member(Name=name,Address=address,Phone=phone,Remark=remark)
     db.add(new_member)
     db.commit()
     db.refresh(new_member)
@@ -25,7 +25,7 @@ def get_od(db: Session, user_id: int):
     return db.query(models.Order).filter(models.Order.M_ID == user_id)
 def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,path:str,discount:int):
     try:
-        mid=db.query(models.Member).filter(models.Member.Phone==phone.strip()).first().ID
+        mid=db.query(models.member).filter(models.member.Phone==phone.strip()).first().ID
     except:
         tk.messagebox.showinfo(title='失敗', message="未輸入電話或電話輸入錯誤", )
     try:
@@ -39,34 +39,36 @@ def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict
     for key,value in product_.items():
         pid=db.query(models.product).filter(models.product.product_Name == key ).first().prodcut_ID
         if i==0:
-            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,discount=discount,total=su-int(discount))
+            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,discount=discount,total=su-int(discount))
             i+=1
         else:
-            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,total=su-int(discount))
+            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,total=su-int(discount))
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
 def get_od_info(db: Session, od_nb: int):
     return db.query(models.Order).filter(models.Order.od_id == od_nb).first()
 def search_od_(db:Session,phone:str,pick_up:str,date_:date,money1:int,money2:int,path:str):
+    # or_(models.Order.Date_==date_),
     if phone=='':
-        return db.query(models.Order).filter(or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.path==path),models.Order.total.between(money1,money2))
+        return db.query(models.Order).filter(models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),or_(models.Order.Date_==date_)).order_by(models.Order.pick_up_date)
     else:
-        mid=db.query(models.Member).filter(models.Member.Phone==phone.strip()).first().ID
-        return db.query(models.Order).filter(models.Order.M_ID== mid,or_(models.Order.pick_up==pick_up,models.Order.Date_==date_,models.Order.total.between(money1,money2),models.Order.path==path))
+        mid=db.query(models.member).filter(models.member.Phone==phone.strip()).first().ID
+        return db.query(models.Order).filter(models.Order.M_ID== mid,models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),or_(models.Order.Date_==date_)).order_by(models.Order.pick_up_date)
 def delete_od(db:Session,od_nb:int,m_id:int):
     db.query(models.Order).filter(models.Order.order_number == od_nb,models.Order.M_ID==m_id).delete()
     db.commit()
 def get_edit_od(db:Session,od_nb:int,od_name:str):
-    Mid=db.query(models.Member).filter(models.Member.Phone==od_name).first().ID
+    Mid=db.query(models.member).filter(models.member.Phone==od_name).first().ID
     return db.query(models.Order).filter(models.Order.order_number==od_nb,models.Order.M_ID==Mid).order_by(models.Order.od_id)
-def edit_order_(db:Session,phone:str,Pick_up:str,path:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str,discount:int):
-    Mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
+def edit_order_(db:Session,phone:str,Pick_up:str,path:str,remark:str,product_:dict,date_:date,key:int,M_name:str,discount:int):
+    Mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID
     db.query(models.Order).filter(models.Order.order_number==key,models.Order.M_ID==Mid).delete()
     db.commit()   
     now_od=key
     su=0
     i=0
+    print(product_)
     for key_,value in product_.items():
         su+=product_[key_][1]
     for key_,value in product_.items():
@@ -126,11 +128,11 @@ def sum_receipt_money(db:Session,o_id:int,m_id:int):
 def ac_get_od(db:Session,o_nb,m_id):
     return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==m_id)
 def spilt_bill_pd(db:Session,o_nb:int,phone:str):
-    mid=db.query(models.Member).filter(models.Member.Phone==phone).first().ID
+    mid=db.query(models.member).filter(models.member.Phone==phone).first().ID
     return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==mid)
 def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str,discount:int):
     #刪除原本的產品 product_ {'產品':[數量,價錢]}
-    mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
+    mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID
     for i in product_.keys():
         pid=db.query(models.product).filter(models.product.product_Name == i ).first().prodcut_ID
         od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
@@ -142,7 +144,7 @@ def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str
             od.count-=product_[i][0]
             db.commit()
     try:
-        mid=db.query(models.Member).filter(models.Member.Phone==M_name).first().ID
+        mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID
     except:
         tk.messagebox.showinfo(title='失敗', message="請輸入電話", )
     try:
@@ -188,16 +190,16 @@ def pd_Analysis(db:Session,date1,date2):
     for i in pd_1:#[數量,價錢]
         if i.p_ID_.product_Name in pd_3:
             pd_3[i.p_ID_.product_Name][0]+=i.count
-            pd_3[i.p_ID_.product_Name][1]+=i.count*i.p_ID_.product_Price
+            pd_3[i.p_ID_.product_Name][1]+=i.money
         else:
-            pd_3[i.p_ID_.product_Name]=[i.count,i.count*i.p_ID_.product_Price]
+            pd_3[i.p_ID_.product_Name]=[i.count,i.money]
     for i in pd_2:
         pd_3[i.product_Name]=[0,0]
     return pd_3
 def test(db:Session,money1:int,money2:int):
     return db.query(models.Order.M_ID,models.Order.order_number).filter(models.Order.total.between(money1,money2),).distinct()
 def ac_us(db:Session,uid:int):
-    return db.query(models.Member).filter(models.Member.ID==uid).first()
+    return db.query(models.member).filter(models.member.ID==uid).first()
 def get_good(db:Session,pid:int):
     return db.query(models.product).filter(models.product.prodcut_ID==pid).first()
 def edit_good(db:Session,pid:int,p_name:str,p_weight:str,p_price:int):
@@ -205,4 +207,9 @@ def edit_good(db:Session,pid:int,p_name:str,p_weight:str,p_price:int):
     pd.product_Name=p_name
     pd.product_Weight=p_weight
     pd.product_Price=p_price
+    db.commit()
+def member_search(db:Session,search):
+    return db.query(models.member).filter(models.member.Phone.like(f'%{search}%'))
+def del_member(db:Session,id_:str):
+    db.query(models.member).filter(models.member.ID==id_).delete()
     db.commit()

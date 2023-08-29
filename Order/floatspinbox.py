@@ -73,36 +73,22 @@ class sum_Frame(customtkinter.CTkFrame):
         self.a=a
         self.buy_list=buy_list
         self.bt_group=bt_group
-
-        self.contents_=customtkinter.CTkFrame(self,  fg_color = ("#EEEEEE"))
-        self.contents_.rowconfigure(len(buy_list),weight=1)
-        if self.a!='':
-            self.buy_list[self.a]=[self.bt_group[self.a][0].get(),self.bt_group[self.a][1]]
-            if self.buy_list[self.a][0]==0:
-                del self.buy_list[self.a]
-                del self.bt_group[self.a]
-        i=0
-        self.s=0
-        for key,value in self.buy_list.items():
-            name_=customtkinter.CTkLabel(self.contents_,text=f'{key}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            number_=customtkinter.CTkLabel(self.contents_,text=f'X{value[0]:5}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            price_=customtkinter.CTkLabel(self.contents_,text=f'{value[0]*value[1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            self.s+=value[0]*value[1]
-            name_.grid(row=i,column=0, padx=20, pady=3,sticky='nw')
-            number_.grid(row=i,column=1, padx=20, pady=3,sticky='n')
-            price_.grid(row=i,column=2, padx=20, pady=3,sticky='n')
-            i+=1
-        self.contents_.pack(fill='both',expand=1)
+        self.c=customtkinter.CTkFrame(self,  fg_color = ("#EEEEEE"))
+        self.contents_=customtkinter.CTkFrame(self.c,  fg_color = ("#EEEEEE"))
+        self.contents_.rowconfigure(len(self.buy_list),weight=1)
+        self.discount_1=0 if discount_==None else discount_
+        self.pd_update_()
+        self.c.pack(fill='both',expand=1)
         self.discount_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         self.discount_frame.columnconfigure((0,1),weight=1)
         self.discount_label=customtkinter.CTkLabel(self.discount_frame,text='自訂優惠',font=("microsoft yahei", 18, 'bold'))
         
         self.discount_entry=customtkinter.CTkEntry(self.discount_frame,font=("microsoft yahei", 18, 'bold'))
-        self.discount_entry.insert(customtkinter.END,discount_)
+        self.discount_entry.insert(customtkinter.END,self.discount_1)
         self.sum_label=customtkinter.CTkLabel(self.discount_frame,text='總計',font=("microsoft yahei", 18, 'bold'))
-        self.money_label=customtkinter.CTkLabel(self.discount_frame,text=f'{self.s-int(discount_)}元',font=("microsoft yahei", 18, 'bold'))
+        self.money_label_=customtkinter.CTkLabel(self.discount_frame,text=f'{self.s}元',font=("microsoft yahei", 18, 'bold'))
         self.sum_label.grid(row=2,column=0,sticky='w')
-        self.money_label.grid(row=2,column=1,sticky='e')
+        self.money_label_.grid(row=2,column=1,sticky='e')
         self.discount_label.grid(row=0,column=0,sticky='w')
         self.discount_entry.grid(row=0,column=1)
         self.discount_frame.pack(anchor='s')
@@ -114,7 +100,29 @@ class sum_Frame(customtkinter.CTkFrame):
                                                         font=("microsoft yahei", 16, 'bold'), width=180)
         self.confirm_bt.pack(pady=10)
         self.reset_bt.pack()
-        def discount_change(event):
-            money=self.s-int(self.discount_entry.get())
-            self.money_label.configure(text=f'{money}元')
-        self.discount_entry.bind("<Return>",discount_change)
+    def update_money(self):
+        self.money_label_.configure(text=f'{self.s}元')
+    def pd_update_(self):
+        self.contents_.pack_forget()
+        self.contents_=customtkinter.CTkFrame(self.c,  fg_color = ("#EEEEEE"))
+        self.contents_.rowconfigure(len(self.buy_list),weight=1)
+        self.contents_.columnconfigure((0,1,2),weight=1)
+        if self.a!='':
+            self.buy_list[self.a]=[self.bt_group[self.a][0].get(),self.bt_group[self.a][1]*self.bt_group[self.a][0].get()]
+            if self.buy_list[self.a][0]==0:
+                del self.buy_list[self.a]
+                del self.bt_group[self.a]
+        i=0
+        self.s=0
+        
+        for key,value in self.buy_list.items():
+            name_=customtkinter.CTkLabel(self.contents_,text=f'{key}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            number_=customtkinter.CTkLabel(self.contents_,text=f'X{value[0]:5}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            price_=customtkinter.CTkLabel(self.contents_,text=f'{value[1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            self.s+=value[1]
+            name_.grid(row=i,column=0, padx=20, pady=3,sticky='nw')
+            number_.grid(row=i,column=1, padx=20, pady=3,sticky='n')
+            price_.grid(row=i,column=2, padx=20, pady=3,sticky='n')
+            i+=1
+        
+        self.contents_.pack(fill='both',expand=1)       

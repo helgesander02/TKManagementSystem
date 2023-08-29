@@ -8,9 +8,9 @@ class Order(Base):
     __tablename__ = "order"
     od_id=Column(Integer, primary_key=True,autoincrement=True)
     order_number=Column(Integer)
-    M_ID=Column(ForeignKey("Member.ID"))
+    M_ID=Column(ForeignKey("member.ID"))
     p_ID=Column(ForeignKey("product.prodcut_ID"))
-    M_ID_=relationship('Member', back_populates='orders')
+    M_ID_=relationship('member', back_populates='orders')
     p_ID_=relationship('product', back_populates='orders')
     Date_=Column(Date, default=dt.datetime.today())
     pick_up=Column(String)
@@ -22,8 +22,8 @@ class Order(Base):
     path=Column(String)
     discount=Column(Integer,default=None)
     total=Column(Integer,default=0)
-class Member(Base):
-    __tablename__ = "Member" # table name in the database
+class member(Base):
+    __tablename__ = "member" # table name in the database
 
     ID = Column(Integer, primary_key=True, index=True,autoincrement=True)
     Name = Column(String, unique=True, index=True)
@@ -48,7 +48,7 @@ class receipt(Base):
 
     rc_id=Column(Integer, primary_key=True, index=True,autoincrement=True)
     o_id=Column(Integer)
-    m_id=Column(ForeignKey("Member.ID"))
+    m_id=Column(ForeignKey("member.ID"))
     date=Column(Date, default=dt.datetime.today())
     money=Column(Integer)
     remark=Column(String)

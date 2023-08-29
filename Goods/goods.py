@@ -59,47 +59,36 @@ class goods_frame(customtkinter.CTkFrame):
         bt1=customtkinter.CTkButton(a,text='新增單個品項',
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),command=self.add_product)
+        bt3=customtkinter.CTkButton(a,text='匯入品項資料',
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.import_date)
         bt2=customtkinter.CTkButton(a,text='匯出品項資料',
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),command=self.output_excel)
-        bt1.pack(anchor='e',padx=30,pady=5)
-        bt2.pack(anchor='e',padx=30,pady=5)
+        bt2.pack(side='right',padx=30,pady=5)
+        bt3.pack(side='right',padx=30,pady=5)
+        bt1.pack(side='right',padx=30,pady=5)
+        
         a.pack(anchor='n',fill='x',padx=30,pady=5)
+        
         self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
         self.history_frame.columnconfigure((0,2,3,4),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
-        order_n=customtkinter.CTkLabel(self.history_frame,text='品項名稱',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n1=customtkinter.CTkLabel(self.history_frame,text='內容物',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n2=customtkinter.CTkLabel(self.history_frame,text='重量',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n3=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n4=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n5=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n.grid(row=0,column=0,sticky='w')
-        order_n1.grid(row=0,column=1,sticky='w')
-        order_n2.grid(row=0,column=2)
-        order_n3.grid(row=0,column=3)
-        order_n4.grid(row=0,column=4)
-        order_n5.grid(row=0,column=5)
+
         
         self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
-        prodcuts=get_all_products(Session(engine))
-        l=1
-        def gen_cmd1(i):return lambda:self.edit_(i)
-        def gen_cmd(i):return lambda:self.delete(i)
-        for i in prodcuts:
-            order_n=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Name}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{"" if i.content==None else i.content}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Weight}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Price}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n4=customtkinter.CTkButton(self.history_frame,image=self.edit_photo, fg_color = ("#EEEEEE"),hover=False,text='',text_color='black',command=gen_cmd1(i.prodcut_ID))
-            order_n5=customtkinter.CTkButton(self.history_frame,image=self.delete_photo, fg_color = ("#EEEEEE"),hover=False,text='',text_color='black',command=gen_cmd(i.prodcut_ID))
-            order_n.grid(row=l,column=0,sticky='w')
-            order_n1.grid(row=l,column=1,sticky='w')
-            order_n2.grid(row=l,column=2)
-            order_n3.grid(row=l,column=3)
-            order_n4.grid(row=l,column=4)
-            order_n5.grid(row=l,column=5)
-            l+=1
+        self.search_()
+
+    def import_date(self):
+        try:
+            file_path = customtkinter.filedialog.askopenfilename()   # 選擇檔案後回傳檔案路徑與名稱
+            df=pd.read_excel(file_path)
+            for index,row in df.iterrows():
+                add_pd(db=Session(engine),p_name=row['product_Name'],p_weight=row['product_Weight'],p_price=row['product_Price'])
+            tk.messagebox.showinfo(title='新增成功', message="新增成功", )
+        except Exception as e:
+            print(e)
+            tk.messagebox.showinfo(title='新增成功', message="新增失敗", )
     def search_(self):
         pd=search_pd(db=Session(engine),pd_name=self.search.get())
         self.history_frame.pack_forget()
@@ -138,54 +127,18 @@ class goods_frame(customtkinter.CTkFrame):
             l+=1
     def edit_(self,i):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = edit_product_ToplevelWindow(self,pid=i)   
+            self.toplevel_window = edit_product_ToplevelWindow(self,pid=i)
+            self.toplevel_window.confirm.configure(command=self.ed)   
             self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus()
     def delete(self,i):
         delete_product(Session(engine),i)
-        self.history_frame.pack_forget()
-        self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
-        self.history_frame.columnconfigure((0,2,3,4),weight=1)
-        self.history_frame.columnconfigure(1,weight=3)
-        order_n=customtkinter.CTkLabel(self.history_frame,text='品項名稱',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n1=customtkinter.CTkLabel(self.history_frame,text='內容物',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n2=customtkinter.CTkLabel(self.history_frame,text='重量',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n3=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n4=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n5=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n.grid(row=0,column=0,sticky='w')
-        order_n1.grid(row=0,column=1,sticky='w')
-        order_n2.grid(row=0,column=2)
-        order_n3.grid(row=0,column=3)
-        order_n4.grid(row=0,column=4)
-        order_n5.grid(row=0,column=5)
-        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
-        
-        i=1
-        prodcuts=get_all_products(Session(engine))
-        l=1
-        def gen_cmd1(i):return lambda:self.edit_(i)
-        def gen_cmd(i):return lambda:self.delete(i)
-        for i in prodcuts:
-            order_n=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Name}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{"" if i.content==None else i.content}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Weight}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Price}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n4=customtkinter.CTkButton(self.history_frame,image=self.edit_photo, fg_color = ("#EEEEEE"),hover=False,text='',text_color='black',command=gen_cmd1(i.prodcut_ID))
-            order_n5=customtkinter.CTkButton(self.history_frame,image=self.delete_photo, fg_color = ("#EEEEEE"),hover=False,text='',text_color='black',command=gen_cmd(i.prodcut_ID))
-            order_n.grid(row=l,column=0,sticky='w')
-            order_n1.grid(row=l,column=1,sticky='w')
-            order_n2.grid(row=l,column=2)
-            order_n3.grid(row=l,column=3)
-            order_n4.grid(row=l,column=4)
-            order_n5.grid(row=l,column=5)
-            l+=1
-        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
-        
+        self.search_()
     def add_product(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = add_product_ToplevelWindow(self)   
+            self.toplevel_window = add_product_ToplevelWindow(self)
+            self.toplevel_window.confirm.configure(command=self.add)   
             self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus()
@@ -200,6 +153,22 @@ class goods_frame(customtkinter.CTkFrame):
             tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{current_directory}\\output_good.xlsx", )              
         except Exception as e:
             tk.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
+    def ed(self):
+        try:
+            edit_good(db=Session(engine),pid=self.toplevel_window.pid,p_name=self.toplevel_window.name_entry.get(),p_weight=self.toplevel_window.weight_entry.get(),p_price=self.toplevel_window.price_entry.get())
+            self.toplevel_window.destroy()
+            self.search_()
+            tk.messagebox.showinfo(title='新增成功', message="新增成功", )  
+        except:
+            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
+    def add(self):
+        try:
+            add_pd(db=Session(engine),p_name=self.toplevel_window.name_entry.get(),p_weight=self.toplevel_window.weight_entry.get(),p_price=self.toplevel_window.price_entry.get())
+            self.toplevel_window.destroy()
+            self.search_()
+            tk.messagebox.showinfo(title='新增成功', message="新增成功", )  
+        except:
+            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )  
 class edit_product_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,pid, **kwargs):
         super().__init__(*args, **kwargs)
@@ -218,9 +187,9 @@ class edit_product_ToplevelWindow(customtkinter.CTkToplevel):
         self.weight_entry.insert(customtkinter.END,good.product_Weight)
         self.price_entry.insert(customtkinter.END,good.product_Price)
 
-        confirm=customtkinter.CTkButton(self,text='確定新增',command=self.ed,font=("microsoft yahei", 18, 'bold'))
+        self.confirm=customtkinter.CTkButton(self,text='確定新增',font=("microsoft yahei", 18, 'bold'))
         cancel=customtkinter.CTkButton(self,text='取消',command=self.destroy,font=("microsoft yahei", 18, 'bold'))
-        confirm.grid(row=3,column=1,pady=10)
+        self.confirm.grid(row=3,column=1,pady=10)
         cancel.grid(row=3,column=0,pady=10)
         name.grid(row=0,column=0,pady=10)
         weight.grid(row=1,column=0,pady=10)
@@ -247,9 +216,9 @@ class add_product_ToplevelWindow(customtkinter.CTkToplevel):
         self.name_entry=customtkinter.CTkEntry(self,)
         self.weight_entry=customtkinter.CTkEntry(self,)
         self.price_entry=customtkinter.CTkEntry(self,)
-        confirm=customtkinter.CTkButton(self,text='確定新增',command=self.add,font=("microsoft yahei", 18, 'bold'))
+        self.confirm=customtkinter.CTkButton(self,text='確定新增',font=("microsoft yahei", 18, 'bold'))
         cancel=customtkinter.CTkButton(self,text='取消',command=self.destroy,font=("microsoft yahei", 18, 'bold'))
-        confirm.grid(row=3,column=1,pady=10)
+        self.confirm.grid(row=3,column=1,pady=10)
         cancel.grid(row=3,column=0,pady=10)
         name.grid(row=0,column=0,pady=10)
         weight.grid(row=1,column=0,pady=10)

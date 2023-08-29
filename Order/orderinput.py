@@ -5,7 +5,7 @@ from sql_app.crud import *
 from sqlalchemy.orm import Session
 from sql_app.database import engine
 from .floatspinbox import FloatSpinbox,sum_Frame
-
+import datetime
 class input_order(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -73,38 +73,67 @@ class input_order(customtkinter.CTkFrame):
         self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
-        # self.sum_frame_.confirm_bt.configure(command=self.add_od)
+        self.sum_frame_.confirm_bt.configure(command=self.add_od)
+        self.sum_frame_.pack_propagate(0)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')  
-        self.sum_frame_.pack_propagate(0)      
+              
         # self.product_=product_Frame(self, fg_color = ("#DDDDDD"))
         self.product_.pack(fill='both',expand=1,padx=30,pady=5)
     def add_od(self):
         try:
             add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),path=self.path.get(),discount=self.sum_frame_.discount_entry.get())
+            self.phone.delete(0,customtkinter.END)
+            self.path.set('現場')
+            self.pick_up.set('現場')
+            self.date_.set_date(datetime.datetime.today())
+            self.Remark_textbox.delete('0.0',customtkinter.END)
             self.sum_frame_.pack_forget()
-            self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
+            self.a_frame.pack_forget()
+            self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#DDDDDD"))
+            prodcuts=get_all_products(Session(engine))
+            for i in range(5):
+                self.a_frame.columnconfigure(i,weight=1)
+            def gen_cmd(i,l):return lambda:self.buy_bt_click(i,l)
+            for i in range(len(prodcuts)):
+                label_Name=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Name,text_color='black',font=("microsoft yahei", 18, 'bold'))
+                label_Name.grid(row=i,column=0,padx=30,sticky='w')
+                label_Weight=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Weight,text_color='black',font=("microsoft yahei", 18, 'bold'))
+                label_Weight.grid(row=i,column=1,padx=30)
+                label_price=customtkinter.CTkLabel(self.a_frame,text=f'{prodcuts[i].product_Price}元',text_color='black',font=("microsoft yahei", 18, 'bold'))
+                label_price.grid(row=i,column=2,padx=30)   
+                spinbox_1 = FloatSpinbox(self.a_frame, width=150, step_size=1)
+
+                # self.bt_group[prodcuts[i].product_Name]=[spinbox_1,prodcuts[i].product_Price]
+                spinbox_1.grid(row=i,column=4,pady=0)
+                buy_button=customtkinter.CTkButton(self.a_frame,image=self.buy_photo,hover=False,fg_color = ("#DDDDDD"), text="",command=gen_cmd(prodcuts[i].product_Name,[spinbox_1,prodcuts[i].product_Price]))
+                buy_button.grid(row=i,column=5, padx=30, pady=0)
+            
+            self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
+            self.sum_frame_=sum_Frame(self.product_,a='',buy_list={},bt_group={},  fg_color = ("#EEEEEE"),width=400)
             self.sum_frame_.reset_bt.configure(command=self.reset_)
-            self.sum_frame_.pack(side='right',anchor='n',fill='both')
             self.sum_frame_.pack_propagate(0)
+            self.sum_frame_.pack(side='right',anchor='n',fill='both')
+            
             tk.messagebox.showinfo(title='新增成功', message="新增成功", )            
-        except:
+        except Exception as e:
+            print(e)
             tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
     def buy_bt_click(self,a,b):
-        self.sum_frame_.pack_forget()
         self.bt_group[a]=b
-        self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
-        self.sum_frame_.reset_bt.configure(command=self.reset_)
-        self.sum_frame_.confirm_bt.configure(command=self.add_od)
-        self.sum_frame_.pack(side='right',anchor='n',fill='both')
-        self.sum_frame_.pack_propagate(0)
+        self.sum_frame_.a=a
+        self.sum_frame_.buy_list=self.buy_list
+        self.sum_frame_.bt_group=self.bt_group
+        self.sum_frame_.pd_update_()
+        self.sum_frame_.update_money()
         self.buy_list=self.sum_frame_.buy_list
-        self.bt_group=self.sum_frame_.bt_group        
+        self.bt_group=self.sum_frame_.bt_group       
     def reset_(self):
         self.buy_list={}
         self.sum_frame_.pack_forget()
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
-        self.sum_frame_.pack(side='right',anchor='n',fill='both')
         self.sum_frame_.pack_propagate(0)
+        self.sum_frame_.pack(side='right',anchor='n',fill='both')
+        
 

@@ -9,5 +9,8 @@ import os
 from PIL import Image
 from tkinter import *
 import datetime
-
-
+file_path = customtkinter.filedialog.askopenfilename()   # 選擇檔案後回傳檔案路徑與名稱
+df=pd.read_excel(file_path)
+for index,row in df.iterrows():
+    print(index)
+    
