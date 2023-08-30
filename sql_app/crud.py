@@ -172,6 +172,9 @@ def date_search(db:Session,date1,date2):
     p_count=db.query(models.Order.M_ID).filter(models.Order.Date_.between(date1,date2)).distinct().count()
     sum_money=db.query(func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2)).first()[0]
     sum_discount=db.query(func.sum(models.Order.discount)).filter(models.Order.Date_.between(date1,date2)).first()[0]
+    pd_count=0 if pd_count==None else pd_count
+    sum_money=0 if sum_money==None else sum_money
+    sum_discount=0 if sum_discount==None else sum_discount
     sum_profit=sum_money-sum_discount
     on_site=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.pick_up=='現場')[0]
     home_delivery=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.pick_up=='宅配')[0]
@@ -208,8 +211,12 @@ def edit_good(db:Session,pid:int,p_name:str,p_weight:str,p_price:int):
     pd.product_Weight=p_weight
     pd.product_Price=p_price
     db.commit()
-def member_search(db:Session,search):
-    return db.query(models.member).filter(models.member.Phone.like(f'%{search}%'))
+def member_search(db:Session,search:str,page:int):
+    a=(page-1)*20
+    b=page*20
+    return db.query(models.member).filter(models.member.Phone.like(f'%{search}%'))[a:b],db.query(models.member).filter(models.member.Phone.like(f'%{search}%')).count()
 def del_member(db:Session,id_:str):
     db.query(models.member).filter(models.member.ID==id_).delete()
     db.commit()
+def get_member_count(db:Session):
+    return db.query(models.member.ID).count()//20+1

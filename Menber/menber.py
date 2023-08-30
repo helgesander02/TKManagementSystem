@@ -8,6 +8,8 @@ from tkinter import *
 from PIL import Image
 import pandas as pd
 import os
+from typing import Union
+from typing import Callable
 # Menber () 會員
 class Menber_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -24,7 +26,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         # search_.columnconfigure((1),weight=1)
         search_label=customtkinter.CTkLabel(search_,text='會員查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
         search_label.pack(side='left')
-        self.search=customtkinter.CTkEntry(search_,fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+        self.search=customtkinter.CTkEntry(search_,fg_color = ("#EEEEEE"),placeholder_text='電話查詢',text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.search_bt=customtkinter.CTkButton(search_, text="Q", width=40,
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 14, 'bold'),
@@ -42,36 +44,26 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         add_bt=customtkinter.CTkButton(search_,text='新增',
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),command=self.open_add_toplevel)
+        self.page_=FloatSpinbox(self)
         
         export_bt.pack(side='right',padx=10)
         import_bt.pack(side='right',padx=10)
         add_bt.pack(side='right',padx=10)
         search_.pack(anchor='n',fill='both',padx=50,pady=50)
-
-
-
-        self.history_frame_title=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"),height=20)
-        self.history_frame_title.columnconfigure((0,1,2,3,4,5),weight=1)
-
-        order_n=customtkinter.CTkLabel(self.history_frame_title,text='會員姓名',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n1=customtkinter.CTkLabel(self.history_frame_title,text='手機',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n2=customtkinter.CTkLabel(self.history_frame_title,text='地址',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n3=customtkinter.CTkLabel(self.history_frame_title,text='備註',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n4=customtkinter.CTkLabel(self.history_frame_title,text='編輯',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n5=customtkinter.CTkLabel(self.history_frame_title,text='刪除',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        a=customtkinter.CTkFrame(self.history_frame_title,width=20,height=5,fg_color= ("#EEEEEE"))
-        order_n.grid(row=0,column=0)
-        order_n1.grid(row=0,column=1)
-        order_n2.grid(row=0,column=2)
-        order_n3.grid(row=0,column=3)
-        order_n4.grid(row=0,column=4)
-        order_n5.grid(row=0,column=5)
-        a.grid(row=0,column=6)
-        self.history_frame_title.pack(fill='x')
-        self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
-        self.history_frame.pack(fill='both',expand=1)
+        self.fake=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
+        self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#EEEEEE"))
+        self.fake.pack(fill='both',expand=1)
+        self.history_frame.pack(fill='both',expand=1,padx=100)
+        self.page_.pack(pady=100)
         self.member_search_click()
+        
+        
         self.toplevel_window = None
+        def page_search(event):
+            self.member_search_click()
+        self.page_.add_button.bind("<Button-1>", page_search)
+        self.page_.subtract_button.bind("<Button-1>", page_search)
+        self.page_.entry.bind('<Return>',page_search)
     def import_date(self):
         try:
             file_path = customtkinter.filedialog.askopenfilename()   # 選擇檔案後回傳檔案路徑與名稱
@@ -93,29 +85,43 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             tk.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
     def member_search_click(self):
         self.history_frame.pack_forget()
-        self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
-        self.history_frame.columnconfigure((0,1,2,3,4,5),weight=1)
+        self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#EEEEEE"))
+        self.history_frame.columnconfigure((2),weight=4)
+        self.history_frame.columnconfigure((0,1,3,4,5),weight=1)
         
-        member=member_search(db=Session(engine),search=self.search.get())
-          
+        member,page_max_=member_search(db=Session(engine),search=self.search.get(),page=1 if self.page_.get()==None else self.page_.get())
+        self.page_.page_max.configure(text=f'/{page_max_//20+1}')
+        order_n=customtkinter.CTkLabel(self.history_frame,text='會員姓名',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n1=customtkinter.CTkLabel(self.history_frame,text='手機',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n2=customtkinter.CTkLabel(self.history_frame,text='地址',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='備註',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n4=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n5=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        # a=customtkinter.CTkFrame(self.history_frame_title,width=20,height=5,fg_color= ("#EEEEEE"))
+        order_n.grid(row=0,column=0,sticky='w')
+        order_n1.grid(row=0,column=1,sticky='w')
+        order_n2.grid(row=0,column=2,sticky='w')
+        order_n3.grid(row=0,column=3,sticky='w')
+        order_n4.grid(row=0,column=4,sticky='w')
+        order_n5.grid(row=0,column=5,sticky='w')
         def gen_cmd1(i):return lambda:self.edit_(i)
         def gen_cmd(i):return lambda:self.delete(i)
         i=1
         for k in member:
-            a1=customtkinter.CTkLabel(self.history_frame,text=f'{k.Name.strip()}',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-            a2=customtkinter.CTkLabel(self.history_frame,text=f'{k.Phone.strip()}',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-            a3=customtkinter.CTkLabel(self.history_frame,text=f'{k.Address.strip()}',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))         
-            a4=customtkinter.CTkLabel(self.history_frame,text=f'{k.Remark.strip()}',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))            
+            a1=customtkinter.CTkLabel(self.history_frame,text=f'{k.Name.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            a2=customtkinter.CTkLabel(self.history_frame,text=f'{k.Phone.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            a3=customtkinter.CTkLabel(self.history_frame,text=f'{k.Address.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))         
+            a4=customtkinter.CTkLabel(self.history_frame,text=' ' if k.Remark==None else f'{k.Remark.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))            
             a5=customtkinter.CTkButton(self.history_frame,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd1(k.Phone))
             a6=customtkinter.CTkButton(self.history_frame,width=30,image=self.delete_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(k.ID))
-            a1.grid(row=i,column=0)
-            a2.grid(row=i,column=1)
-            a3.grid(row=i,column=2)
-            a4.grid(row=i,column=3)
-            a5.grid(row=i,column=4)
-            a6.grid(row=i,column=5)
+            a1.grid(row=i,column=0,sticky='w')
+            a2.grid(row=i,column=1,sticky='w')
+            a3.grid(row=i,column=2,sticky='w')
+            a4.grid(row=i,column=3,sticky='w')
+            a5.grid(row=i,column=4,sticky='w')
+            a6.grid(row=i,column=5,sticky='w')
             i+=1
-        self.history_frame.pack(fill='both',expand=1)  
+        self.history_frame.pack(fill='both',expand=1,padx=100)  
   
     def open_add_toplevel(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -233,4 +239,70 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
         self.destroy()
 
 
-        
+class FloatSpinbox(customtkinter.CTkFrame):
+    def __init__(self, *args,
+                 width: int = 200,
+                 height: int = 32,
+                 step_size: Union[int, float] = 1,
+                 command: Callable = None,
+                 **kwargs):
+        super().__init__(*args, width=width, height=height, **kwargs)
+
+        self.step_size = step_size
+        self.command = command
+
+        self.configure(fg_color=("#DDDDDD", "#DDDDDD"))  # set frame color
+
+        self.grid_columnconfigure((0, 3), weight=0)  # buttons don't expand
+        self.grid_columnconfigure((1, 2), weight=0)  # entry expands
+
+        self.subtract_button = customtkinter.CTkButton(self, text="上一頁", width=height-6, height=height-6,
+                                                       command=self.subtract_button_callback)
+        self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
+
+        self.entry = customtkinter.CTkEntry(self, width=width-(2*height), height=height-6, border_width=0)
+        self.entry.grid(row=0, column=1, padx=3, pady=3)
+        self.page_max=customtkinter.CTkLabel(self)
+        self.page_max.grid(row=0, column=2, padx=3, pady=3)
+        self.add_button = customtkinter.CTkButton(self, text="下一頁", width=height-6, height=height-6,
+                                                  command=self.add_button_callback)
+        self.add_button.grid(row=0, column=3, padx=(0, 3), pady=3)
+
+        # default value
+        self.entry.insert(0, "1")
+
+    def add_button_callback(self):
+        if self.command is not None:
+            self.command()
+        try:
+            value = int(self.entry.get()) + self.step_size
+            self.entry.delete(0, "end")
+            self.entry.insert(0, value)
+        except ValueError:
+            return
+
+    def subtract_button_callback(self):
+        if self.command is not None:
+            self.command()
+        try:
+            value = int(self.entry.get()) - self.step_size
+            self.entry.delete(0, "end")
+            if value<=0:
+                self.entry.insert(0, 1)
+            else:
+                self.entry.insert(0, value)
+        except ValueError:
+            return
+
+    def get(self) -> Union[float, None]:
+        try:
+            return int(self.entry.get())
+        except ValueError:
+            return None
+
+    def set(self, value: float):
+        self.entry.delete(0, "end")
+        if value<=0:
+           self.entry.insert(0, str(1))
+        else: 
+            self.entry.insert(0, str(int(value)))       
