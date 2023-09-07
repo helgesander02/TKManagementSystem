@@ -30,8 +30,11 @@ class edit_order(customtkinter.CTkFrame):
         self.pick_up.grid(row=2,column=1,padx=30,pady=5)
         self.date_label=customtkinter.CTkLabel(self.edit_top_, text="日期",text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.date_=DateEntry(self.edit_top_,selectmode='day',date_pattern='yyyy-mm-dd',font=("microsoft yahei", 18, 'bold'))
+        self.date_1=DateEntry(self.edit_top_,selectmode='day',date_pattern='yyyy-mm-dd',font=("microsoft yahei", 18, 'bold'))
         self.date_label.grid(row=0,column=2,padx=30,pady=5)
+        self.date_.set_date('2000-01-01')
         self.date_.grid(row=0,column=3,padx=30,pady=5)
+        self.date_1.grid(row=1,column=3,padx=30,pady=5)
         self.money_label=customtkinter.CTkLabel(self.edit_top_, text="金額",text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.money=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.money2=customtkinter.CTkEntry(self.edit_top_, placeholder_text="",fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
@@ -48,15 +51,15 @@ class edit_order(customtkinter.CTkFrame):
         search=customtkinter.CTkButton(self.edit_top_,text='確定查詢', width=150, height=40,
                                                         fg_color=("#5b5a5a"),
                                                         font=("microsoft yahei", 18, 'bold'),
-                                                        command=lambda: self.search_od_list(phone=self.phone.get(),pick_up=self.pick_up.get(),date_=self.date_.get_date(),money1=self.money.get(),money2=self.money2.get(),path=self.path.get()))
+                                                        command=lambda: self.search_od_list(phone=self.phone.get(),pick_up=self.pick_up.get(),date_=self.date_.get_date(),date_1=self.date_1.get_date(),money1=self.money.get(),money2=self.money2.get(),path=self.path.get()))
         search.grid(row=1,column=6,padx=30,pady=5)  
      
         self.edit_top_.pack(fill='x',padx=30,pady=5)
-        self.ol=order_List(self,phone='',path='',pick_up='',date_='',money1='',money2='',fg_color = ("#DDDDDD"))
+        self.ol=order_List(self,phone='',path='',pick_up='',date_='',date_1='',money1='',money2='',fg_color = ("#DDDDDD"))
         self.ol.pack(fill='both',expand=1,padx=30,pady=5)
-    def search_od_list(self,phone,path,pick_up,date_,money1,money2):
+    def search_od_list(self,phone,path,pick_up,date_,date_1,money1,money2):
         self.ol.pack_forget()
-        self.ol=order_List(self,phone=phone,path=path,pick_up=pick_up,date_=date_,money1=money1,money2=money2,fg_color = ("#DDDDDD"))
+        self.ol=order_List(self,phone=phone,path=path,pick_up=pick_up,date_=date_,date_1=date_1,money1=money1,money2=money2,fg_color = ("#DDDDDD"))
         self.ol.pack(fill='both',expand=1,padx=30,pady=5)
     def reset_(self):
         self.phone.delete(0,customtkinter.END)
@@ -68,7 +71,7 @@ class edit_order(customtkinter.CTkFrame):
         self.money.insert(customtkinter.END,0)
         self.money2.insert(customtkinter.END,99999)
 class order_List(customtkinter.CTkFrame):
-    def __init__(self, master,phone,path,pick_up,date_,money1,money2, **kwargs):
+    def __init__(self, master,phone,path,pick_up,date_,date_1,money1,money2, **kwargs):
         super().__init__(master, **kwargs)
         self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
                                   dark_image=Image.open("image\\user.png"),
@@ -87,6 +90,7 @@ class order_List(customtkinter.CTkFrame):
         self.pick_up=pick_up
         self.path=path
         self.date_=date_
+        self.date_1=date_1
         self.money1=money1
         self.money2=money2
         self.c=customtkinter.CTkScrollableFrame(self,fg_color = ("#DDDDDD"))
@@ -98,7 +102,7 @@ class order_List(customtkinter.CTkFrame):
         self.c.pack_forget()
         try:
             self.od_l={}
-            order_list=search_od_(db=Session(engine),path=self.path,phone=self.phone,pick_up=self.pick_up,date_=self.date_,money1=self.money1,money2=self.money2)
+            order_list=search_od_(db=Session(engine),path=self.path,phone=self.phone,pick_up=self.pick_up,date_=self.date_,date_1=self.date_1,money1=self.money1,money2=self.money2)
             for i in order_list:
                 if f'{i.order_number}{i.M_ID}' in self.od_l:
                     self.od_l[f'{i.order_number}{i.M_ID}'][4]+=f',{i.p_ID_.product_Name}'

@@ -69,7 +69,7 @@ class finish_search_fame(customtkinter.CTkFrame):
     def search_A(self):
         try:
             self.od_l={}
-            user=get_user(Session(engine),user_phone=self.search.get())
+            user=get_user(Session(engine),user_phone=self.search.get().strip())
             self.customer_name.configure(text=f'客戶名稱：{user.Name}')
             self.address.configure(text=f'地址：：{user.Address}')
             self.phone.configure(text=f'　　手機：：{user.Phone}')
@@ -113,13 +113,15 @@ class finish_search_fame(customtkinter.CTkFrame):
             order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{0 if sum_1==None else sum_1}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{0 if sum_==None else sum_}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n4=customtkinter.CTkLabel(self.history_frame,text=f'{sum_1-(0 if sum_==None else sum_)}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n5=customtkinter.CTkCheckBox(self.history_frame,text='', command=gen_cmd(key,value[0]), onvalue="on", offvalue="off")
+            if sum_1-(0 if sum_==None else sum_)!=0:
+                order_n5=customtkinter.CTkCheckBox(self.history_frame,text='', command=gen_cmd(key,value[0]), onvalue="on", offvalue="off")
+                order_n5.grid(row=l,column=5)
             order_n.grid(row=l,column=0,sticky='w')
             order_n1.grid(row=l,column=1,sticky='w')
             order_n2.grid(row=l,column=2)
             order_n3.grid(row=l,column=3)
             order_n4.grid(row=l,column=4)
-            order_n5.grid(row=l,column=5)
+            
             l+=1
 
     def update_(self,key,m_id):

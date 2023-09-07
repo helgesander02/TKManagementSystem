@@ -42,19 +42,19 @@ def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict
             new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,discount=discount,total=su-int(discount))
             i+=1
         else:
-            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,total=su-int(discount))
+            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],path=path,total=su-int(discount),discount=0)
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
 def get_od_info(db: Session, od_nb: int):
     return db.query(models.Order).filter(models.Order.od_id == od_nb).first()
-def search_od_(db:Session,phone:str,pick_up:str,date_:date,money1:int,money2:int,path:str):
+def search_od_(db:Session,phone:str,pick_up:str,date_:date,date_1:date,money1:int,money2:int,path:str):
     # or_(models.Order.Date_==date_),
     if phone=='':
-        return db.query(models.Order).filter(models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),or_(models.Order.Date_==date_)).order_by(models.Order.pick_up_date)
+        return db.query(models.Order).filter(models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),models.Order.Date_.between(date_,date_1)).order_by(models.Order.pick_up_date)
     else:
         mid=db.query(models.member).filter(models.member.Phone==phone.strip()).first().ID
-        return db.query(models.Order).filter(models.Order.M_ID== mid,models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),or_(models.Order.Date_==date_)).order_by(models.Order.pick_up_date)
+        return db.query(models.Order).filter(models.Order.M_ID== mid,models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),models.Order.Date_.between(date_,date_1)).order_by(models.Order.pick_up_date)
 def delete_od(db:Session,od_nb:int,m_id:int):
     db.query(models.Order).filter(models.Order.order_number == od_nb,models.Order.M_ID==m_id).delete()
     db.commit()
@@ -68,16 +68,15 @@ def edit_order_(db:Session,phone:str,Pick_up:str,path:str,remark:str,product_:di
     now_od=key
     su=0
     i=0
-    print(product_)
     for key_,value in product_.items():
         su+=product_[key_][1]
     for key_,value in product_.items():
         pid=db.query(models.product).filter(models.product.product_Name == key_ ).first().prodcut_ID
         if i==0:
-            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path,discount=discount)
+            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path,discount=discount)
             i+=1
         else:
-            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path)
+            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path,discount=0)
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
@@ -123,6 +122,12 @@ def add_receipt(db:Session,o_id:int,m_id:int,money:int,m_way:str,remark:str,disc
     db.add(new_receipt)
     db.commit()
     db.refresh(new_receipt)
+    sum_,sum_1=sum_receipt_money(db=db,o_id=o_id,m_id=m_id)
+    if sum_1-(0 if sum_==None else sum_)==0:
+        od=db.query(models.Order).filter(models.Order.M_ID==m_id,models.Order.order_number==o_id)
+        for i in od:
+            i.pick_up_tf='是'
+            db.commit() 
 def sum_receipt_money(db:Session,o_id:int,m_id:int):
     return db.query(func.sum(models.receipt.money)).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id).scalar(),db.query(models.Order).filter(models.Order.order_number==o_id,models.Order.M_ID==m_id).first().total
 def ac_get_od(db:Session,o_nb,m_id):
@@ -158,10 +163,10 @@ def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str
     for key,value in product_.items():
         pid=db.query(models.product).filter(models.product.product_Name == key ).first().prodcut_ID
         if i==0:
-            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),discount=discount)
+            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),discount=discount)
             i+=1
         else:
-            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='0',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount))
+            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),discount=0)
         
         db.add(new_od)
         db.commit()
