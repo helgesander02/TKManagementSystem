@@ -26,7 +26,7 @@ class member(Base):
     __tablename__ = "member" # table name in the database
 
     ID = Column(Integer, primary_key=True, index=True,autoincrement=True)
-    Name = Column(String, unique=True, index=True)
+    Name = Column(String)
     Address = Column(String)
     Remark = Column(String, default=True)
     Phone=Column(String)
@@ -37,7 +37,7 @@ class product(Base):
     __tablename__ = "product" # table name in the database
 
     prodcut_ID = Column(Integer, primary_key=True, index=True,autoincrement=True)
-    product_Name = Column(String, unique=True, index=True)
+    product_Name = Column(String)
     product_Weight = Column(String)
     product_Price = Column(Integer, default=True)
     orders = relationship('Order', back_populates='p_ID_')
