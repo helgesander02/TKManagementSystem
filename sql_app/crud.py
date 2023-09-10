@@ -63,6 +63,7 @@ def get_edit_od(db:Session,od_nb:int,od_name:str):
     return db.query(models.Order).filter(models.Order.order_number==od_nb,models.Order.M_ID==Mid).order_by(models.Order.od_id)
 def edit_order_(db:Session,phone:str,Pick_up:str,path:str,remark:str,product_:dict,date_:date,key:int,M_name:str,discount:int):
     Mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID
+    da=db.query(models.Order).filter(models.Order.order_number==key,models.Order.M_ID==Mid).first().Date_
     db.query(models.Order).filter(models.Order.order_number==key,models.Order.M_ID==Mid).delete()
     db.commit()   
     now_od=key
@@ -73,10 +74,10 @@ def edit_order_(db:Session,phone:str,Pick_up:str,path:str,remark:str,product_:di
     for key_,value in product_.items():
         pid=db.query(models.product).filter(models.product.product_Name == key_ ).first().prodcut_ID
         if i==0:
-            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path,discount=discount)
+            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path,discount=discount,Date_=da)
             i+=1
         else:
-            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path,discount=0)
+            new_od=models.Order(order_number=now_od,M_ID=Mid,p_ID=pid,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),path=path,discount=0,Date_=da)
         db.add(new_od)
         db.commit()
         db.refresh(new_od)
@@ -138,6 +139,7 @@ def spilt_bill_pd(db:Session,o_nb:int,phone:str):
 def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str,discount:int):
     #刪除原本的產品 product_ {'產品':[數量,價錢]}
     mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID
+    di=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid).order_by(models.Order.od_id).first().discount
     for i in product_.keys():
         pid=db.query(models.product).filter(models.product.product_Name == i ).first().prodcut_ID
         od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
@@ -147,6 +149,21 @@ def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str
         else:
             od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
             od.count-=product_[i][0]
+            od.money=product_[i][1]
+            db.commit()
+ 
+    a=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid).order_by(models.Order.od_id)
+    total_=int(db.query(func.sum(models.Order.money)).filter(models.Order.order_number == key,models.Order.M_ID==mid).first()[0])
+    i=0
+    for l in a:
+        if i==0:
+            l.discount=di
+            l.total=total_-di
+            db.commit()
+            i+=1
+        else:
+            l.total=total_-di
+            l.discount=0
             db.commit()
     try:
         mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID

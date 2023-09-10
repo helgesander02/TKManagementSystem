@@ -106,9 +106,9 @@ class order_List(customtkinter.CTkFrame):
             for i in order_list:
                 if f'{i.order_number}{i.M_ID}' in self.od_l:
                     self.od_l[f'{i.order_number}{i.M_ID}'][4]+=f',{i.p_ID_.product_Name}'
-                    self.od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
+                    # self.od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
                 else:
-                    self.od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price,i.M_ID,i.order_number]
+                    self.od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.total,i.M_ID,i.order_number]
         except:
             self.od_l={}
         self.c=customtkinter.CTkScrollableFrame(self,fg_color = ("#DDDDDD"))
@@ -328,8 +328,8 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         self.buy_list={}
         self.original_buy_list={}
         for i in od:
-            self.buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price*i.count]
-            self.original_buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
+            self.buy_list[i.p_ID_.product_Name]=[i.count,i.money]
+            self.original_buy_list[i.p_ID_.product_Name]=[i.count,i.money]
         self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#DDDDDD"))
         for i in range(6):
             self.a_frame.columnconfigure(i,weight=1)
@@ -440,8 +440,8 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
         self.buy_list={}
         self.original_buy_list={}
         for i in od:
-            self.buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
-            self.original_buy_list[i.p_ID_.product_Name]=[i.count,i.p_ID_.product_Price]
+            self.buy_list[i.p_ID_.product_Name]=[i.count,i.money]
+            self.original_buy_list[i.p_ID_.product_Name]=[i.count,i.money]
         self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#DDDDDD"))
         for i in range(6):
             self.a_frame.columnconfigure(i,weight=1)
@@ -466,7 +466,7 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
             l+=1
             
         self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
-        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,discount_=od[0].discount,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,discount_=0,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')        
@@ -478,17 +478,19 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
 
             self.destroy()
             tk.messagebox.showinfo(title='修改成功', message="修改成功", )
-        except:
+        except Exception as e:
+            print(e)
             tk.messagebox.showinfo(title='修改失敗', message="修改失敗", )
 
     def buy_bt_click(self,a,b):
-        discount=self.sum_frame_.discount_entry.get()
+        # discount=self.sum_frame_.discount_entry.get()
         
         self.bt_group[a]=b
         self.sum_frame_.a=a
         self.sum_frame_.buy_list=self.buy_list
         self.sum_frame_.bt_group=self.bt_group
         self.sum_frame_.pd_update_()
+        self.sum_frame_.update_money()
         self.buy_list=self.sum_frame_.buy_list
         self.bt_group=self.sum_frame_.bt_group
         # self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,discount_=discount,  fg_color = ("#EEEEEE"))

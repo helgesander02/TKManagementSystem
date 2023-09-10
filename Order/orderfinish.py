@@ -70,10 +70,10 @@ class finish_search_fame(customtkinter.CTkFrame):
         try:
             self.od_l={}
             user=get_user(Session(engine),user_phone=self.search.get().strip())
-            self.customer_name.configure(text=f'客戶名稱：{user.Name}')
-            self.address.configure(text=f'地址：：{user.Address}')
-            self.phone.configure(text=f'　　手機：：{user.Phone}')
-            self.remark.configure(text=f'備註：{user.Remark}')
+            self.customer_name.configure(text=f'客戶名稱：{user.Name.strip()}')
+            self.address.configure(text=f'地址：：{user.Address.strip()}')
+            self.phone.configure(text=f'　　手機：：{user.Phone.strip()}')
+            self.remark.configure(text=f'備註：{user.Remark.strip()}')
             for i in user.orders:
                 if i.order_number in self.od_l:
                     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
