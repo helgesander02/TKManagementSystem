@@ -144,13 +144,14 @@ class goods_frame(customtkinter.CTkFrame):
             self.toplevel_window.focus()
     def output_excel(self):
         try:
+            fill_path=customtkinter.filedialog.asksaveasfilename(defaultextension='.xlsx',filetypes=[('Excel活頁簿','.xlsx')],initialfile='產品')
             query = 'SELECT * FROM product'
             df = pd.read_sql_query(query, engine)
             for index,row in df.iterrows(): 
                 if row['content']==None:df.at[index, 'content'] = row['product_Name']
-            df.to_excel('output_good.xlsx', index=False)
-            current_directory = os.getcwd()
-            tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{current_directory}\\output_good.xlsx", )              
+            df.to_excel(fill_path, index=False)
+            # current_directory = os.getcwd()
+            tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{fill_path}", )              
         except Exception as e:
             tk.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
     def ed(self):

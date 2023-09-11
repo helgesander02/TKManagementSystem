@@ -67,8 +67,8 @@ class Search_Frame(customtkinter.CTkFrame):
         self.toplevel_window = None
         #會員查詢
         # #relx/rely range[0.0, 1,0]
-        self.MS_label = customtkinter.CTkLabel(self, text="會員查詢" ,font=("microsoft yahei", 35, 'bold'),text_color='black')
-        self.MS_label.place(relx=0.1, rely=0.5, anchor=tk.CENTER)
+        MS_label = customtkinter.CTkLabel(self, text="會員查詢" ,font=("microsoft yahei", 35, 'bold'),text_color='black')
+        MS_label.place(relx=0.1, rely=0.5, anchor=tk.CENTER)
         
         self.MS_entry = customtkinter.CTkEntry(self, width=250, height=40, 
                                                         border_width=3,
@@ -197,9 +197,9 @@ class Schedule_Frame(customtkinter.CTkScrollableFrame):
             for i in order_list:
                 if f'{i.order_number}{i.M_ID}' in od_l:
                     od_l[f'{i.order_number}{i.M_ID}'][4]+=f',{i.p_ID_.product_Name}'
-                    od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
+                    # od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
                 else:
-                    od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
+                    od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.total]
             i=1
             for key,value in od_l.items():
                 a=customtkinter.CTkButton(self,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
@@ -388,6 +388,7 @@ class App(customtkinter.CTk):
         self.Main_Frame = Order_Main_Frame(self,fg_color = ("#EEEEEE"), corner_radius=0)
         self.Main_Frame.input_order_.phone.insert(customtkinter.END,phone)
         self.Main_Frame.pack(fill='both',expand=1)        
+
 if __name__ == "__main__":
     app = App()
     app.after(0, lambda: app.wm_state('zoomed'))

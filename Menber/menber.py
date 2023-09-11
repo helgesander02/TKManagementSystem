@@ -76,11 +76,12 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             tk.messagebox.showinfo(title='新增成功', message="新增失敗", )
     def export_date(self):
         try:
+            fill_path=customtkinter.filedialog.asksaveasfilename(defaultextension='.xlsx',filetypes=[('Excel活頁簿','.xlsx')],initialfile='成員')
             query = 'SELECT * FROM Member'
             df = pd.read_sql_query(query, engine)
-            df.to_excel('output_Member.xlsx', index=False)
-            current_directory = os.getcwd()
-            tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{current_directory}\\output_Member.xlsx", )              
+            df.to_excel(fill_path, index=False)
+            # current_directory = os.getcwd()
+            tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{fill_path}", )              
         except Exception as e:
             tk.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
     def member_search_click(self):
