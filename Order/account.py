@@ -11,8 +11,11 @@ class acount(customtkinter.CTkFrame):
         self.key_=list(selected.keys())
         self.i=0
         self.toplevel_window = None
+        
         recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
         u=ac_us(Session(engine),self.selected[self.key_[self.i]])
+        
+           
         self.name=u.Name
         self.left=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         self.o_id_=customtkinter.CTkLabel(self.left,text=f'訂單編號：{self.key_[self.i]}',font=("microsoft yahei", 18, 'bold'))
@@ -125,6 +128,7 @@ class acount(customtkinter.CTkFrame):
             self.o_id_.configure(text=f'訂單編號：{self.key_[self.i]}')
             self.m_id_.configure(text=f'會員名稱：{self.name}')
             self.ac_history.pack_forget()
+            self.ac_history.destroy()
             self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
             self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
             recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
@@ -151,6 +155,7 @@ class acount(customtkinter.CTkFrame):
             self.o_id_.configure(text=f'訂單編號：{self.key_[self.i]}')
             self.m_id_.configure(text=f'會員名稱：{self.name}')
             self.ac_history.pack_forget()
+            self.ac_history.destroy()
             self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
             self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
             recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])
@@ -177,6 +182,7 @@ class acount(customtkinter.CTkFrame):
             self.o_id_.configure(text=f'訂單編號：{self.key_[self.i]}')
             self.m_id_.configure(text=f'會員名稱：{self.name}')
             self.ac_history.pack_forget()
+            self.ac_history.destroy()
             self.ac_history=customtkinter.CTkScrollableFrame(self.a,fg_color = ("#DDDDDD"))
             self.ac_history.columnconfigure((0,1,2,3,4),weight=1)
             recipit_=Search_receipt(db=Session(engine),o_id=self.key_[self.i],m_id=self.selected[self.key_[self.i]])

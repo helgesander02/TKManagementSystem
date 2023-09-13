@@ -115,7 +115,7 @@ def update_balance(db:Session,selected,cm:int,m_way:str,remark:str,discount:int)
       db.commit()
       db.refresh(od)
 def home_search_date(db:Session,date_:date):
-    return db.query(models.Order).filter(models.Order.Date_==date_)
+    return db.query(models.Order).filter(models.Order.Date_==date_).order_by(models.Order.pick_up_date)
 def Search_receipt(db:Session,o_id:int,m_id:str):
     return db.query(models.receipt).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id)
 def add_receipt(db:Session,o_id:int,m_id:int,money:int,m_way:str,remark:str,discount:int):

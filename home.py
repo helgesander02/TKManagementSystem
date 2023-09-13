@@ -333,42 +333,57 @@ class App(customtkinter.CTk):
         self.Select_Frame.pack(fill='both',side='left')
         #Main_Frame
         self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+        self.Main_Frame1 = Order_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0)
+        self.Main_Frame2 = Menber_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+        self.Main_Frame3 = Goods_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+        self.Main_Frame4 = Data_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+
         self.Main_Frame.Search_Frame_.order_button.configure(command=self.open_order_)
         # self.Main_Frame.grid(row=0, column=1,sticky='nsew')
         self.Main_Frame.pack(fill='both',expand=1)
         #關掉主要的Frame開啟對應btn的Frame
         #隱藏的方法 https://www.delftstack.com/zh-tw/howto/python-tkinter/how-to-hide-recover-and-delete-tkinter-widgets/
 
-        def open_home (event):   
-            self.Main_Frame.pack_forget()
+        def open_home (event):
+            self.forget_()
+            self.Main_Frame.pack(fill='both',expand=1)   
+            # self.Main_Frame.pack_forget()
 
-            self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.Search_Frame_.order_button.configure(command=self.open_order_)
-            self.Main_Frame.pack(fill='both',expand=1)
+            # self.Main_Frame = Home_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+            # self.Main_Frame.Search_Frame_.order_button.configure(command=self.open_order_)
+            # self.Main_Frame.pack(fill='both',expand=1)
 
         def open_order (event):
-            self.Main_Frame.pack_forget()
+            self.forget_()
+            self.Main_Frame1.pack(fill='both',expand=1)            
+            # self.Main_Frame.pack_forget()
   
-            self.Main_Frame = Order_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0)
-            self.Main_Frame.pack(fill='both',expand=1)
+            # self.Main_Frame = Order_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0)
+            # self.Main_Frame.pack(fill='both',expand=1)
 
         def open_menber (event):
-            self.Main_Frame.pack_forget()
+            self.forget_()
+            self.Main_Frame2.pack(fill='both',expand=1)
+            # self.Main_Frame.pack_forget()
    
-            self.Main_Frame = Menber_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.pack(fill='both',expand=1)
+            # self.Main_Frame = Menber_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+            # self.Main_Frame.pack(fill='both',expand=1)
 
         def open_goods (event):
-            self.Main_Frame.pack_forget()
+            self.forget_()
+            self.Main_Frame3.pack(fill='both',expand=1)
+            # self.Main_Frame.pack_forget()
 
-            self.Main_Frame = Goods_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.pack(fill='both',expand=1)
+            # self.Main_Frame = Goods_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+            # self.Main_Frame.pack(fill='both',expand=1)
 
         def open_data (event):
-            self.Main_Frame.pack_forget()
+            self.forget_()
+            self.Main_Frame4.pack(fill='both',expand=1)
+            # self.Main_Frame.pack_forget()
 
-            self.Main_Frame = Data_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-            self.Main_Frame.pack(fill='both',expand=1)
+            # self.Main_Frame = Data_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
+            # self.Main_Frame.pack(fill='both',expand=1)
 
         def clear_main (event):
             self.Main_Frame.pack_forget()
@@ -384,11 +399,18 @@ class App(customtkinter.CTk):
         phone=''
         if self.Main_Frame.Search_Frame_.tf_label.cget('text')=='有此會員':
             phone=self.Main_Frame.Search_Frame_.MS_entry.get()
+        self.forget_()
+        self.Main_Frame1.pack(fill='both',expand=1)
+        # self.Main_Frame.pack_forget()
+        # self.Main_Frame = Order_Main_Frame(self,fg_color = ("#EEEEEE"), corner_radius=0)
+        self.Main_Frame1.input_order_.phone.insert(customtkinter.END,phone)
+        # self.Main_Frame.pack(fill='both',expand=1)        
+    def forget_(self):
         self.Main_Frame.pack_forget()
-        self.Main_Frame = Order_Main_Frame(self,fg_color = ("#EEEEEE"), corner_radius=0)
-        self.Main_Frame.input_order_.phone.insert(customtkinter.END,phone)
-        self.Main_Frame.pack(fill='both',expand=1)        
-
+        self.Main_Frame1.pack_forget()
+        self.Main_Frame2.pack_forget()
+        self.Main_Frame3.pack_forget()
+        self.Main_Frame4.pack_forget()
 if __name__ == "__main__":
     app = App()
     app.after(0, lambda: app.wm_state('zoomed'))

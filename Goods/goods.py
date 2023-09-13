@@ -15,22 +15,30 @@ class Goods_Main_Frame(customtkinter.CTkFrame):
         self.bt_frame=button_Frame(self,fg_color=("#EEEEEE"))
         self.bt_frame.pack(pady=40,padx=40,anchor='nw')
         self.goods_F=goods_frame(self,fg_color=("#EEEEEE"))
+        self.goods_F1=add_frame(self,  fg_color = ("#EEEEEE"))
         self.goods_F.pack(pady=20,padx=40,anchor='nw',fill='both',expand=1)
         
         def input_button_click(event):
             self.bt_frame.reset_color()
             self.bt_frame.input_button.configure(fg_color = ("#5b5a5a"),text_color='white')
-            self.goods_F.pack_forget()
-            self.goods_F=goods_frame(self,  fg_color = ("#EEEEEE"))
+            self.forget_()
             self.goods_F.pack(pady=20,padx=40,anchor='nw',fill='both',expand=1)
+            # self.goods_F.pack_forget()
+            # self.goods_F=goods_frame(self,  fg_color = ("#EEEEEE"))
+            # self.goods_F.pack(pady=20,padx=40,anchor='nw',fill='both',expand=1)
         def add_button_click(event):
             self.bt_frame.reset_color()
             self.bt_frame.edit_button.configure(fg_color = ("#5b5a5a"),text_color='white')
-            self.goods_F.pack_forget()
-            self.goods_F=add_frame(self,  fg_color = ("#EEEEEE"))
-            self.goods_F.pack(fill='both',expand=1,pady=20,padx=30,anchor='nw')
+            self.forget_()
+            self.goods_F1.pack(fill='both',expand=1,pady=20,padx=30,anchor='nw')
+            # self.goods_F.pack_forget()
+            # self.goods_F=add_frame(self,  fg_color = ("#EEEEEE"))
+            # self.goods_F.pack(fill='both',expand=1,pady=20,padx=30,anchor='nw')
         self.bt_frame.input_button.bind("<Button-1>", input_button_click)
         self.bt_frame.edit_button.bind("<Button-1>", add_button_click)
+    def forget_(self):
+        self.goods_F.pack_forget()
+        self.goods_F1.pack_forget()
 class add_frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -72,11 +80,6 @@ class goods_frame(customtkinter.CTkFrame):
         a.pack(anchor='n',fill='x',padx=30,pady=5)
         
         self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
-        self.history_frame.columnconfigure((0,2,3,4),weight=1)
-        self.history_frame.columnconfigure(1,weight=3)
-
-        
-        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
         self.search_()
 
     def import_date(self):
@@ -92,6 +95,7 @@ class goods_frame(customtkinter.CTkFrame):
     def search_(self):
         pd=search_pd(db=Session(engine),pd_name=self.search.get())
         self.history_frame.pack_forget()
+        self.history_frame.destroy()
         self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
         self.history_frame.columnconfigure((0,2,3,4),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
@@ -107,7 +111,7 @@ class goods_frame(customtkinter.CTkFrame):
         order_n3.grid(row=0,column=3)
         order_n4.grid(row=0,column=4)
         order_n5.grid(row=0,column=5)
-        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
+        
         l=1
         def gen_cmd1(i):return lambda:self.edit_(i)
         def gen_cmd(i):return lambda:self.delete(i)
@@ -125,6 +129,7 @@ class goods_frame(customtkinter.CTkFrame):
             order_n4.grid(row=l,column=4)
             order_n5.grid(row=l,column=5)
             l+=1
+        self.history_frame.pack(fill='both',anchor='n',expand=1,pady=40,padx=30)
     def edit_(self,i):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = edit_product_ToplevelWindow(self,pid=i)
@@ -292,7 +297,7 @@ class product_Frame(customtkinter.CTkFrame):
         name=self.sum_frame_.name_entry.get()
         weight=self.sum_frame_.weight_entry.get()
         price=self.sum_frame_.price_entry.get()
-        self.sum_frame_.pack_forget()
+        self.sum_frame_.destroy()
         self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,name=name,weight=weight,price=price,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
@@ -300,7 +305,7 @@ class product_Frame(customtkinter.CTkFrame):
         
     def reset_(self):
         self.buy_list={}
-        self.sum_frame_.pack_forget()
+        self.sum_frame_.destroy()
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')

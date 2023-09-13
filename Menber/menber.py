@@ -53,7 +53,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         self.fake=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#EEEEEE"))
         self.fake.pack(fill='both',expand=1)
-        self.history_frame.pack(fill='both',expand=1,padx=100)
+        # self.history_frame.pack(fill='both',expand=1,padx=100)
         self.page_.pack(pady=100)
         self.member_search_click()
         
@@ -86,6 +86,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             tk.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
     def member_search_click(self):
         self.history_frame.pack_forget()
+        self.history_frame.destroy()
         self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#EEEEEE"))
         self.history_frame.columnconfigure((2),weight=4)
         self.history_frame.columnconfigure((0,1,3,4,5),weight=1)

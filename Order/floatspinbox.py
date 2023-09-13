@@ -86,7 +86,7 @@ class sum_Frame(customtkinter.CTkFrame):
         self.discount_entry=customtkinter.CTkEntry(self.discount_frame,font=("microsoft yahei", 18, 'bold'))
         self.discount_entry.insert(customtkinter.END,self.discount_1)
         self.sum_label=customtkinter.CTkLabel(self.discount_frame,text='總計',font=("microsoft yahei", 18, 'bold'))
-        self.money_label_=customtkinter.CTkLabel(self.discount_frame,text=f'{self.s}元',font=("microsoft yahei", 18, 'bold'))
+        self.money_label_=customtkinter.CTkLabel(self.discount_frame,text=f'{self.s-self.discount_1}元',font=("microsoft yahei", 18, 'bold'))
         self.sum_label.grid(row=2,column=0,sticky='w')
         self.money_label_.grid(row=2,column=1,sticky='e')
         self.discount_label.grid(row=0,column=0,sticky='w')
@@ -100,10 +100,14 @@ class sum_Frame(customtkinter.CTkFrame):
                                                         font=("microsoft yahei", 16, 'bold'), width=180)
         self.confirm_bt.pack(pady=10)
         self.reset_bt.pack()
+        
+        def discount_change(event):
+            self.money_label_.configure(text=f'{self.s-int(self.discount_entry.get())}元')
+        self.discount_entry.bind("<Return>",discount_change)
     def update_money(self):
-        self.money_label_.configure(text=f'{self.s}元')
+        self.money_label_.configure(text=f'{self.s-int(self.discount_entry.get())}元')
     def pd_update_(self):
-        self.contents_.pack_forget()
+        self.contents_.destroy()
         self.contents_=customtkinter.CTkFrame(self.c,  fg_color = ("#EEEEEE"))
         self.contents_.rowconfigure(len(self.buy_list),weight=1)
         self.contents_.columnconfigure((0,1,2),weight=1)

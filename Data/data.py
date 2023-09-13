@@ -10,21 +10,27 @@ class Data_Main_Frame(customtkinter.CTkFrame):
         self.bt_=button_Frame(self,fg_color=("#EEEEEE"))
         self.bt_.pack(pady=40,padx=40,fill='x')
         self.Main=Main_Frame(self)
+        self.Main1=Main2_Frame(self)
         self.Main.pack(pady=40,padx=40,fill='both',expand=1)
         def open_pd_analyze (event):
             self.bt_.reset_color()
             self.bt_.pd_analyze_button.configure(fg_color = ("#5b5a5a"),text_color='white')
-            self.Main.pack_forget()
-            self.Main=Main2_Frame(self)#品項分析
-            self.Main.pack(pady=40,padx=40,fill='both',expand=1)
+            self.forget_()
+            # self.Main.pack_forget()
+            # self.Main=Main2_Frame(self)#品項分析
+            self.Main1.pack(pady=40,padx=40,fill='both',expand=1)
         def open_data_analyze (event):
             self.bt_.reset_color()
             self.bt_.data_analyze_button.configure(fg_color = ("#5b5a5a"),text_color='white')
-            self.Main.pack_forget()
-            self.Main=Main_Frame(self)#數據分析
+            self.forget_()
+            # self.Main.pack_forget()
+            # self.Main=Main_Frame(self)#數據分析
             self.Main.pack(pady=40,padx=40,fill='both',expand=1)
         self.bt_.pd_analyze_button.bind("<Button-1>", open_pd_analyze)
         self.bt_.data_analyze_button.bind("<Button-1>", open_data_analyze)
+    def forget_(self):
+        self.Main.pack_forget()
+        self.Main1.pack_forget()
 class Main_Frame(customtkinter.CTkFrame):#數據分析
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -166,6 +172,7 @@ class Main2_Frame(customtkinter.CTkFrame):#品項分析
         self.b.pack(fill='both',expand=1)
     def search(self):
         self.b.pack_forget()
+        self.b.destroy()
         self.b=customtkinter.CTkScrollableFrame(self,fg_color=("#DDDDDD"))
         self.b.columnconfigure((0,1,2),weight=1)
         title_label=customtkinter.CTkLabel(self.b,text='品項分析',font=("microsoft yahei", 18, 'bold'))

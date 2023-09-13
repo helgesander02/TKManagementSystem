@@ -56,7 +56,8 @@ class finish_search_fame(customtkinter.CTkFrame):
         order_n3.grid(row=0,column=3)
         order_n4.grid(row=0,column=4)
         order_n5.grid(row=0,column=5)
-        self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30,expand=1)
+        # self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30,expand=1)
+
         self.ac_fame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.ac_fame.pack(fill='both',side='bottom',pady=40,padx=30)
         self.ac=customtkinter.CTkButton(self.ac_fame,text='入賬')
@@ -70,23 +71,25 @@ class finish_search_fame(customtkinter.CTkFrame):
         try:
             self.od_l={}
             user=get_user(Session(engine),user_phone=self.search.get().strip())
-            self.customer_name.configure(text=f'客戶名稱：{user.Name.strip()}')
-            self.address.configure(text=f'地址：：{user.Address.strip()}')
-            self.phone.configure(text=f'　　手機：：{user.Phone.strip()}')
-            self.remark.configure(text=f'備註：{user.Remark.strip()}')
+            self.customer_name.configure(text=f'客戶名稱：{user.Name}')
+            self.address.configure(text=f'地址：：{user.Address}')
+            self.phone.configure(text=f'　　手機：{user.Phone}')
+            self.remark.configure(text=f'備註：{user.Remark}')
             for i in user.orders:
                 if i.order_number in self.od_l:
                     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
                     if i.discount!=None:self.od_l[i.order_number][3]=i.discount
                 else:
                     self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.discount,i.Date_]
-        except:
+        except Exception as e:
+            print(e)
             self.od_l={}
             self.customer_name.configure(text=f'客戶名稱：')
             self.address.configure(text=f'地址：')
             self.phone.configure(text=f'　　手機：')
-            self.remark.configure(text=f'備註：') 
-        self.history_frame.pack_forget()
+            self.remark.configure(text=f'備註：')
+        self.history_frame.pack_forget() 
+        self.history_frame.destroy()
         self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.history_frame.columnconfigure((0,2,3,4,5),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
@@ -102,7 +105,6 @@ class finish_search_fame(customtkinter.CTkFrame):
         order_n3.grid(row=0,column=3)
         order_n4.grid(row=0,column=4)
         order_n5.grid(row=0,column=5)
-        self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30,expand=1)
         
         l=1
         def gen_cmd(i,l):return lambda:self.update_(i,l)
@@ -123,7 +125,7 @@ class finish_search_fame(customtkinter.CTkFrame):
             order_n4.grid(row=l,column=4)
             
             l+=1
-
+        self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30,expand=1)
     def update_(self,key,m_id):
         if key in self.selected_pd:
             del self.selected_pd[key]
@@ -144,7 +146,7 @@ class cm_ToplevelWindow(customtkinter.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.geometry("400x300")
         self.selected_pd=selected
-
+        self.title('一次入賬多筆')
         self.ac_now_=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         self.ac_now_.columnconfigure((0,1,2,3,4),weight=1)
         self.ac_now_.pack(fill='x')

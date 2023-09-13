@@ -58,7 +58,7 @@ class edit_order(customtkinter.CTkFrame):
         self.ol=order_List(self,phone='',path='',pick_up='',date_='',date_1='',money1='',money2='',fg_color = ("#DDDDDD"))
         self.ol.pack(fill='both',expand=1,padx=30,pady=5)
     def search_od_list(self,phone,path,pick_up,date_,date_1,money1,money2):
-        self.ol.pack_forget()
+        self.ol.destroy()
         self.ol=order_List(self,phone=phone,path=path,pick_up=pick_up,date_=date_,date_1=date_1,money1=money1,money2=money2,fg_color = ("#DDDDDD"))
         self.ol.pack(fill='both',expand=1,padx=30,pady=5)
     def reset_(self):
@@ -94,12 +94,12 @@ class order_List(customtkinter.CTkFrame):
         self.money1=money1
         self.money2=money2
         self.c=customtkinter.CTkScrollableFrame(self,fg_color = ("#DDDDDD"))
-        self.c.pack(fill='both',expand=1)
+        # self.c.pack(fill='both',expand=1)
         self.search()
         self.toplevel_window = None
     # 取得訂單訊息
     def search(self):
-        self.c.pack_forget()
+        self.c.destroy()
         try:
             self.od_l={}
             order_list=search_od_(db=Session(engine),path=self.path,phone=self.phone,pick_up=self.pick_up,date_=self.date_,date_1=self.date_1,money1=self.money1,money2=self.money2)
@@ -382,7 +382,7 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def reset_(self):
         discount=self.sum_frame_.discount_entry.get()
         self.buy_list=self.original_buy_list
-        self.sum_frame_.pack_forget()
+        self.sum_frame_.destroy()
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.original_buy_list,bt_group=self.bt_group,discount_=discount,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
@@ -500,7 +500,7 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
     def reset_(self):
         discount=self.sum_frame_.discount_entry.get()
         self.buy_list=self.original_buy_list
-        self.sum_frame_.pack_forget()
+        self.sum_frame_.destroy()
         self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.original_buy_list,bt_group=self.bt_group,discount_=discount,  fg_color = ("#EEEEEE"))
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.confirm_bt.configure(command=self.add_od)
