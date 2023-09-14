@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from sql_app.database import engine,Base
 from PIL import Image
 import datetime
+from backup import backup_Frame
 
 # https://steam.oxxostudio.tw/category/python/tkinter/grid.html
 # .grid 詳細解釋
@@ -26,7 +27,7 @@ import datetime
 class Select_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        for i in range(5):
+        for i in range(6):
             self.rowconfigure(i,weight=1)
         
         homeimg = Image.open(f"{os.getcwd()}\\image\\home.png")
@@ -53,6 +54,9 @@ class Select_Frame(customtkinter.CTkFrame):
         Redataimg = customtkinter.CTkImage(dataimg,size=(70,100))
         self.btn_data = customtkinter.CTkButton(self ,image=Redataimg ,text="" ,fg_color = "#5b5a5a" ,corner_radius=0)
         self.btn_data.grid(row=4, column=0,sticky='nsew')
+        
+        self.backup = customtkinter.CTkButton(self,text='備份',fg_color = "#5b5a5a",corner_radius=0,width=70,height=100)
+        self.backup.grid(row=5, column=0,sticky='nsew')
     def reset_(self):
         self.btn_home.configure(fg_color = "#5b5a5a",text_color='white')
         self.btn_order.configure(fg_color = "#5b5a5a",text_color='white')
@@ -337,7 +341,7 @@ class App(customtkinter.CTk):
         self.Main_Frame2 = Menber_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
         self.Main_Frame3 = Goods_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
         self.Main_Frame4 = Data_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
-
+        self.Main_Frame5 = backup_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
         self.Main_Frame.Search_Frame_.order_button.configure(command=self.open_order_)
         # self.Main_Frame.grid(row=0, column=1,sticky='nsew')
         self.Main_Frame.pack(fill='both',expand=1)
@@ -385,8 +389,9 @@ class App(customtkinter.CTk):
             # self.Main_Frame = Data_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
             # self.Main_Frame.pack(fill='both',expand=1)
 
-        def clear_main (event):
-            self.Main_Frame.pack_forget()
+        def open_back (event):
+            self.forget_()
+            self.Main_Frame5.pack(fill='both',expand=1)
 
         #切換功能
         #btn事件教學 https://ithelp.ithome.com.tw/articles/10275712?sc=iThomeR
@@ -395,6 +400,7 @@ class App(customtkinter.CTk):
         self.Select_Frame.btn_menber.bind("<Button-1>", open_menber)
         self.Select_Frame.btn_goods.bind("<Button-1>", open_goods)
         self.Select_Frame.btn_data.bind("<Button-1>", open_data)
+        self.Select_Frame.backup.bind("<Button-1>",open_back)
     def open_order_(self):
         phone=''
         if self.Main_Frame.Search_Frame_.tf_label.cget('text')=='有此會員':
@@ -411,6 +417,7 @@ class App(customtkinter.CTk):
         self.Main_Frame2.pack_forget()
         self.Main_Frame3.pack_forget()
         self.Main_Frame4.pack_forget()
+        self.Main_Frame5.pack_forget()
 if __name__ == "__main__":
     app = App()
     app.after(0, lambda: app.wm_state('zoomed'))
