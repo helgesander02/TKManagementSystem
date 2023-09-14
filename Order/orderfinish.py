@@ -66,6 +66,7 @@ class finish_search_fame(customtkinter.CTkFrame):
         self.one_time_ac.pack(side='right',padx=20)
     def refresh(self):
         self.search.delete(0,tk.END)
+        self.selected_pd={}
         self.search_A()
     def search_A(self):
         try:

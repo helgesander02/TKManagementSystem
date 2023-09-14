@@ -39,6 +39,7 @@ class Order_Main_Frame(customtkinter.CTkFrame):
             self.bt_frame.finish_button.configure(fg_color = ("#5b5a5a"),text_color='white')
             self.forget_()
             self.input_order_2.pack(fill='both',expand=1,pady=20,padx=30,anchor='nw')
+            self.input_order_2.search.refresh()
             self.input_order_2.ac.pack_forget()
             self.input_order_2.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
             # self.input_order_.pack_forget()
