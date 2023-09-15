@@ -58,6 +58,7 @@ class edit_order(customtkinter.CTkFrame):
         self.ol=order_List(self,phone='',path='',pick_up='',date_='',date_1='',money1='',money2='',fg_color = ("#DDDDDD"))
         self.ol.pack(fill='both',expand=1,padx=30,pady=5)
     def search_od_list(self,phone,path,pick_up,date_,date_1,money1,money2):
+        self.ol.pack_forget()
         self.ol.destroy()
         self.ol=order_List(self,phone=phone,path=path,pick_up=pick_up,date_=date_,date_1=date_1,money1=money1,money2=money2,fg_color = ("#DDDDDD"))
         self.ol.pack(fill='both',expand=1,padx=30,pady=5)
@@ -99,6 +100,7 @@ class order_List(customtkinter.CTkFrame):
         self.toplevel_window = None
     # 取得訂單訊息
     def search(self):
+        self.c.pack_forget()
         self.c.destroy()
         try:
             self.od_l={}
@@ -151,8 +153,10 @@ class order_List(customtkinter.CTkFrame):
             a.grid(row=i,column=2) 
             a=customtkinter.CTkLabel(self.c,text=f'{value[3]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=3) 
-            a=customtkinter.CTkLabel(self.c,text=f'{value[4]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-            a.grid(row=i,column=4)
+            b=customtkinter.CTkScrollableFrame(self.c,orientation='horizontal',height=20)
+            a=customtkinter.CTkLabel(b,text=f'{value[4]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+            a.pack(side='left')
+            b.grid(row=i,column=4,sticky='ew')
             a=customtkinter.CTkLabel(self.c,text=f'{value[5]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=5)
             a=customtkinter.CTkLabel(self.c,text=f'{value[6]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
@@ -262,10 +266,16 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
         edit_n2=customtkinter.CTkLabel(self,text='地址：',text_color='black',font=("microsoft yahei", 18, 'bold'))
         edit_n3=customtkinter.CTkLabel(self,text='備註：',text_color='black',font=("microsoft yahei", 18, 'bold'))
         # edit_n4=customtkinter.CTkLabel(self,text='廠商編號',text_color='black')
-        edit_nL=customtkinter.CTkLabel(self,text=f'{user.ID}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        edit_n1L=customtkinter.CTkLabel(self,text=f'{user.Name}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        edit_n2L=customtkinter.CTkLabel(self,text=f'{user.Address}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        edit_n3L=customtkinter.CTkLabel(self,text=f'{user.Remark}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_nL=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_n1L=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_n2L=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_n3L=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+
+        edit_nL.insert(customtkinter.END,f'{user.ID}')
+        edit_n1L.insert(customtkinter.END,f"{user.Name}")
+        edit_n2L.insert(customtkinter.END,f"{user.Address}")
+        edit_n3L.insert(customtkinter.END,f"{user.Remark}")
+
         bt.grid(row=0,column=0,columnspan=2,pady=20)
         edit_n.grid(row=1,column=0)#姓名
         edit_n1.grid(row=2,column=0)#電話

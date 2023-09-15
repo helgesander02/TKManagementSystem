@@ -137,8 +137,8 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             self.edit_entry_n3=customtkinter.CTkTextbox(self,border_color='black',border_width=2,font=("microsoft yahei", 18, 'bold'))
             self.edit_entry_n1.insert(customtkinter.END,add_phone)
 
-            self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click)
-            confirm_bt=customtkinter.CTkButton(self,text='確定新增',command=self.confirm_edit)
+            self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click,fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
+            confirm_bt=customtkinter.CTkButton(self,text='確定新增',command=self.confirm_edit,fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
             self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
             confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
             # edit_n4.grid(row=0,column=0)
@@ -175,23 +175,28 @@ class Schedule_Frame(customtkinter.CTkScrollableFrame):
         self.info = customtkinter.CTkImage(light_image=Image.open("image\\information-button.png"),
                                   dark_image=Image.open("image\\information-button.png"),
                                   size=(30, 30))
+        # b=customtkinter.CTkFrame(self,fg_color = ("#5b5a5a"))
         for i in range(7):
             self.columnconfigure(i,weight=1)
+            # b.columnconfigure(i,weight=1)
         self.columnconfigure(4,weight=2)
-        a=customtkinter.CTkLabel(self,text='會員資訊',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        a.grid(row=0,column=0)
-        a=customtkinter.CTkLabel(self,text='訂單資訊',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        a.grid(row=0,column=1)
-        a=customtkinter.CTkLabel(self,text='取貨日期',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        a.grid(row=0,column=2) 
-        a=customtkinter.CTkLabel(self,text='取貨方式',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        a.grid(row=0,column=3) 
-        a=customtkinter.CTkLabel(self,text='訂單項目',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        a.grid(row=0,column=4)
-        a=customtkinter.CTkLabel(self,text='是否取貨',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        a.grid(row=0,column=5)
-        a=customtkinter.CTkLabel(self,text='金額',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 16, 'bold'))
-        a.grid(row=0,column=6)
+        # b.columnconfigure(4,weight=2)
+        
+        a=customtkinter.CTkLabel(self,text='會員資訊',fg_color = ("#5b5a5a"),text_color='White',font=("microsoft yahei", 16, 'bold'))
+        a.grid(row=0,column=0,sticky='ew')
+        a=customtkinter.CTkLabel(self,text='訂單資訊',fg_color = ("#5b5a5a"),text_color='White',font=("microsoft yahei", 16, 'bold'))
+        a.grid(row=0,column=1,sticky='ew')
+        a=customtkinter.CTkLabel(self,text='取貨日期',fg_color = ("#5b5a5a"),text_color='White',font=("microsoft yahei", 16, 'bold'))
+        a.grid(row=0,column=2,sticky='ew') 
+        a=customtkinter.CTkLabel(self,text='取貨方式',fg_color = ("#5b5a5a"),text_color='White',font=("microsoft yahei", 16, 'bold'))
+        a.grid(row=0,column=3,sticky='ew') 
+        a=customtkinter.CTkLabel(self,text='訂單項目',fg_color = ("#5b5a5a"),text_color='White',font=("microsoft yahei", 16, 'bold'))
+        a.grid(row=0,column=4,sticky='ew')
+        a=customtkinter.CTkLabel(self,text='是否取貨',fg_color = ("#5b5a5a"),text_color='White',font=("microsoft yahei", 16, 'bold'))
+        a.grid(row=0,column=5,sticky='ew')
+        a=customtkinter.CTkLabel(self,text='金額',fg_color = ("#5b5a5a"),text_color='White',font=("microsoft yahei", 16, 'bold'))
+        a.grid(row=0,column=6,sticky='ew')
+        # b.grid(row=0,column=0,columnspan=7,sticky='ew')
         self.toplevel_window = None
         def gen_cmd(i):return lambda:self.od_info(i)
         def get_user(i):return lambda:self.get_u(i)
@@ -213,9 +218,11 @@ class Schedule_Frame(customtkinter.CTkScrollableFrame):
                 a=customtkinter.CTkLabel(self,text=f'{value[2]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
                 a.grid(row=i,column=2) 
                 a=customtkinter.CTkLabel(self,text=f'{value[3]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-                a.grid(row=i,column=3) 
-                a=customtkinter.CTkLabel(self,text=f'{value[4]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-                a.grid(row=i,column=4,sticky='w')
+                a.grid(row=i,column=3)
+                b=customtkinter.CTkScrollableFrame(self,orientation='horizontal',height=20) 
+                a=customtkinter.CTkLabel(b,text=f'{value[4]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+                a.pack(side='left')
+                b.grid(row=i,column=4,sticky='we')
                 a=customtkinter.CTkLabel(self,text=f'{value[5]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
                 a.grid(row=i,column=5)
                 a=customtkinter.CTkLabel(self,text=f'{value[6]}',fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
@@ -251,10 +258,16 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
         edit_n2=customtkinter.CTkLabel(self,text='地址：',text_color='black',font=("microsoft yahei", 18, 'bold'))
         edit_n3=customtkinter.CTkLabel(self,text='備註：',text_color='black',font=("microsoft yahei", 18, 'bold'))
         
-        edit_nL=customtkinter.CTkLabel(self,text=f'{user.ID}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        edit_n1L=customtkinter.CTkLabel(self,text=f'{user.Name}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        edit_n2L=customtkinter.CTkLabel(self,text=f'{user.Address}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        edit_n3L=customtkinter.CTkLabel(self,text=f'{user.Remark}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_nL=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_n1L=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_n2L=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_n3L=customtkinter.CTkEntry(self,text_color='black',font=("microsoft yahei", 18, 'bold'))
+
+        edit_nL.insert(customtkinter.END,f'{user.ID}')
+        edit_n1L.insert(customtkinter.END,f"{user.Name}")
+        edit_n2L.insert(customtkinter.END,f"{user.Address}")
+        edit_n3L.insert(customtkinter.END,f"{user.Remark}")
+
         bt.grid(row=0,column=0,columnspan=2,pady=20)
         edit_n.grid(row=1,column=0)#姓名
         edit_n1.grid(row=2,column=0)#電話
@@ -300,26 +313,28 @@ class info_window(customtkinter.CTkToplevel):
 class Home_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.image = customtkinter.CTkImage(light_image=Image.open("image\\search.png"),
+                                  dark_image=Image.open("image\\search.png"),
+                                  size=(30, 30))
         #Search_Frame
         self.Search_Frame_ = Search_Frame(self,  fg_color = ("#DDDDDD"))
         self.Search_Frame_.pack(pady=30,padx=30,fill='x')
-        self.se_date=customtkinter.CTkFrame(self,  fg_color = ("#DDDDDD"))
+        self.se_date=customtkinter.CTkFrame(self,  fg_color = ("#EEEEEE"))
         # DateEntry https://tkcalendar.readthedocs.io/en/stable/_modules/tkcalendar/dateentry.html#DateEntry.configure
-        self.date_=DateEntry(self.se_date,selectmode='day', width=20,font=("microsoft yahei", 10, 'bold'),date_pattern='yyyy-mm-dd')
-        self.date_MS_button = customtkinter.CTkButton(self.se_date, text="Q", width=20, height=20,
-                                                        fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 10, 'bold'),command=self.search_date)
-                
+        self.date_=DateEntry(self.se_date,selectmode='day', width=15,font=("microsoft yahei", 24, 'bold'),date_pattern='yyyy-mm-dd')
+        self.date_MS_button = customtkinter.CTkButton(self.se_date ,text='',width=30,fg_color = "#EEEEEE",hover=False,image=self.image,command=self.search_date)
+      
         self.date_.grid(row=0,column=0)
         self.date_MS_button.grid(row=0,column=1)
         self.se_date.pack(anchor='w',padx=30)
         #Schedule_Frame
+        
         self.Schedule_Frame_ = Schedule_Frame(self,date_=datetime.date.today(),  fg_color = ("#DDDDDD"))
-        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30)
+        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30)
     def search_date(self):
         self.Schedule_Frame_.pack_forget()
         self.Schedule_Frame_=Schedule_Frame(self,date_=self.date_.get_date(),  fg_color = ("#DDDDDD"))
-        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30,pady=30) 
+        self.Schedule_Frame_.pack(fill='both',expand=1,padx=30) 
 
 class App(customtkinter.CTk):
     def __init__(self):

@@ -12,16 +12,15 @@ class finish_search_fame(customtkinter.CTkFrame):
         # 搜尋
         search_f=customtkinter.CTkFrame(self,fg_color=("#EEEEEE"))
        
-        self.reset_btn = customtkinter.CTkButton(search_f,width=200,height=40,
-                                                    fg_color="#3B8ED0",
-                                                    text="重設查詢",
-                                                    font=("microsoft yahei", 20, 'bold'),command=self.refresh
+        self.reset_btn = customtkinter.CTkButton(search_f, width=150, height=40, text="重設查詢",
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.refresh
                                                     )        
 
         self.search=customtkinter.CTkEntry(search_f,fg_color = ("#DDDDDD"),text_color='black',placeholder_text="客戶電話",font=("microsoft yahei", 18, 'bold'))
-        self.search_bt=customtkinter.CTkButton(search_f, text="確認查詢",width=200, height=40,
-                                                        fg_color=("#3B8ED0"),
-                                                        font=("microsoft yahei", 20, 'bold'),
+        self.search_bt=customtkinter.CTkButton(search_f, text="確認查詢", width=150, height=40,
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),
                                                         command=self.search_A)
         self.search.pack(side='top',pady=40,padx=30,fill='x')
         self.reset_btn.pack(side='bottom',pady=20,padx=30)        
@@ -60,8 +59,12 @@ class finish_search_fame(customtkinter.CTkFrame):
 
         self.ac_fame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
         self.ac_fame.pack(fill='both',side='bottom',pady=40,padx=30)
-        self.ac=customtkinter.CTkButton(self.ac_fame,text='入賬')
-        self.one_time_ac=customtkinter.CTkButton(self.ac_fame,text='一次入賬多筆',command=self.once_ac)
+        self.ac=customtkinter.CTkButton(self.ac_fame, width=150, height=40,
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),text='入賬')
+        self.one_time_ac=customtkinter.CTkButton(self.ac_fame, width=150, height=40,
+                                                        fg_color=("#5b5a5a"),
+                                                        font=("microsoft yahei", 18, 'bold'),text='一次入賬多筆',command=self.once_ac)
         self.ac.pack(side='right',padx=20)
         self.one_time_ac.pack(side='right',padx=20)
     def refresh(self):
@@ -81,9 +84,9 @@ class finish_search_fame(customtkinter.CTkFrame):
                     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
                     if i.discount!=None:self.od_l[i.order_number][3]=i.discount
                 else:
-                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.discount,i.Date_]
+                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.discount,i.pick_up_date]
         except Exception as e:
-            print(e)
+            
             self.od_l={}
             self.customer_name.configure(text=f'客戶名稱：')
             self.address.configure(text=f'地址：')
@@ -92,38 +95,40 @@ class finish_search_fame(customtkinter.CTkFrame):
         self.history_frame.pack_forget() 
         self.history_frame.destroy()
         self.history_frame=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"))
-        self.history_frame.columnconfigure((0,2,3,4,5),weight=1)
-        self.history_frame.columnconfigure(1,weight=3)
+        self.history_frame.columnconfigure((0,1,3,4,5),weight=1)
+        self.history_frame.columnconfigure(2,weight=3)
         order_n=customtkinter.CTkLabel(self.history_frame,text='日期',text_color='black',font=("microsoft yahei", 18, 'bold'))
         order_n1=customtkinter.CTkLabel(self.history_frame,text='訂單內容',text_color='black',font=("microsoft yahei", 18, 'bold'))
         order_n2=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black',font=("microsoft yahei", 18, 'bold'))
         order_n3=customtkinter.CTkLabel(self.history_frame,text='已收金額',text_color='black',font=("microsoft yahei", 18, 'bold'))
         order_n4=customtkinter.CTkLabel(self.history_frame,text='餘額',text_color='black',font=("microsoft yahei", 18, 'bold'))
         order_n5=customtkinter.CTkLabel(self.history_frame,text='',text_color='black')
-        order_n.grid(row=0,column=0,sticky='w')
-        order_n1.grid(row=0,column=1,sticky='w')
-        order_n2.grid(row=0,column=2)
-        order_n3.grid(row=0,column=3)
-        order_n4.grid(row=0,column=4)
-        order_n5.grid(row=0,column=5)
+        order_n.grid(row=0,column=1,sticky='w')
+        order_n1.grid(row=0,column=2,sticky='w')
+        order_n2.grid(row=0,column=3)
+        order_n3.grid(row=0,column=4)
+        order_n4.grid(row=0,column=5)
+        order_n5.grid(row=0,column=0)
         
         l=1
         def gen_cmd(i,l):return lambda:self.update_(i,l)
         for key,value in self.od_l.items():
             sum_,sum_1=sum_receipt_money(db=Session(engine),o_id=key,m_id=value[0])
             order_n=customtkinter.CTkLabel(self.history_frame,text=f'{value[-1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{value[1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            b=customtkinter.CTkScrollableFrame(self.history_frame,orientation='horizontal',height=20)
+            order_n1=customtkinter.CTkLabel(b,text=f'{value[1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{0 if sum_1==None else sum_1}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{0 if sum_==None else sum_}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n4=customtkinter.CTkLabel(self.history_frame,text=f'{sum_1-(0 if sum_==None else sum_)}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             if sum_1-(0 if sum_==None else sum_)!=0:
                 order_n5=customtkinter.CTkCheckBox(self.history_frame,text='', command=gen_cmd(key,value[0]), onvalue="on", offvalue="off")
-                order_n5.grid(row=l,column=5)
-            order_n.grid(row=l,column=0,sticky='w')
-            order_n1.grid(row=l,column=1,sticky='w')
-            order_n2.grid(row=l,column=2)
-            order_n3.grid(row=l,column=3)
-            order_n4.grid(row=l,column=4)
+                order_n5.grid(row=l,column=0)
+            order_n.grid(row=l,column=1,sticky='w')
+            order_n1.pack(side='left')
+            b.grid(row=l,column=2,sticky='ew')
+            order_n2.grid(row=l,column=3)
+            order_n3.grid(row=l,column=4)
+            order_n4.grid(row=l,column=5)
             
             l+=1
         self.history_frame.pack(fill='both',anchor='n',pady=40,padx=30,expand=1)
@@ -179,8 +184,8 @@ class cm_ToplevelWindow(customtkinter.CTkToplevel):
         self.ac_now_input_5.grid(row=0,column=4,sticky='ew')
 
         bt=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
-        self.cancel_bt=customtkinter.CTkButton(bt,text='取消',command=self.cancel_click,font=("microsoft yahei", 18, 'bold'))
-        confirm_bt=customtkinter.CTkButton(bt,text='確定入賬',command=self.confirm_edit,font=("microsoft yahei", 18, 'bold'))
+        self.cancel_bt=customtkinter.CTkButton(bt,text='取消',fg_color=("#5b5a5a"),command=self.cancel_click,font=("microsoft yahei", 18, 'bold'))
+        confirm_bt=customtkinter.CTkButton(bt,text='確定入賬',fg_color=("#5b5a5a"),command=self.confirm_edit,font=("microsoft yahei", 18, 'bold'))
         self.cancel_bt.grid(row=0,column=0,sticky='e',padx=30,pady=10)
         confirm_bt.grid(row=0,column=1,sticky='e',padx=30,pady=10)
         bt.pack(side='bottom')

@@ -18,14 +18,14 @@ class FloatSpinbox(customtkinter.CTkFrame):
         self.grid_columnconfigure((0, 2), weight=0)  # buttons don't expand
         self.grid_columnconfigure(1, weight=1)  # entry expands
 
-        self.subtract_button = customtkinter.CTkButton(self, text="-", width=height-6, height=height-6,
+        self.subtract_button = customtkinter.CTkButton(self, text="-",fg_color=("#5b5a5a"), width=height-6, height=height-6,text_color='white',
                                                        command=self.subtract_button_callback)
         self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
 
         self.entry = customtkinter.CTkEntry(self, width=width-(2*height), height=height-6, border_width=0)
         self.entry.grid(row=0, column=1, columnspan=1, padx=3, pady=3, sticky="ew")
 
-        self.add_button = customtkinter.CTkButton(self, text="+", width=height-6, height=height-6,
+        self.add_button = customtkinter.CTkButton(self, text="+",fg_color=("#5b5a5a"), width=height-6, height=height-6,text_color='white',
                                                   command=self.add_button_callback)
         self.add_button.grid(row=0, column=2, padx=(0, 3), pady=3)
 
@@ -73,12 +73,17 @@ class sum_Frame(customtkinter.CTkFrame):
         self.a=a
         self.buy_list=buy_list
         self.bt_group=bt_group
+        title=customtkinter.CTkLabel(self,text='訂單項目',fg_color=("#5b5a5a"),text_color='white',font=("microsoft yahei", 18, 'bold'))
+        title.pack(fill='x')
         self.c=customtkinter.CTkFrame(self,  fg_color = ("#EEEEEE"))
         self.contents_=customtkinter.CTkFrame(self.c,  fg_color = ("#EEEEEE"))
-        self.contents_.rowconfigure(len(self.buy_list),weight=1)
+        # for i in range(len(self.buy_list)):
+        #     self.contents_.rowconfigure(i,weight=1)
+        
         self.discount_1=0 if discount_==None else discount_
         self.pd_update_()
         self.c.pack(fill='both',expand=1)
+
         self.discount_frame=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
         self.discount_frame.columnconfigure((0,1),weight=1)
         self.discount_label=customtkinter.CTkLabel(self.discount_frame,text='自訂優惠',font=("microsoft yahei", 18, 'bold'))
@@ -86,7 +91,7 @@ class sum_Frame(customtkinter.CTkFrame):
         self.discount_entry=customtkinter.CTkEntry(self.discount_frame,font=("microsoft yahei", 18, 'bold'))
         self.discount_entry.insert(customtkinter.END,self.discount_1)
         self.sum_label=customtkinter.CTkLabel(self.discount_frame,text='總計',font=("microsoft yahei", 18, 'bold'))
-        self.money_label_=customtkinter.CTkLabel(self.discount_frame,text=f'{self.s-self.discount_1}元',font=("microsoft yahei", 18, 'bold'))
+        self.money_label_=customtkinter.CTkLabel(self.discount_frame,text=f'{self.s-int(self.discount_1)}元',font=("microsoft yahei", 18, 'bold'))
         self.sum_label.grid(row=2,column=0,sticky='w')
         self.money_label_.grid(row=2,column=1,sticky='e')
         self.discount_label.grid(row=0,column=0,sticky='w')
@@ -109,14 +114,14 @@ class sum_Frame(customtkinter.CTkFrame):
     def pd_update_(self):
         self.contents_.destroy()
         self.contents_=customtkinter.CTkFrame(self.c,  fg_color = ("#EEEEEE"))
-        self.contents_.rowconfigure(len(self.buy_list),weight=1)
+        # self.contents_.rowconfigure(len(self.buy_list),weight=1)
         self.contents_.columnconfigure((0,1,2),weight=1)
         if self.a!='':
             self.buy_list[self.a]=[self.bt_group[self.a][0].get(),self.bt_group[self.a][1]*self.bt_group[self.a][0].get()]
             if self.buy_list[self.a][0]==0:
                 del self.buy_list[self.a]
                 del self.bt_group[self.a]
-        i=0
+        i=1
         self.s=0
         
         for key,value in self.buy_list.items():
@@ -129,4 +134,4 @@ class sum_Frame(customtkinter.CTkFrame):
             price_.grid(row=i,column=2, padx=20, pady=3,sticky='n')
             i+=1
         
-        self.contents_.pack(fill='both',expand=1)       
+        self.contents_.pack(fill='both',expand=1,side='top')       

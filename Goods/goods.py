@@ -52,17 +52,18 @@ class goods_frame(customtkinter.CTkFrame):
                                   size=(30, 30))
         self.edit_photo = customtkinter.CTkImage(light_image=Image.open("image\\pencil.png"),
                                   dark_image=Image.open("image\\pencil.png"),
+                                  size=(30, 30))
+        self.image = customtkinter.CTkImage(light_image=Image.open("image\\search.png"),
+                                  dark_image=Image.open("image\\search.png"),
                                   size=(30, 30))        
         self.toplevel_window = None
-        a=customtkinter.CTkFrame(self,fg_color=("#EEEEEE"))
-        search_label=customtkinter.CTkLabel(a,text='品項查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-        search_label.pack(side='left')
-        self.search=customtkinter.CTkEntry(a,fg_color = ("#EEEEEE"),text_color='black')
-        self.search_bt=customtkinter.CTkButton(a, text="Q", width=40,
-                                                        fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 14, 'bold'),
+        a=customtkinter.CTkFrame(self,fg_color=("#DDDDDD"),height=150)
+        # search_label=customtkinter.CTkLabel(a,text='品項查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+        # search_label.pack(side='left')
+        self.search=customtkinter.CTkEntry(a,fg_color = ("#EEEEEE"),text_color='black',placeholder_text='品項查詢',font=("microsoft yahei", 18, 'bold'),width=300)
+        self.search_bt=customtkinter.CTkButton(a, text="", width=40,hover=False,image=self.image,fg_color = "#DDDDDD",
                                                         command=self.search_)
-        self.search.pack(side='left')
+        self.search.pack(side='left',padx=40)
         self.search_bt.pack(side='left')
         bt1=customtkinter.CTkButton(a,text='新增單個品項',
                                                         fg_color=("#5b5a5a"),
@@ -76,7 +77,7 @@ class goods_frame(customtkinter.CTkFrame):
         bt2.pack(side='right',padx=30,pady=5)
         bt3.pack(side='right',padx=30,pady=5)
         bt1.pack(side='right',padx=30,pady=5)
-        
+        a.pack_propagate(0)
         a.pack(anchor='n',fill='x',padx=30,pady=5)
         
         self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
@@ -96,7 +97,7 @@ class goods_frame(customtkinter.CTkFrame):
         pd=search_pd(db=Session(engine),pd_name=self.search.get())
         self.history_frame.pack_forget()
         self.history_frame.destroy()
-        self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#EEEEEE"))
+        self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#DDDDDD"))
         self.history_frame.columnconfigure((0,2,3,4),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
         order_n=customtkinter.CTkLabel(self.history_frame,text='品項名稱',text_color='black',font=("microsoft yahei", 18, 'bold'))
@@ -120,8 +121,8 @@ class goods_frame(customtkinter.CTkFrame):
             order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{"" if i.content==None else i.content}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Weight}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Price}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            order_n4=customtkinter.CTkButton(self.history_frame,image=self.edit_photo, fg_color = ("#EEEEEE"),hover=False,text='',text_color='black',command=gen_cmd1(i.prodcut_ID))
-            order_n5=customtkinter.CTkButton(self.history_frame,image=self.delete_photo, fg_color = ("#EEEEEE"),hover=False,text='',text_color='black',command=gen_cmd(i.prodcut_ID))
+            order_n4=customtkinter.CTkButton(self.history_frame,image=self.edit_photo, fg_color = ("#DDDDDD"),hover=False,text='',text_color='black',command=gen_cmd1(i.prodcut_ID))
+            order_n5=customtkinter.CTkButton(self.history_frame,image=self.delete_photo, fg_color = ("#DDDDDD"),hover=False,text='',text_color='black',command=gen_cmd(i.prodcut_ID))
             order_n.grid(row=l,column=0,sticky='w')
             order_n1.grid(row=l,column=1,sticky='w')
             order_n2.grid(row=l,column=2)
@@ -222,8 +223,8 @@ class add_product_ToplevelWindow(customtkinter.CTkToplevel):
         self.name_entry=customtkinter.CTkEntry(self,)
         self.weight_entry=customtkinter.CTkEntry(self,)
         self.price_entry=customtkinter.CTkEntry(self,)
-        self.confirm=customtkinter.CTkButton(self,text='確定新增',font=("microsoft yahei", 18, 'bold'))
-        cancel=customtkinter.CTkButton(self,text='取消',command=self.destroy,font=("microsoft yahei", 18, 'bold'))
+        self.confirm=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
+        cancel=customtkinter.CTkButton(self,text='取消',fg_color=("#5b5a5a"),command=self.destroy,font=("microsoft yahei", 18, 'bold'))
         self.confirm.grid(row=3,column=1,pady=10)
         cancel.grid(row=3,column=0,pady=10)
         name.grid(row=0,column=0,pady=10)
@@ -357,10 +358,10 @@ class sum_Frame(customtkinter.CTkFrame):
             price_.grid(row=i,column=2, padx=20, pady=3,sticky='n')
             i+=1
         self.contents_.pack(fill='both',expand=1)
-        self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',command=lambda: self.add_gift_box_(pd=self.buy_list))
-        self.reset_bt=customtkinter.CTkButton(self,text='重設')
-        self.confirm_bt.pack(pady=20)
-        self.reset_bt.pack()
+        self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'),command=lambda: self.add_gift_box_(pd=self.buy_list))
+        self.reset_bt=customtkinter.CTkButton(self,text='重設',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
+        self.confirm_bt.pack(pady=20,fill='x')
+        self.reset_bt.pack(fill='x')
     def add_gift_box_(self,pd):
         try:
             add_gift_box(db=Session(engine),pd=pd,name=self.name_entry.get(),weight=self.weight_entry.get(),price=self.price_entry.get())

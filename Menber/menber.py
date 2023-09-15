@@ -19,20 +19,22 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
                                   size=(30, 30))
         self.delete_photo = customtkinter.CTkImage(light_image=Image.open("image\\close.png"),
                                   dark_image=Image.open("image\\close.png"),
-                                  size=(30, 30))         
+                                  size=(30, 30))
+        self.image = customtkinter.CTkImage(light_image=Image.open("image\\search.png"),
+                                  dark_image=Image.open("image\\search.png"),
+                                  size=(30, 30))           
         self.user_id=''
         # self.columnconfigure((0,1,2,3),weight=1)
-        search_=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
+        search_=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"),height=150)
         # search_.columnconfigure((1),weight=1)
-        search_label=customtkinter.CTkLabel(search_,text='會員查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
-        search_label.pack(side='left')
-        self.search=customtkinter.CTkEntry(search_,fg_color = ("#EEEEEE"),placeholder_text='電話查詢',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        self.search_bt=customtkinter.CTkButton(search_, text="Q", width=40,
-                                                        fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 14, 'bold'),
+        # search_label=customtkinter.CTkLabel(search_,text='會員查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+        # search_label.pack(side='left')
+        self.search=customtkinter.CTkEntry(search_,fg_color = ("#EEEEEE"),width=300,placeholder_text='電話查詢',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        self.search_bt=customtkinter.CTkButton(search_, text="", width=40,
+                                                        hover=False,image=self.image,fg_color = "#DDDDDD",
                                                         command=self.member_search_click)
         
-        self.search.pack(side='left')
+        self.search.pack(side='left',padx=40)
         self.search_bt.pack(side='left')
         import_bt=customtkinter.CTkButton(search_,text='匯入資料',
                                                         fg_color=("#5b5a5a"),
@@ -49,12 +51,13 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         export_bt.pack(side='right',padx=10)
         import_bt.pack(side='right',padx=10)
         add_bt.pack(side='right',padx=10)
+        search_.pack_propagate(0)
         search_.pack(anchor='n',fill='both',padx=50,pady=50)
         self.fake=customtkinter.CTkFrame(self,fg_color = ("#EEEEEE"))
-        self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#EEEEEE"))
+        self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#DDDDDD"))
         self.fake.pack(fill='both',expand=1)
         # self.history_frame.pack(fill='both',expand=1,padx=100)
-        self.page_.pack(pady=100)
+        self.page_.pack(pady=20)
         self.member_search_click()
         
         
@@ -87,7 +90,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
     def member_search_click(self):
         self.history_frame.pack_forget()
         self.history_frame.destroy()
-        self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#EEEEEE"))
+        self.history_frame=customtkinter.CTkScrollableFrame(self.fake,fg_color = ("#DDDDDD"))
         self.history_frame.columnconfigure((2),weight=4)
         self.history_frame.columnconfigure((0,1,3,4,5),weight=1)
         
@@ -114,8 +117,8 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             a2=customtkinter.CTkLabel(self.history_frame,text=f'{k.Phone.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             a3=customtkinter.CTkLabel(self.history_frame,text=f'{k.Address.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))         
             a4=customtkinter.CTkLabel(self.history_frame,text=' ' if k.Remark==None else f'{k.Remark.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))            
-            a5=customtkinter.CTkButton(self.history_frame,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd1(k.Phone))
-            a6=customtkinter.CTkButton(self.history_frame,width=30,image=self.delete_photo,hover=False,text='',fg_color = ("#EEEEEE"),text_color='black',command=gen_cmd(k.ID))
+            a5=customtkinter.CTkButton(self.history_frame,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(k.Phone))
+            a6=customtkinter.CTkButton(self.history_frame,width=30,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(k.ID))
             a1.grid(row=i,column=0,sticky='w')
             a2.grid(row=i,column=1,sticky='w')
             a3.grid(row=i,column=2,sticky='w')
@@ -123,7 +126,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
             a5.grid(row=i,column=4,sticky='w')
             a6.grid(row=i,column=5,sticky='w')
             i+=1
-        self.history_frame.pack(fill='both',expand=1,padx=100)  
+        self.history_frame.pack(fill='both',expand=1,padx=50)  
   
     def open_add_toplevel(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -218,8 +221,8 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             self.edit_entry_n2=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
             self.edit_entry_n3=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
 
-            self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click,font=("microsoft yahei", 18, 'bold'))
-            self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',font=("microsoft yahei", 18, 'bold'))
+            self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click,fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
+            self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
             self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
             self.confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
             edit_n.grid(row=1,column=0)#姓名
@@ -257,8 +260,8 @@ class FloatSpinbox(customtkinter.CTkFrame):
 
         self.grid_columnconfigure((0, 3), weight=0)  # buttons don't expand
         self.grid_columnconfigure((1, 2), weight=0)  # entry expands
-
-        self.subtract_button = customtkinter.CTkButton(self, text="上一頁", width=height-6, height=height-6,
+       
+        self.subtract_button = customtkinter.CTkButton(self, text="上一頁",fg_color=("#5b5a5a"), width=height-6, height=height-6,
                                                        command=self.subtract_button_callback)
         self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
 
@@ -266,7 +269,7 @@ class FloatSpinbox(customtkinter.CTkFrame):
         self.entry.grid(row=0, column=1, padx=3, pady=3)
         self.page_max=customtkinter.CTkLabel(self)
         self.page_max.grid(row=0, column=2, padx=3, pady=3)
-        self.add_button = customtkinter.CTkButton(self, text="下一頁", width=height-6, height=height-6,
+        self.add_button = customtkinter.CTkButton(self, text="下一頁",fg_color=("#5b5a5a"), width=height-6, height=height-6,
                                                   command=self.add_button_callback)
         self.add_button.grid(row=0, column=3, padx=(0, 3), pady=3)
 

@@ -51,10 +51,10 @@ def get_od_info(db: Session, od_nb: int):
 def search_od_(db:Session,phone:str,pick_up:str,date_:date,date_1:date,money1:int,money2:int,path:str):
     # or_(models.Order.Date_==date_),
     if phone=='':
-        return db.query(models.Order).filter(models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),models.Order.Date_.between(date_,date_1)).order_by(models.Order.pick_up_date)
+        return db.query(models.Order).filter(models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),models.Order.pick_up_date.between(date_,date_1)).order_by(models.Order.pick_up_date)
     else:
         mid=db.query(models.member).filter(models.member.Phone==phone.strip()).first().ID
-        return db.query(models.Order).filter(models.Order.M_ID== mid,models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),models.Order.Date_.between(date_,date_1)).order_by(models.Order.pick_up_date)
+        return db.query(models.Order).filter(models.Order.M_ID== mid,models.Order.path.like(f'%{path}%'),models.Order.pick_up.like(f'%{pick_up}%'),models.Order.total.between(money1,money2),models.Order.pick_up_date.between(date_,date_1)).order_by(models.Order.pick_up_date)
 def delete_od(db:Session,od_nb:int,m_id:int):
     db.query(models.Order).filter(models.Order.order_number == od_nb,models.Order.M_ID==m_id).delete()
     db.commit()
@@ -115,7 +115,7 @@ def update_balance(db:Session,selected,cm:int,m_way:str,remark:str,discount:int)
       db.commit()
       db.refresh(od)
 def home_search_date(db:Session,date_:date):
-    return db.query(models.Order).filter(models.Order.Date_==date_).order_by(models.Order.pick_up_date)
+    return db.query(models.Order).filter(models.Order.pick_up_date==date_).order_by(models.Order.pick_up_date)
 def Search_receipt(db:Session,o_id:int,m_id:str):
     return db.query(models.receipt).filter(models.receipt.o_id==o_id,models.receipt.m_id==m_id)
 def add_receipt(db:Session,o_id:int,m_id:int,money:int,m_way:str,remark:str,discount:int):
@@ -189,24 +189,24 @@ def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str
         db.commit()
         db.refresh(new_od)
 def date_search(db:Session,date1,date2):
-    od_count=db.query(models.Order.order_number,models.Order.M_ID).filter(models.Order.Date_.between(date1,date2)).distinct().count()
-    pd_count=db.query(func.sum(models.Order.count)).filter(models.Order.Date_.between(date1,date2)).first()[0]
-    p_count=db.query(models.Order.M_ID).filter(models.Order.Date_.between(date1,date2)).distinct().count()
-    sum_money=db.query(func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2)).first()[0]
-    sum_discount=db.query(func.sum(models.Order.discount)).filter(models.Order.Date_.between(date1,date2)).first()[0]
+    od_count=db.query(models.Order.order_number,models.Order.M_ID).filter(models.Order.pick_up_date.between(date1,date2)).distinct().count()
+    pd_count=db.query(func.sum(models.Order.count)).filter(models.Order.pick_up_date.between(date1,date2)).first()[0]
+    p_count=db.query(models.Order.M_ID).filter(models.Order.pick_up_date.between(date1,date2)).distinct().count()
+    sum_money=db.query(func.sum(models.Order.money)).filter(models.Order.pick_up_date.between(date1,date2)).first()[0]
+    sum_discount=db.query(func.sum(models.Order.discount)).filter(models.Order.pick_up_date.between(date1,date2)).first()[0]
     pd_count=0 if pd_count==None else pd_count
     sum_money=0 if sum_money==None else sum_money
     sum_discount=0 if sum_discount==None else sum_discount
     sum_profit=sum_money-sum_discount
-    on_site=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.pick_up=='現場')[0]
-    home_delivery=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.pick_up=='宅配')[0]
+    on_site=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.pick_up_date.between(date1,date2),models.Order.pick_up=='現場')[0]
+    home_delivery=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.pick_up_date.between(date1,date2),models.Order.pick_up=='宅配')[0]
 
-    p_on_site=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.path=='現場')[0]
-    p_internet=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.Date_.between(date1,date2),models.Order.path=='網站')[0]
+    p_on_site=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.pick_up_date.between(date1,date2),models.Order.path=='現場')[0]
+    p_internet=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.pick_up_date.between(date1,date2),models.Order.path=='網站')[0]
     return od_count,pd_count,p_count,sum_money,sum_discount,sum_profit,on_site,home_delivery,p_on_site,p_internet
 def pd_Analysis(db:Session,date1,date2):
-    pd_1=db.query(models.Order).filter(models.Order.Date_.between(date1,date2))
-    x=db.query(models.Order.p_ID).filter(models.Order.Date_.between(date1,date2))
+    pd_1=db.query(models.Order).filter(models.Order.pick_up_date.between(date1,date2))
+    x=db.query(models.Order.p_ID).filter(models.Order.pick_up_date.between(date1,date2))
     z=[]
     for i in x:
         z.append(i[0])
