@@ -290,8 +290,9 @@ class product_Frame(customtkinter.CTkFrame):
             buy_button.grid(row=i,column=5, padx=30, pady=0)
             
         self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)
-        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.pack_propagate(0)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')        
         self.product_.pack(fill='both',expand=1,pady=5)
     def buy_bt_click(self,a):
@@ -299,15 +300,17 @@ class product_Frame(customtkinter.CTkFrame):
         weight=self.sum_frame_.weight_entry.get()
         price=self.sum_frame_.price_entry.get()
         self.sum_frame_.destroy()
-        self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,name=name,weight=weight,price=price,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a=a,buy_list=self.buy_list,bt_group=self.bt_group,name=name,weight=weight,price=price,  fg_color = ("#EEEEEE"),width=400)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
+        self.sum_frame_.pack_propagate(0)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
         self.buy_list=self.sum_frame_.buy_list
         
     def reset_(self):
         self.buy_list={}
         self.sum_frame_.destroy()
-        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"))
+        self.sum_frame_=sum_Frame(self.product_,a='',buy_list=self.buy_list,bt_group=self.bt_group,  fg_color = ("#EEEEEE"),width=400)
+        self.sum_frame_.pack_propagate(0)
         self.sum_frame_.reset_bt.configure(command=self.reset_)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')
 class sum_Frame(customtkinter.CTkFrame):
