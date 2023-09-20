@@ -15,7 +15,7 @@ from sql_app.database import engine,Base
 from PIL import Image
 import datetime
 from backup import backup_Frame
-
+import tkinter.messagebox 
 # https://steam.oxxostudio.tw/category/python/tkinter/grid.html
 # .grid 詳細解釋
 # https://vocus.cc/article/62577184fd89780001e55c39
@@ -163,17 +163,17 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
         try:
             add_data(Session(engine),name=self.edit_entry_n.get(),phone=self.edit_entry_n1.get(),address=self.edit_entry_n2.get(1.0,tk.END),remark=self.edit_entry_n3.get(1.0,tk.END))
             self.destroy()
-            tk.messagebox.showinfo(title='新增成功', message="新增成功", )
+            tkinter.messagebox.showinfo(title='新增成功', message="新增成功", )
         except:
-            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
+            tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )
 class Schedule_Frame(customtkinter.CTkScrollableFrame):
     def __init__(self, master,date_, **kwargs):
         super().__init__(master, **kwargs)
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
-                                  dark_image=Image.open("image\\user.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
                                   size=(30, 30))
-        self.info = customtkinter.CTkImage(light_image=Image.open("image\\information-button.png"),
-                                  dark_image=Image.open("image\\information-button.png"),
+        self.info = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\information-button.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\information-button.png"),
                                   size=(30, 30))
         # b=customtkinter.CTkFrame(self,fg_color = ("#5b5a5a"))
         for i in range(7):
@@ -244,8 +244,8 @@ class Schedule_Frame(customtkinter.CTkScrollableFrame):
 class profile_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,phone, **kwargs):
         super().__init__(*args, **kwargs)
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
-                                  dark_image=Image.open("image\\user.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
                                   size=(100, 100))
         self.geometry("400x500")
         self.title('會員資訊')
@@ -282,8 +282,8 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
 class info_window(customtkinter.CTkToplevel):
     def __init__(self, *args,a, **kwargs):
         super().__init__(*args, **kwargs)
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
-                                  dark_image=Image.open("image\\user.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
                                   size=(100, 100))
         self.title('訂單資訊')
         self.geometry("400x500")
@@ -313,8 +313,8 @@ class info_window(customtkinter.CTkToplevel):
 class Home_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\search.png"),
-                                  dark_image=Image.open("image\\search.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\search.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\search.png"),
                                   size=(30, 30))
         #Search_Frame
         self.Search_Frame_ = Search_Frame(self,  fg_color = ("#DDDDDD"))
@@ -333,6 +333,7 @@ class Home_Main_Frame(customtkinter.CTkFrame):
         self.Schedule_Frame_.pack(fill='both',expand=1,padx=30)
     def search_date(self):
         self.Schedule_Frame_.pack_forget()
+        self.Schedule_Frame_.destroy()
         self.Schedule_Frame_=Schedule_Frame(self,date_=self.date_.get_date(),  fg_color = ("#DDDDDD"))
         self.Schedule_Frame_.pack(fill='both',expand=1,padx=30) 
 
@@ -365,6 +366,7 @@ class App(customtkinter.CTk):
 
         def open_home (event):
             self.forget_()
+            self.Main_Frame.search_date()
             self.Main_Frame.pack(fill='both',expand=1)   
             # self.Main_Frame.pack_forget()
 
@@ -374,6 +376,7 @@ class App(customtkinter.CTk):
 
         def open_order (event):
             self.forget_()
+            self.Main_Frame1.input_order_.update_product()
             self.Main_Frame1.pack(fill='both',expand=1)            
             # self.Main_Frame.pack_forget()
   
@@ -383,6 +386,7 @@ class App(customtkinter.CTk):
         def open_menber (event):
             self.forget_()
             self.Main_Frame2.pack(fill='both',expand=1)
+            self.Main_Frame2.choose_bt.configure(command=self.member_open_order_)
             # self.Main_Frame.pack_forget()
    
             # self.Main_Frame = Menber_Main_Frame(self,  fg_color = ("#EEEEEE"), corner_radius=0 )
@@ -390,6 +394,7 @@ class App(customtkinter.CTk):
 
         def open_goods (event):
             self.forget_()
+            self.Main_Frame3.goods_F1.product_.update_product( )
             self.Main_Frame3.pack(fill='both',expand=1)
             # self.Main_Frame.pack_forget()
 
@@ -416,6 +421,7 @@ class App(customtkinter.CTk):
         self.Select_Frame.btn_goods.bind("<Button-1>", open_goods)
         self.Select_Frame.btn_data.bind("<Button-1>", open_data)
         self.Select_Frame.backup.bind("<Button-1>",open_back)
+        
     def open_order_(self):
         phone=''
         if self.Main_Frame.Search_Frame_.tf_label.cget('text')=='有此會員':
@@ -424,8 +430,24 @@ class App(customtkinter.CTk):
         self.Main_Frame1.pack(fill='both',expand=1)
         # self.Main_Frame.pack_forget()
         # self.Main_Frame = Order_Main_Frame(self,fg_color = ("#EEEEEE"), corner_radius=0)
+        self.Main_Frame1.input_order_.phone.delete(0,customtkinter.END)
         self.Main_Frame1.input_order_.phone.insert(customtkinter.END,phone)
-        # self.Main_Frame.pack(fill='both',expand=1)        
+        self.Main_Frame1.forget_()
+        self.Main_Frame1.bt_frame.reset_color()
+        self.Main_Frame1.bt_frame.input_button.configure(fg_color = ("#5b5a5a"),text_color='white')
+        self.Main_Frame1.input_order_.pack(fill='both',expand=1,padx=40,pady=40,anchor='nw')
+        # self.Main_Frame.pack(fill='both',expand=1)
+    def member_open_order_(self):
+        self.forget_()
+        self.Main_Frame1.pack(fill='both',expand=1)
+        # self.Main_Frame.pack_forget()
+        # self.Main_Frame = Order_Main_Frame(self,fg_color = ("#EEEEEE"), corner_radius=0)
+        self.Main_Frame1.input_order_.phone.delete(0,customtkinter.END)
+        self.Main_Frame1.input_order_.phone.insert(customtkinter.END,self.Main_Frame2.choose_label.cget('text'))
+        self.Main_Frame1.forget_()
+        self.Main_Frame1.bt_frame.reset_color()
+        self.Main_Frame1.bt_frame.input_button.configure(fg_color = ("#5b5a5a"),text_color='white')
+        self.Main_Frame1.input_order_.pack(fill='both',expand=1,padx=40,pady=40,anchor='nw')
     def forget_(self):
         self.Main_Frame.pack_forget()
         self.Main_Frame1.pack_forget()

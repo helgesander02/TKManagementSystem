@@ -6,7 +6,7 @@ from .orderfinish import *
 from .orderinput import *
 from .account import *
 # Order () 訂單
-
+import tkinter.messagebox 
 class Order_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -22,6 +22,7 @@ class Order_Main_Frame(customtkinter.CTkFrame):
             self.bt_frame.reset_color()
             self.bt_frame.input_button.configure(fg_color = ("#5b5a5a"),text_color='white')
             self.forget_()
+            self.input_order_.update_product()
             self.input_order_.pack(fill='both',expand=1,pady=20,padx=30,anchor='nw')
             # self.input_order_.pack_forget()
             # self.input_order_=input_order(self,  fg_color = ("#DDDDDD"))
@@ -72,7 +73,7 @@ class finish_frame(customtkinter.CTkFrame):
             # self.search=acount(self,selected=selected,fg_color = ("#DDDDDD"))
             # self.search.pack(fill='both',side='left',expand=1,padx=15,pady=5)
         else:
-            tk.messagebox.showinfo(title='失敗', message="請勾選想要入帳的訂單", )
+            tkinter.messagebox.showinfo(title='失敗', message="請勾選想要入帳的訂單", )
 
 
 class button_Frame(customtkinter.CTkFrame):

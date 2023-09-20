@@ -7,7 +7,7 @@ from sql_app.database import engine
 from sql_app.crud import *
 import tkinter as tk
 from .floatspinbox import FloatSpinbox,sum_Frame
-
+import os
 class edit_order(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -55,7 +55,7 @@ class edit_order(customtkinter.CTkFrame):
         search.grid(row=1,column=6,padx=30,pady=5)  
      
         self.edit_top_.pack(fill='x',padx=30,pady=5)
-        self.ol=order_List(self,phone='',path='',pick_up='',date_='',date_1='',money1='',money2='',fg_color = ("#DDDDDD"))
+        self.ol=order_List(self,phone='',path='',pick_up='',date_='2000-01-01',date_1=datetime.datetime.today(),money1='0',money2='999999',fg_color = ("#DDDDDD"))
         self.ol.pack(fill='both',expand=1,padx=30,pady=5)
     def search_od_list(self,phone,path,pick_up,date_,date_1,money1,money2):
         self.ol.pack_forget()
@@ -66,7 +66,8 @@ class edit_order(customtkinter.CTkFrame):
         self.phone.delete(0,customtkinter.END)
         self.path.set('')
         self.pick_up.set('')
-        self.date_.set_date(datetime.datetime.today())
+        self.date_.set_date('2000-01-01')
+        self.date_1.set_date(datetime.datetime.today())
         self.money.delete(0,customtkinter.END)
         self.money2.delete(0,customtkinter.END)
         self.money.insert(customtkinter.END,0)
@@ -74,17 +75,17 @@ class edit_order(customtkinter.CTkFrame):
 class order_List(customtkinter.CTkFrame):
     def __init__(self, master,phone,path,pick_up,date_,date_1,money1,money2, **kwargs):
         super().__init__(master, **kwargs)
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
-                                  dark_image=Image.open("image\\user.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
                                   size=(30, 30))
-        self.info = customtkinter.CTkImage(light_image=Image.open("image\\information-button.png"),
-                                  dark_image=Image.open("image\\information-button.png"),
+        self.info = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\information-button.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\information-button.png"),
                                   size=(30, 30))
-        self.edit_photo = customtkinter.CTkImage(light_image=Image.open("image\\pencil.png"),
-                                  dark_image=Image.open("image\\pencil.png"),
+        self.edit_photo = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\pencil.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\pencil.png"),
                                   size=(30, 30))
-        self.delete_photo = customtkinter.CTkImage(light_image=Image.open("image\\close.png"),
-                                  dark_image=Image.open("image\\close.png"),
+        self.delete_photo = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\close.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\close.png"),
                                   size=(30, 30))        
         self.od_l={}
         self.phone=phone
@@ -111,7 +112,8 @@ class order_List(customtkinter.CTkFrame):
                     # self.od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
                 else:
                     self.od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.total,i.M_ID,i.order_number]
-        except:
+        except Exception as e:
+            print(e)
             self.od_l={}
         self.c=customtkinter.CTkScrollableFrame(self,fg_color = ("#DDDDDD"))
         for i in range(10):
@@ -222,8 +224,8 @@ class info_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,od, **kwargs):
         super().__init__(*args, **kwargs)
         self.title('訂單資訊')
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
-                                  dark_image=Image.open("image\\user.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
                                   size=(100, 100))
         self.geometry("400x500")
         self.columnconfigure((0,1),weight=1)
@@ -253,8 +255,8 @@ class profile_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,phone, **kwargs):
         super().__init__(*args, **kwargs)
         self.title('會員資訊')
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\user.png"),
-                                  dark_image=Image.open("image\\user.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
                                   size=(100, 100))
         self.geometry("400x500")
         self.columnconfigure((0,1),weight=1)
@@ -291,8 +293,8 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.title('編輯訂單')
         self.master=master
-        self.buy_photo = customtkinter.CTkImage(light_image=Image.open("image\\cart.png"),
-                                  dark_image=Image.open("image\\cart.png"),
+        self.buy_photo = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\cart.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\cart.png"),
                                   size=(30, 30))        
         od=get_edit_od(Session(engine),key,M_Name)
         self.key=key
@@ -403,8 +405,8 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.title('拆單')
         self.master=master
-        self.buy_photo = customtkinter.CTkImage(light_image=Image.open("image\\cart.png"),
-                                  dark_image=Image.open("image\\cart.png"),
+        self.buy_photo = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\cart.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\cart.png"),
                                   size=(30, 30))        
         od=get_edit_od(Session(engine),key,M_Name)
         self.key=key

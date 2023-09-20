@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sql_app.database import engine
 from tkcalendar import DateEntry
 import datetime
+import tkinter.messagebox 
 class finish_search_fame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -146,7 +147,7 @@ class finish_search_fame(customtkinter.CTkFrame):
             else:
                 self.toplevel_window.focus()
         else:
-            tk.messagebox.showinfo(title='失敗', message="請勾選想要入帳的訂單", )
+            tkinter.messagebox.showinfo(title='失敗', message="請勾選想要入帳的訂單", )
 class cm_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,selected, **kwargs):
         super().__init__(*args, **kwargs)
@@ -194,7 +195,7 @@ class cm_ToplevelWindow(customtkinter.CTkToplevel):
     def confirm_edit(self):
         try:
             update_balance(db=Session(engine),selected=self.selected_pd,cm=self.ac_now_input_3.get(),m_way=self.ac_now_input_2.get(),remark=self.ac_now_input_5.get(),discount=self.ac_now_input_4.get())
-            tk.messagebox.showinfo(title='入賬成功', message="入賬成功", )
+            tkinter.messagebox.showinfo(title='入賬成功', message="入賬成功", )
             self.destroy()
         except:
-            tk.messagebox.showinfo(title='入賬失敗', message="入賬失敗", )
+            tkinter.messagebox.showinfo(title='入賬失敗', message="入賬失敗", )

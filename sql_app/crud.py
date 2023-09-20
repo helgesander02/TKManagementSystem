@@ -205,22 +205,19 @@ def date_search(db:Session,date1,date2):
     p_internet=db.query(func.sum(models.Order.count),func.sum(models.Order.money)).filter(models.Order.pick_up_date.between(date1,date2),models.Order.path=='網站')[0]
     return od_count,pd_count,p_count,sum_money,sum_discount,sum_profit,on_site,home_delivery,p_on_site,p_internet
 def pd_Analysis(db:Session,date1,date2):
+    pd=db.query(models.product).all()
+    pd_dict={}
+    for i in pd:
+        pd_dict[i.product_Name]=[0,0]
     pd_1=db.query(models.Order).filter(models.Order.pick_up_date.between(date1,date2))
-    x=db.query(models.Order.p_ID).filter(models.Order.pick_up_date.between(date1,date2))
-    z=[]
-    for i in x:
-        z.append(i[0])
-    pd_2=db.query(models.product).filter(models.product.prodcut_ID.not_in(z))
-    pd_3={}
     for i in pd_1:#[數量,價錢]
-        if i.p_ID_.product_Name in pd_3:
-            pd_3[i.p_ID_.product_Name][0]+=i.count
-            pd_3[i.p_ID_.product_Name][1]+=i.money
+        if i.p_ID_.product_Name in pd_dict:
+            pd_dict[i.p_ID_.product_Name][0]+=i.count
+            pd_dict[i.p_ID_.product_Name][1]+=i.money
         else:
-            pd_3[i.p_ID_.product_Name]=[i.count,i.money]
-    for i in pd_2:
-        pd_3[i.product_Name]=[0,0]
-    return pd_3
+            pd_dict[i.p_ID_.product_Name]=[i.count,i.money]
+    
+    return pd_dict    
 def test(db:Session,money1:int,money2:int):
     return db.query(models.Order.M_ID,models.Order.order_number).filter(models.Order.total.between(money1,money2),).distinct()
 def ac_us(db:Session,uid:int):

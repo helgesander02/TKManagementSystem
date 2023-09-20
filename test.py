@@ -13,6 +13,15 @@ import tkinter as tk
 import os
 import time
 import sqlalchemy as sa
+import tkinter.messagebox 
+# a=pd_Analysis(Session(engine),'2000-01-01','2023-09-20')
+pd_=pd_Analysis(Session(engine),'2000-01-01','2023-09-20')
+print(list(pd_.values())[0])
+for i in list(pd_.values()):
+    print(i)
+# tk._test()
+# tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
+# tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )
 # import os
 # Base.metadata.drop_all(engine)
 # DB_HOST = 'localhost'

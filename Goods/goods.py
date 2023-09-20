@@ -8,6 +8,7 @@ from sql_app.crud import *
 import pandas as pd
 import os
 from PIL import Image
+import tkinter.messagebox 
 # Goods () 品項
 class Goods_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -30,6 +31,7 @@ class Goods_Main_Frame(customtkinter.CTkFrame):
             self.bt_frame.reset_color()
             self.bt_frame.edit_button.configure(fg_color = ("#5b5a5a"),text_color='white')
             self.forget_()
+            self.goods_F1.product_.update_product()
             self.goods_F1.pack(fill='both',expand=1,pady=20,padx=30,anchor='nw')
             # self.goods_F.pack_forget()
             # self.goods_F=add_frame(self,  fg_color = ("#EEEEEE"))
@@ -47,14 +49,14 @@ class add_frame(customtkinter.CTkFrame):
 class goods_frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.delete_photo = customtkinter.CTkImage(light_image=Image.open("image\\close.png"),
-                                  dark_image=Image.open("image\\close.png"),
+        self.delete_photo = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\close.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\close.png"),
                                   size=(30, 30))
-        self.edit_photo = customtkinter.CTkImage(light_image=Image.open("image\\pencil.png"),
-                                  dark_image=Image.open("image\\pencil.png"),
+        self.edit_photo = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\pencil.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\pencil.png"),
                                   size=(30, 30))
-        self.image = customtkinter.CTkImage(light_image=Image.open("image\\search.png"),
-                                  dark_image=Image.open("image\\search.png"),
+        self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\search.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\search.png"),
                                   size=(30, 30))        
         self.toplevel_window = None
         a=customtkinter.CTkFrame(self,fg_color=("#DDDDDD"),height=150)
@@ -89,10 +91,11 @@ class goods_frame(customtkinter.CTkFrame):
             df=pd.read_excel(file_path)
             for index,row in df.iterrows():
                 add_pd(db=Session(engine),p_name=row['product_Name'],p_weight=row['product_Weight'],p_price=row['product_Price'])
-            tk.messagebox.showinfo(title='新增成功', message="新增成功", )
+            self.search_()
+            tkinter.messagebox.showinfo(title='新增成功', message="新增成功", )
         except Exception as e:
             print(e)
-            tk.messagebox.showinfo(title='新增成功', message="新增失敗", )
+            tkinter.messagebox.showinfo(title='新增成功', message="新增失敗", )
     def search_(self):
         pd=search_pd(db=Session(engine),pd_name=self.search.get())
         self.history_frame.pack_forget()
@@ -157,25 +160,25 @@ class goods_frame(customtkinter.CTkFrame):
                 if row['content']==None:df.at[index, 'content'] = row['product_Name']
             df.to_excel(fill_path, index=False)
             # current_directory = os.getcwd()
-            tk.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{fill_path}", )              
+            tkinter.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{fill_path}", )              
         except Exception as e:
-            tk.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
+            tkinter.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗{e}", )
     def ed(self):
         try:
             edit_good(db=Session(engine),pid=self.toplevel_window.pid,p_name=self.toplevel_window.name_entry.get(),p_weight=self.toplevel_window.weight_entry.get(),p_price=self.toplevel_window.price_entry.get())
             self.toplevel_window.destroy()
             self.search_()
-            tk.messagebox.showinfo(title='新增成功', message="新增成功", )  
+            tkinter.messagebox.showinfo(title='新增成功', message="新增成功", )  
         except:
-            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
+            tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )
     def add(self):
         try:
             add_pd(db=Session(engine),p_name=self.toplevel_window.name_entry.get(),p_weight=self.toplevel_window.weight_entry.get(),p_price=self.toplevel_window.price_entry.get())
             self.toplevel_window.destroy()
             self.search_()
-            tk.messagebox.showinfo(title='新增成功', message="新增成功", )  
+            tkinter.messagebox.showinfo(title='新增成功', message="新增成功", )  
         except:
-            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )  
+            tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )  
 class edit_product_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args,pid, **kwargs):
         super().__init__(*args, **kwargs)
@@ -208,9 +211,9 @@ class edit_product_ToplevelWindow(customtkinter.CTkToplevel):
         try:
             edit_good(db=Session(engine),pid=self.pid,p_name=self.name_entry.get(),p_weight=self.weight_entry.get(),p_price=self.price_entry.get())
             self.destroy()
-            tk.messagebox.showinfo(title='新增成功', message="新增成功", )  
+            tkinter.messagebox.showinfo(title='新增成功', message="新增成功", )  
         except:
-            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", ) 
+            tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", ) 
 class add_product_ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -237,9 +240,9 @@ class add_product_ToplevelWindow(customtkinter.CTkToplevel):
         try:
             add_pd(db=Session(engine),p_name=self.name_entry.get(),p_weight=self.weight_entry.get(),p_price=self.price_entry.get())
             self.destroy()
-            tk.messagebox.showinfo(title='新增成功', message="新增成功", )  
+            tkinter.messagebox.showinfo(title='新增成功', message="新增成功", )  
         except:
-            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )  
+            tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )  
 class button_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -263,8 +266,8 @@ class button_Frame(customtkinter.CTkFrame):
 class product_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.buy_photo = customtkinter.CTkImage(light_image=Image.open("image\\cart.png"),
-                                  dark_image=Image.open("image\\cart.png"),
+        self.buy_photo = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\cart.png"),
+                                  dark_image=Image.open(f"{os.getcwd()}\\image\\cart.png"),
                                   size=(30, 30))        
         self.product_=customtkinter.CTkFrame(self, fg_color = ("#EEEEEE"))
         prodcuts=get_all_products(Session(engine))
@@ -295,6 +298,29 @@ class product_Frame(customtkinter.CTkFrame):
         self.sum_frame_.pack_propagate(0)
         self.sum_frame_.pack(side='right',anchor='n',fill='both')        
         self.product_.pack(fill='both',expand=1,pady=5)
+    def update_product(self):
+        self.a_frame.pack_forget()
+        self.a_frame.destroy()
+        self.a_frame=customtkinter.CTkScrollableFrame(self.product_,fg_color = ("#EEEEEE"))
+        for i in range(5):
+            self.a_frame.columnconfigure(i,weight=1)
+        prodcuts=get_all_products(Session(engine))
+        def gen_cmd(i):return lambda:self.buy_bt_click(i)
+        for i in range(len(prodcuts)):
+            label_Name=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Name,text_color='black',font=("microsoft yahei", 18, 'bold'))
+            label_Name.grid(row=i,column=0,sticky='w')
+            label_Weight=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Weight,text_color='black',font=("microsoft yahei", 18, 'bold'))
+            label_Weight.grid(row=i,column=1)
+            label_price=customtkinter.CTkLabel(self.a_frame,text=f'{prodcuts[i].product_Price}元',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            label_price.grid(row=i,column=2)
+            
+            spinbox_1 = FloatSpinbox(self.a_frame, width=150, step_size=1)
+            self.bt_group[prodcuts[i].product_Name]=[spinbox_1,prodcuts[i].product_Price]
+            spinbox_1.grid(row=i,column=4,pady=0)
+            buy_button=customtkinter.CTkButton(self.a_frame,image=self.buy_photo, text="",hover=False,  fg_color = ("#EEEEEE"),command=gen_cmd(prodcuts[i].product_Name))
+            buy_button.grid(row=i,column=5, padx=30, pady=0)
+            
+        self.a_frame.pack(side='left',anchor='n',fill='both',expand=1)        
     def buy_bt_click(self,a):
         name=self.sum_frame_.name_entry.get()
         weight=self.sum_frame_.weight_entry.get()
@@ -368,9 +394,9 @@ class sum_Frame(customtkinter.CTkFrame):
     def add_gift_box_(self,pd):
         try:
             add_gift_box(db=Session(engine),pd=pd,name=self.name_entry.get(),weight=self.weight_entry.get(),price=self.price_entry.get())
-            tk.messagebox.showinfo(title='新增成功', message="新增成功", )
+            tkinter.messagebox.showinfo(title='新增成功', message="新增成功", )
         except:
-            tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
+            tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )
 class FloatSpinbox(customtkinter.CTkFrame):
     def __init__(self, *args,
                  width: int = 100,

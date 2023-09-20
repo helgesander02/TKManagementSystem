@@ -3,6 +3,8 @@ from tkcalendar import DateEntry
 from sql_app.crud import date_search,pd_Analysis
 from sqlalchemy.orm import Session
 from sql_app.database import engine
+import pandas as pd
+import tkinter.messagebox
 # Data () 數據
 class Data_Main_Frame(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -40,10 +42,12 @@ class Main_Frame(customtkinter.CTkFrame):#數據分析
         self.date2=DateEntry(a,selectmode='day',date_pattern='yyyy-mm-dd',font=("microsoft yahei", 10, 'bold'))
         self.date1.set_date('2000-01-01')
         search=customtkinter.CTkButton(a,text='查詢',fg_color=("#5b5a5a"),command=self.search,font=("microsoft yahei", 18, 'bold'))
+        output=customtkinter.CTkButton(a,text='輸出資料表',fg_color=("#5b5a5a"),command=self.output_excel,font=("microsoft yahei", 18, 'bold'))
         date_label.grid(row=0,column=0)
         self.date1.grid(row=0,column=1,padx=30)
         self.date2.grid(row=1,column=1,padx=30)
         search.grid(row=0,column=2)
+        output.grid(row=0,column=3,padx=30)
         a.pack(anchor='w',padx=30,fill='x')
         b=customtkinter.CTkFrame(self)
         b.columnconfigure((0,1),weight=1)
@@ -129,6 +133,26 @@ class Main_Frame(customtkinter.CTkFrame):#數據分析
         label3.grid(row=2,column=1)
         path_frame.grid(row=3,column=1,padx=10,pady=10,sticky='nswe')
         b.pack(anchor='w',padx=30,pady=30,fill='both',expand=1)
+    def output_excel(self):
+        # od_count,pd_count,p_count,sum_money,sum_discount,sum_profit,on_site,home_delivery,p_on_site,p_internet=date_search(Session(engine),self.date1.get_date(),self.date2.get_date())
+        try:
+            record=pd.DataFrame(
+            [
+                ['利潤分析','','','','會員分析',''],
+                ['銷售總訂單數量',self.PAlabel1_.cget('text'),'','','銷售量','銷售總金額'],
+                ['銷售總品項數量',self.PAlabel2_.cget('text'),'','現場',self.pulabel1_.cget('text'),self.pulabel2_.cget('text')],
+                ['銷售總購買人數量',self.PAlabel3_.cget('text'),'','宅配',self.pulabel3_.cget('text'),self.pulabel4_.cget('text')],
+                ['銷售總金額',self.PAlabel4_.cget('text'),'','','通路分析',''],
+                ['銷售優惠總額',self.PAlabel5_.cget('text'),'','','銷售量','銷售總金額'],
+                ['銷售總利潤',self.PAlabel6_.cget('text'),'','現場',self.palabel1_.cget('text'),self.palabel2_.cget('text')],
+                ['','','','網站',self.palabel3_.cget('text'),self.palabel4_.cget('text')]
+            ]
+            )
+            fill_path=customtkinter.filedialog.asksaveasfilename(defaultextension='.xlsx',filetypes=[('Excel活頁簿','.xlsx')],initialfile='數據分析')
+            record.to_excel(fill_path,index=False)
+            tkinter.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{fill_path}", )
+        except:
+            tkinter.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗", )
     def search(self):
         od_count,pd_count,p_count,sum_money,sum_discount,sum_profit,on_site,home_delivery,p_on_site,p_internet=date_search(Session(engine),self.date1.get_date(),self.date2.get_date())
         self.PAlabel1_.configure(text=od_count)
@@ -141,6 +165,7 @@ class Main_Frame(customtkinter.CTkFrame):#數據分析
         self.pulabel2_.configure(text=0 if on_site[1]==None else on_site[1])
         self.pulabel3_.configure(text=0 if home_delivery[0]==None else home_delivery[0])
         self.pulabel4_.configure(text=0 if home_delivery[1]==None else home_delivery[1])
+        
         self.palabel1_.configure(text=0 if p_on_site[0]==None else p_on_site[0])
         self.palabel2_.configure(text=0 if p_on_site[1]==None else p_on_site[1])
         self.palabel3_.configure(text=0 if p_internet[0]==None else p_internet[0])
@@ -154,9 +179,12 @@ class Main2_Frame(customtkinter.CTkFrame):#品項分析
         self.date2=DateEntry(a,selectmode='day',date_pattern='yyyy-mm-dd',font=("microsoft yahei", 10, 'bold'))
         self.date1.set_date('2000-01-01')
         search=customtkinter.CTkButton(a,text='查詢',fg_color=("#5b5a5a"),command=self.search,font=("microsoft yahei", 18, 'bold'))
+        output=customtkinter.CTkButton(a,text='輸出資料表',fg_color=("#5b5a5a"),command=self.output_excel,font=("microsoft yahei", 18, 'bold'))
+
         date_label.grid(row=0,column=0)
         self.date1.grid(row=0,column=1,padx=30)
         self.date2.grid(row=1,column=1,padx=30)
+        output.grid(row=0,column=3,padx=30)
         search.grid(row=0,column=2)
         a.pack(anchor='w',fill='x')
         self.b=customtkinter.CTkScrollableFrame(self,fg_color=("#DDDDDD"))
@@ -170,6 +198,26 @@ class Main2_Frame(customtkinter.CTkFrame):#品項分析
         title_label2.grid(row=1,column=1)
         title_label3.grid(row=1,column=2)
         self.b.pack(fill='both',expand=1)
+    def output_excel(self):
+        try:
+            pd_=pd_Analysis(Session(engine),self.date1.get_date(),self.date2.get_date())
+            c1=[]
+            c2=[]
+            for i in list(pd_.values()):
+                c1.append(i[0])
+                c2.append(i[1])
+            a=pd.DataFrame(
+                {
+                    '所有品項名稱':list(pd_.keys()),
+                    '銷售量':c1,
+                    '銷售總金額':c2
+                }
+            )
+            fill_path=customtkinter.filedialog.asksaveasfilename(defaultextension='.xlsx',filetypes=[('Excel活頁簿','.xlsx')],initialfile='品項分析')
+            a.to_excel(fill_path,index=False)
+            tkinter.messagebox.showinfo(title='匯出成功', message=f"匯出成功\n檔案位置：{fill_path}", )
+        except:
+            tkinter.messagebox.showinfo(title='匯出失敗', message=f"匯出失敗", )
     def search(self):
         self.b.pack_forget()
         self.b.destroy()
