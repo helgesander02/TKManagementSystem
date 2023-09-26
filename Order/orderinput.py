@@ -113,7 +113,7 @@ class input_order(customtkinter.CTkFrame):
         self.a_frame.pack(fill='both',anchor='n',expand=1)        
     def add_od(self):
         try:
-            add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),path=self.path.get(),discount=self.sum_frame_.discount_entry.get())
+            add_order(db=Session(engine),phone=self.phone.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),path=self.path.get(),discount=0 if self.sum_frame_.discount_entry.get()=='' else self.sum_frame_.discount_entry.get())
             self.phone.delete(0,customtkinter.END)
             self.path.set('現場')
             self.pick_up.set('現場')

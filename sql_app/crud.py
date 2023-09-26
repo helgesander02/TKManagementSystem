@@ -24,14 +24,14 @@ def get_od(db: Session, user_id: int):
     # return db.query(models.Member).filter(models.Order.order_number == od_nb).first()
     return db.query(models.Order).filter(models.Order.M_ID == user_id)
 def add_order(db:Session,phone:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,path:str,discount:int):
+    
     try:
         mid=db.query(models.member).filter(models.member.Phone==phone.strip()).first().ID
     except:
         tk.messagebox.showinfo(title='失敗', message="未輸入電話或電話輸入錯誤", )
-    try:
+    max_value=0
+    if db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first()!=None:
         max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first().order_number
-    except:
-        max_value=0
     su=0
     i=0
     for key,value in product_.items():
@@ -136,58 +136,66 @@ def ac_get_od(db:Session,o_nb,m_id):
 def spilt_bill_pd(db:Session,o_nb:int,phone:str):
     mid=db.query(models.member).filter(models.member.Phone==phone).first().ID
     return db.query(models.Order).filter(models.Order.order_number==o_nb,models.Order.M_ID==mid)
-def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,m_id:int,remark:str,product_:dict,date_:date,key:int,M_name:str,discount:int):
+def spilt_bill_add(db:Session,phone:str,path:str,Pick_up:str,remark:str,product_:dict,date_:date,key:int,M_name:str,discount:int):
     #刪除原本的產品 product_ {'產品':[數量,價錢]}
-    mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID
-    di=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid).order_by(models.Order.od_id).first().discount
-    for i in product_.keys():
-        pid=db.query(models.product).filter(models.product.product_Name == i ).first().prodcut_ID
-        od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
-        if (od.count-product_[i][0])==0:
-            db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).delete()
-            db.commit()
+    try:
+        if db.query(models.member).filter(models.member.Phone==M_name).first()!=None:
+            mid=db. query(models.member).filter(models.member.Phone==M_name).first().ID
         else:
+            raise 
+        di=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid).order_by(models.Order.od_id).first().discount
+        for i in product_.keys():
+            pid=db.query(models.product).filter(models.product.product_Name == i ).first().prodcut_ID
             od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
-            od.count-=product_[i][0]
-            od.money=product_[i][1]
-            db.commit()
- 
-    a=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid).order_by(models.Order.od_id)
-    total_=int(db.query(func.sum(models.Order.money)).filter(models.Order.order_number == key,models.Order.M_ID==mid).first()[0])
-    i=0
-    for l in a:
-        if i==0:
-            l.discount=di
-            l.total=total_-di
-            db.commit()
-            i+=1
-        else:
-            l.total=total_-di
-            l.discount=0
-            db.commit()
-    try:
-        mid=db.query(models.member).filter(models.member.Phone==M_name).first().ID
-    except:
-        tk.messagebox.showinfo(title='失敗', message="請輸入電話", )
-    try:
-        max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first().order_number
-    except:
+            if (od.count-product_[i][0])==0:
+                db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).delete()
+                db.commit()
+            else:
+                od=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid,models.Order.p_ID==pid).first()
+                od.count-=product_[i][0]
+                od.money=product_[i][1]
+                db.commit()
+    
+        a=db.query(models.Order).filter(models.Order.order_number == key,models.Order.M_ID==mid).order_by(models.Order.od_id)
+        if db.query(func.sum(models.Order.money)).filter(models.Order.order_number == key,models.Order.M_ID==mid).first()[0]!=None:
+            total_=int(db.query(func.sum(models.Order.money)).filter(models.Order.order_number == key,models.Order.M_ID==mid).first()[0])
+            i=0
+            for l in a:
+                if i==0:
+                    l.discount=di
+                    l.total=total_-di
+                    db.commit()
+                    i+=1
+                else:
+                    l.total=total_-di
+                    l.discount=0
+                    db.commit()
+
+        # try:
+        #     mid=db. query(models.member).filter(models.member.Phone==M_name).first().ID
+        # except:
+        #     tk.messagebox.showinfo(title='失敗', message="請輸入電話", )
         max_value=0
-    su=0
-    i=0
-    for key,value in product_.items():
-        su+=product_[key][1]
-    for key,value in product_.items():
-        pid=db.query(models.product).filter(models.product.product_Name == key ).first().prodcut_ID
-        if i==0:
-            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),discount=discount)
-            i+=1
-        else:
-            new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),discount=0)
-        
-        db.add(new_od)
-        db.commit()
-        db.refresh(new_od)
+        if db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first()!=None:
+            max_value=db.query(models.Order).order_by(desc('order_number')).filter(models.Order.M_ID==mid).first().order_number
+        su=0
+        i=0
+        for key,value in product_.items():
+            su+=product_[key][1]
+        for key,value in product_.items():
+            pid=db.query(models.product).filter(models.product.product_Name == key ).first().prodcut_ID
+            if i==0:
+                new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),discount=discount)
+                i+=1
+            else:
+                new_od=models.Order(order_number=max_value+1,M_ID=mid,p_ID=pid,path=path,pick_up=Pick_up,pick_up_tf='否',count=value[0],Remark=remark,pick_up_date=date_,money=value[1],total=su-int(discount),discount=0)
+            
+            db.add(new_od)
+            db.commit()
+            db.refresh(new_od)
+    except Exception as e:
+        print(e)
+        tk.messagebox.showinfo(title='失敗', message="請輸入電話", )
 def date_search(db:Session,date1,date2):
     od_count=db.query(models.Order.order_number,models.Order.M_ID).filter(models.Order.pick_up_date.between(date1,date2)).distinct().count()
     pd_count=db.query(func.sum(models.Order.count)).filter(models.Order.pick_up_date.between(date1,date2)).first()[0]

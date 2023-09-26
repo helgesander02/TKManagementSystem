@@ -15,10 +15,10 @@ import time
 import sqlalchemy as sa
 import tkinter.messagebox 
 # a=pd_Analysis(Session(engine),'2000-01-01','2023-09-20')
-pd_=pd_Analysis(Session(engine),'2000-01-01','2023-09-20')
-print(list(pd_.values())[0])
-for i in list(pd_.values()):
-    print(i)
+# pd_=pd_Analysis(Session(engine),'2000-01-01','2023-09-20')
+# print(list(pd_.values())[0])
+# for i in list(pd_.values()):
+#     print(i)
 # tk._test()
 # tk.messagebox.showinfo(title='新增失敗', message="新增失敗", )
 # tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )
@@ -31,4 +31,26 @@ for i in list(pd_.values()):
 # restore_PATH = customtkinter.filedialog.askopenfilename()
 # restore_CMD=f'psql --dbname=postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME} -f {restore_PATH}'
 # os.system(restore_CMD)
+# from tkinter import *
 
+# # Create an instance of tkinter frame
+# win = Tk()
+
+# # Set the size of the tkinter window
+# win.geometry("700x350")
+
+# def disable_entry():
+#    entry.config(state= "disabled")
+
+# # Create an entry widget
+# entry=Entry(win, width= 40, font= ('Helvetica 16'))
+# entry.insert(0,'abccc')
+# entry.config(state= "disabled")
+# entry.pack(pady=20)
+
+
+# # Create a button
+# button=Button(win, text="Disable Entry", font=('Arial', 12), command=disable_entry)
+# button.pack()
+
+# win.mainloop()

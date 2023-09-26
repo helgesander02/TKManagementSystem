@@ -194,7 +194,7 @@ class order_List(customtkinter.CTkFrame):
             self.toplevel_window.focus()
     def spilt_od(self):
         try:
-            spilt_bill_add(db=Session(engine),phone=self.toplevel_window.phone.get(),path=self.toplevel_window.path.get(),Pick_up=self.toplevel_window.pick_up.get(),remark=self.toplevel_window.Remark_textbox.get(1.0,'end'),product_=self.toplevel_window.buy_list,m_id='1',date_=self.toplevel_window.date_.get_date(),key=self.toplevel_window.key,M_name=self.toplevel_window.M_Name,discount=self.toplevel_window.sum_frame_.discount_entry.get())
+            spilt_bill_add(db=Session(engine),phone=self.toplevel_window.phone.get(),path=self.toplevel_window.path.get(),Pick_up=self.toplevel_window.pick_up.get(),remark=self.toplevel_window.Remark_textbox.get(1.0,'end'),product_=self.toplevel_window.buy_list,date_=self.toplevel_window.date_.get_date(),key=self.toplevel_window.key,M_name=self.toplevel_window.M_Name,discount=0 if self.toplevel_window.sum_frame_.discount_entry.get()=='' else self.toplevel_window.sum_frame_.discount_entry.get())
             self.toplevel_window.destroy()
             self.search()  
             tk.messagebox.showinfo(title='修改成功', message="修改成功", )
@@ -210,7 +210,7 @@ class order_List(customtkinter.CTkFrame):
             self.toplevel_window.focus()
     def edit_od(self):
         try:
-            edit_order_(db=Session(engine),phone=self.toplevel_window.phone.get(),path=self.toplevel_window.path.get(),Pick_up=self.toplevel_window.pick_up.get(),remark=self.toplevel_window.Remark_textbox.get(1.0,'end'),product_=self.toplevel_window.buy_list,date_=self.toplevel_window.date_.get_date(),key=self.toplevel_window.key,M_name=self.toplevel_window.M_Name,discount=self.toplevel_window.sum_frame_.discount_entry.get())
+            edit_order_(db=Session(engine),phone=self.toplevel_window.phone.get(),path=self.toplevel_window.path.get(),Pick_up=self.toplevel_window.pick_up.get(),remark=self.toplevel_window.Remark_textbox.get(1.0,'end'),product_=self.toplevel_window.buy_list,date_=self.toplevel_window.date_.get_date(),key=self.toplevel_window.key,M_name=self.toplevel_window.M_Name,discount=0 if self.toplevel_window.sum_frame_.discount_entry.get()=='' else self.toplevel_window.sum_frame_.discount_entry.get())
             self.toplevel_window.destroy()
             self.search()
             tk.messagebox.showinfo(title='修改成功', message="修改成功", )
@@ -308,6 +308,7 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         self.ph_label=customtkinter.CTkLabel(self.input_top_, text="電話",text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.phone=customtkinter.CTkEntry(self.input_top_, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.phone.insert(tk.END,od[0].M_ID_.Phone)
+        self.phone.configure(state='disabled')
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
         self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black',font=("microsoft yahei", 18, 'bold'))
@@ -373,7 +374,7 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
     def add_od(self):
 
         try:
-            edit_order_(db=Session(engine),phone=self.phone.get(),path=self.path.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,date_=self.date_.get_date(),key=self.key,M_name=self.M_Name,discount=self.sum_frame_.discount_entry.get())
+            edit_order_(db=Session(engine),phone=self.phone.get(),path=self.path.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,date_=self.date_.get_date(),key=self.key,M_name=self.M_Name,discount=0 if self.sum_frame_.discount_entry.get()=="" else self.sum_frame_.discount_entry.get())
 
             self.destroy()
             tk.messagebox.showinfo(title='修改成功', message="修改成功", )
@@ -420,6 +421,7 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
         self.ph_label=customtkinter.CTkLabel(self.input_top_, text="電話",text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.phone=customtkinter.CTkEntry(self.input_top_, placeholder_text="電話",fg_color = ("#DDDDDD"),text_color='black',font=("microsoft yahei", 18, 'bold'))
         self.phone.insert(tk.END,od[0].M_ID_.Phone)
+        self.phone.configure(state='disabled')
         self.ph_label.grid(row=0,column=0,padx=30,pady=5)
         self.phone.grid(row=0, column=1,padx=30,pady=5)
         self.path_label=customtkinter.CTkLabel(self.input_top_, text="通路",text_color='black',font=("microsoft yahei", 18, 'bold'))
@@ -486,7 +488,7 @@ class split_bill_ToplevelWindow(customtkinter.CTkToplevel):
         self.product_.pack(fill='both',expand=1,padx=30,pady=5)
     def add_od(self):
         try:
-            spilt_bill_add(db=Session(engine),phone=self.phone.get(),path=self.path.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,m_id='1',date_=self.date_.get_date(),key=self.key,M_name=self.M_Name,discount=self.sum_frame_.discount_entry.get())
+            spilt_bill_add(db=Session(engine),phone=self.phone.get(),path=self.path.get(),Pick_up=self.pick_up.get(),remark=self.Remark_textbox.get(1.0,'end'),product_=self.buy_list,date_=self.date_.get_date(),key=self.key,M_name=self.M_Name,discount=0 if self.sum_frame_.discount_entry.get()=="" else self.sum_frame_.discount_entry.get())
 
             self.destroy()
             tk.messagebox.showinfo(title='修改成功', message="修改成功", )
