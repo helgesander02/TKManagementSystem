@@ -15,7 +15,9 @@ from sql_app.database import engine,Base
 from PIL import Image
 import datetime
 from backup import backup_Frame
-import tkinter.messagebox 
+import tkinter.messagebox
+from typing import Union
+from typing import Callable 
 # https://steam.oxxostudio.tw/category/python/tkinter/grid.html
 # .grid 詳細解釋
 # https://vocus.cc/article/62577184fd89780001e55c39
@@ -167,7 +169,7 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
         except:
             tkinter.messagebox.showinfo(title='新增失敗', message="新增失敗", )
 class Schedule_Frame(customtkinter.CTkScrollableFrame):
-    def __init__(self, master,date_, **kwargs):
+    def __init__(self, master,date_,page, **kwargs):
         super().__init__(master, **kwargs)
         self.image = customtkinter.CTkImage(light_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
                                   dark_image=Image.open(f"{os.getcwd()}\\image\\user.png"),
@@ -201,14 +203,11 @@ class Schedule_Frame(customtkinter.CTkScrollableFrame):
         def gen_cmd(i):return lambda:self.od_info(i)
         def get_user(i):return lambda:self.get_u(i)
         if date_!='':
+            
+            order_list,self.page_max=home_search_date(db=Session(engine),date_=date_,page=page)
             od_l={}
-            order_list=home_search_date(db=Session(engine),date_=date_)
             for i in order_list:
-                if f'{i.order_number}{i.M_ID}' in od_l:
-                    od_l[f'{i.order_number}{i.M_ID}'][4]+=f',{i.p_ID_.product_Name}'
-                    # od_l[f'{i.order_number}{i.M_ID}'][6]+=i.count*i.p_ID_.product_Price
-                else:
-                    od_l[f'{i.order_number}{i.M_ID}']=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.total]
+                od_l[f'{i.id}']=[i.m_id_.Phone,i.id,i.pick_up_date,i.pick_up,','.join(list(map(lambda x:x.p_id_.product_Name,i.orders_))),i.pick_up_tf,i.total]
             i=1
             for key,value in od_l.items():
                 a=customtkinter.CTkButton(self,image=self.image,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=get_user(value[0]))
@@ -296,9 +295,9 @@ class info_window(customtkinter.CTkToplevel):
         edit_n1=customtkinter.CTkLabel(self,text='通路：',text_color='black',font=("microsoft yahei", 18, 'bold'))
         edit_n2=customtkinter.CTkLabel(self,text='備註：',text_color='black',font=("microsoft yahei", 18, 'bold'))
         
-        edit_nL=customtkinter.CTkLabel(self,text=f'{od_.order_number+od_.M_ID}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_nL=customtkinter.CTkLabel(self,text=f'{od_.id}',text_color='black',font=("microsoft yahei", 18, 'bold'))
         edit_n1L=customtkinter.CTkLabel(self,text=f'{od_.pick_up}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        edit_n2L=customtkinter.CTkLabel(self,text=f'{od_.Remark}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        edit_n2L=customtkinter.CTkLabel(self,text=f'{od_.remark}',text_color='black',font=("microsoft yahei", 18, 'bold'))
         
         bt.grid(row=0,column=0,columnspan=2,pady=20)
         edit_n.grid(row=1,column=0)#姓名
@@ -329,14 +328,89 @@ class Home_Main_Frame(customtkinter.CTkFrame):
         self.se_date.pack(anchor='w',padx=30)
         #Schedule_Frame
         
-        self.Schedule_Frame_ = Schedule_Frame(self,date_=datetime.date.today(),  fg_color = ("#DDDDDD"))
+        self.Schedule_Frame_ = Schedule_Frame(self,date_=datetime.date.today(),page=1,  fg_color = ("#DDDDDD"))
         self.Schedule_Frame_.pack(fill='both',expand=1,padx=30)
+        self.page_=FloatSpinbox(self)
+        self.page_.page_max.configure(text=f'/{self.Schedule_Frame_.page_max//20+1}')
+        self.page_.pack(pady=20,side='bottom')
+        def page_search(event):
+            self.search_date()
+        self.page_.add_button.bind("<Button-1>", page_search)
+        self.page_.subtract_button.bind("<Button-1>", page_search)
+        self.page_.entry.bind('<Return>',page_search)
     def search_date(self):
         self.Schedule_Frame_.pack_forget()
         self.Schedule_Frame_.destroy()
-        self.Schedule_Frame_=Schedule_Frame(self,date_=self.date_.get_date(),  fg_color = ("#DDDDDD"))
+        self.Schedule_Frame_=Schedule_Frame(self,date_=self.date_.get_date(),page=1 if self.page_.get()==None else self.page_.get(),  fg_color = ("#DDDDDD"))
+        self.page_.page_max.configure(text=f'/{self.Schedule_Frame_.page_max//20+1}')
         self.Schedule_Frame_.pack(fill='both',expand=1,padx=30) 
+class FloatSpinbox(customtkinter.CTkFrame):
+    def __init__(self, *args,
+                 width: int = 200,
+                 height: int = 32,
+                 step_size: Union[int, float] = 1,
+                 command: Callable = None,
+                 **kwargs):
+        super().__init__(*args, width=width, height=height, **kwargs)
 
+        self.step_size = step_size
+        self.command = command
+
+        self.configure(fg_color=("#DDDDDD", "#DDDDDD"))  # set frame color
+
+        self.grid_columnconfigure((0, 3), weight=0)  # buttons don't expand
+        self.grid_columnconfigure((1, 2), weight=0)  # entry expands
+       
+        self.subtract_button = customtkinter.CTkButton(self, text="上一頁",fg_color=("#5b5a5a"), width=height-6, height=height-6,
+                                                       command=self.subtract_button_callback)
+        self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
+
+        self.entry = customtkinter.CTkEntry(self, width=width-(2*height), height=height-6, border_width=0)
+        self.entry.grid(row=0, column=1, padx=3, pady=3)
+        self.page_max=customtkinter.CTkLabel(self)
+        self.page_max.grid(row=0, column=2, padx=3, pady=3)
+        self.add_button = customtkinter.CTkButton(self, text="下一頁",fg_color=("#5b5a5a"), width=height-6, height=height-6,
+                                                  command=self.add_button_callback)
+        self.add_button.grid(row=0, column=3, padx=(0, 3), pady=3)
+
+        # default value
+        self.entry.insert(0, "1")
+
+    def add_button_callback(self):
+        if self.command is not None:
+            self.command()
+        try:
+            value = int(self.entry.get()) + self.step_size
+            self.entry.delete(0, "end")
+            self.entry.insert(0, value)
+        except ValueError:
+            return
+
+    def subtract_button_callback(self):
+        if self.command is not None:
+            self.command()
+        try:
+            value = int(self.entry.get()) - self.step_size
+            self.entry.delete(0, "end")
+            if value<=0:
+                self.entry.insert(0, 1)
+            else:
+                self.entry.insert(0, value)
+        except ValueError:
+            return
+
+    def get(self) -> Union[float, None]:
+        try:
+            return int(self.entry.get())
+        except ValueError:
+            return None
+
+    def set(self, value: float):
+        self.entry.delete(0, "end")
+        if value<=0:
+           self.entry.insert(0, str(1))
+        else: 
+            self.entry.insert(0, str(int(value)))
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()

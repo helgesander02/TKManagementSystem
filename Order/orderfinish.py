@@ -81,13 +81,14 @@ class finish_search_fame(customtkinter.CTkFrame):
             self.phone.configure(text=f'　　手機：{user.Phone}')
             self.remark.configure(text=f'備註：{user.Remark}')
             for i in user.orders:
-                if i.order_number in self.od_l:
-                    self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
-                    if i.discount!=None:self.od_l[i.order_number][3]=i.discount
-                else:
-                    self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.discount,i.pick_up_date]
+                self.od_l[i.order_number]=[i.m_id_.ID,','.join(list(map(lambda x:x.p_id_.product_Name,i.orders_))),0,i.discount,i.pick_up_date]
+                # if i.order_number in self.od_l:
+                #     self.od_l[i.order_number][1]+=f',{i.p_ID_.product_Name}'
+                #     if i.discount!=None:self.od_l[i.order_number][3]=i.discount
+                # else:
+                #     self.od_l[i.order_number]=[i.M_ID_.ID,i.p_ID_.product_Name,i.money,i.discount,i.pick_up_date]
         except Exception as e:
-            
+            print(e)
             self.od_l={}
             self.customer_name.configure(text=f'客戶名稱：')
             self.address.configure(text=f'地址：')

@@ -232,19 +232,12 @@ class od_info_ToplevelWindow(customtkinter.CTkToplevel):
         a=customtkinter.CTkLabel(self,text='金額',text_color='black',font=("microsoft yahei", 16, 'bold'))
         a.grid(row=0,column=4)
         self.toplevel_window = None
-        def gen_cmd(i):return lambda:self.od_info(i)
-        def get_user(i):return lambda:self.get_u(i)
         od_l={}
         order_list=ac_get_od(Session(engine),o_nb=o_nb,m_id=m_id)
         for i in order_list:
-            if i.order_number in od_l:
-                od_l[i.order_number][4]+=f',{i.p_ID_.product_Name}'
-                od_l[i.order_number][6]+=i.count*i.p_ID_.product_Price
-            else:
-                od_l[i.order_number]=[i.M_ID_.Phone,i.od_id,i.pick_up_date,i.pick_up,i.p_ID_.product_Name,i.pick_up_tf,i.count*i.p_ID_.product_Price]
-            i=1
+            od_l[i.order_number]=[i.m_id_.Phone,i.id,i.pick_up_date,i.pick_up,','.join(list(map(lambda x :x.p_id_.product_Name,i.orders_))),i.pick_up_tf,i.total]
+        i=1
         for key,value in od_l.items():
-
             a=customtkinter.CTkLabel(self,text=f'{value[2]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             a.grid(row=i,column=0) 
             a=customtkinter.CTkLabel(self,text=f'{value[3]}',text_color='black',font=("microsoft yahei", 18, 'bold'))

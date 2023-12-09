@@ -120,7 +120,8 @@ class sum_Frame(customtkinter.CTkFrame):
             self.buy_list[self.a]=[self.bt_group[self.a][0].get(),self.bt_group[self.a][1]*self.bt_group[self.a][0].get()]
             if self.buy_list[self.a][0]==0:
                 del self.buy_list[self.a]
-                del self.bt_group[self.a]
+                self.bt_group[self.a][0].set(0)
+                # del self.bt_group[self.a]
         i=1
         self.s=0
         
