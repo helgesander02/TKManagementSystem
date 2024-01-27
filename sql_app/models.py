@@ -36,11 +36,11 @@ class member(Base):
 class product(Base):
     __tablename__ = "product" # table name in the database
 
-    prodcut_ID = Column(Integer, primary_key=True, index=True,autoincrement=True)
+    prodcut_ID = Column(Integer, primary_key=True,autoincrement=True)
     product_Name = Column(String)
     product_Weight = Column(String)
     product_Price = Column(Integer, default=True)
-    orders = relationship('order_list', back_populates='p_id_')
+    orders = relationship('order_list', back_populates='p_id_', cascade="all, delete-orphan")
     content=Column(String)
     # orders = relationship('Order', secondary=association_table, back_populates='p_ID_',overlaps="M_ID")
 class receipt(Base):
@@ -74,7 +74,7 @@ class order_list(Base):
     id=Column(Integer, primary_key=True, index=True,autoincrement=True,unique=True)
     od_id=Column(ForeignKey("order_new.id"))
     od_id_=relationship('order_new', back_populates='orders_')
-    p_id=Column(ForeignKey("product.prodcut_ID"))
+    p_id=Column(ForeignKey("product.prodcut_ID",ondelete='CASCADE'))
     p_id_=relationship('product', back_populates='orders')
     count=Column(Integer)
     money=Column(Integer)

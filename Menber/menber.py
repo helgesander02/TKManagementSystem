@@ -28,9 +28,9 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         # self.columnconfigure((0,1,2,3),weight=1)
         search_=customtkinter.CTkFrame(self,fg_color = ("#DDDDDD"),height=150)
         # search_.columnconfigure((1),weight=1)
-        # search_label=customtkinter.CTkLabel(search_,text='會員查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+        # search_label=customtkinter.CTkLabel(search_,text='會員查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 22, 'bold'))
         # search_label.pack(side='left')
-        self.search=customtkinter.CTkEntry(search_,fg_color = ("#EEEEEE"),width=300,placeholder_text='電話查詢',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        self.search=customtkinter.CTkEntry(search_,fg_color = ("#EEEEEE"),width=300,placeholder_text='電話查詢',text_color='black',font=("microsoft yahei", 22, 'bold'))
         self.search_bt=customtkinter.CTkButton(search_, text="", width=40,
                                                         hover=False,image=self.image,fg_color = "#DDDDDD",
                                                         command=self.member_search_click)
@@ -39,14 +39,14 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         self.search_bt.pack(side='left')
         import_bt=customtkinter.CTkButton(search_,text='匯入資料',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 18, 'bold'),command=self.import_date)
+                                                        font=("microsoft yahei", 22, 'bold'),command=self.import_date)
         # ,command=self.open_edit_toplevel
         export_bt=customtkinter.CTkButton(search_,text='匯出資料',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 18, 'bold'),command=self.export_date)       
+                                                        font=("microsoft yahei", 22, 'bold'),command=self.export_date)       
         add_bt=customtkinter.CTkButton(search_,text='新增',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 18, 'bold'),command=self.open_add_toplevel)
+                                                        font=("microsoft yahei", 22, 'bold'),command=self.open_add_toplevel)
         self.page_=FloatSpinbox(self)
         
         export_bt.pack(side='right',padx=10)
@@ -61,7 +61,7 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         self.choose_label2.pack(side='left',padx=10)
         self.choose_bt=customtkinter.CTkButton(self.choose_frame,text='訂購',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 18, 'bold'))
+                                                        font=("microsoft yahei", 22, 'bold'))
         self.choose_bt.pack(side='left')
         self.choose_frame.pack(anchor='w',padx=50)
 
@@ -110,13 +110,13 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         
         member,page_max_=member_search(db=Session(engine),search=self.search.get(),page=1 if self.page_.get()==None else self.page_.get())
         self.page_.page_max.configure(text=f'/{page_max_//20+1}')
-        order_n=customtkinter.CTkLabel(self.history_frame,text='會員姓名',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n1=customtkinter.CTkLabel(self.history_frame,text='手機',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n2=customtkinter.CTkLabel(self.history_frame,text='地址',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n3=customtkinter.CTkLabel(self.history_frame,text='備註',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n4=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n5=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black',font=("microsoft yahei", 18, 'bold'))
-        order_n6=customtkinter.CTkLabel(self.history_frame,text='訂購',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n=customtkinter.CTkLabel(self.history_frame,text='會員姓名',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        order_n1=customtkinter.CTkLabel(self.history_frame,text='手機',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        order_n2=customtkinter.CTkLabel(self.history_frame,text='地址',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='備註',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        order_n4=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        order_n5=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        order_n6=customtkinter.CTkLabel(self.history_frame,text='訂購',text_color='black',font=("microsoft yahei", 22, 'bold'))
         # a=customtkinter.CTkFrame(self.history_frame_title,width=20,height=5,fg_color= ("#EEEEEE"))
         order_n.grid(row=0,column=0,sticky='w')
         order_n1.grid(row=0,column=1,sticky='w')
@@ -131,10 +131,10 @@ class Menber_Main_Frame(customtkinter.CTkFrame):
         
         i=1
         for k in member:
-            a1=customtkinter.CTkLabel(self.history_frame,text=f'{k.Name.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            a2=customtkinter.CTkLabel(self.history_frame,text=f'{k.Phone.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            a3=customtkinter.CTkLabel(self.history_frame,text=f'{k.Address.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))         
-            a4=customtkinter.CTkLabel(self.history_frame,text=' ' if k.Remark==None or k.Remark=='NaN' else f'{k.Remark.strip()}',text_color='black',font=("microsoft yahei", 18, 'bold'))            
+            a1=customtkinter.CTkLabel(self.history_frame,text=f'{k.Name.strip()}',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            a2=customtkinter.CTkLabel(self.history_frame,text=f'{k.Phone.strip()}',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            a3=customtkinter.CTkLabel(self.history_frame,text=f'{k.Address.strip()}',text_color='black',font=("microsoft yahei", 22, 'bold'))         
+            a4=customtkinter.CTkLabel(self.history_frame,text=' ' if k.Remark==None or k.Remark=='NaN' else f'{k.Remark.strip()}',text_color='black',font=("microsoft yahei", 22, 'bold'))            
             a5=customtkinter.CTkButton(self.history_frame,width=30,image=self.edit_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd1(k.Phone))
             a6=customtkinter.CTkButton(self.history_frame,width=30,image=self.delete_photo,hover=False,text='',fg_color = ("#DDDDDD"),text_color='black',command=gen_cmd(k.ID))
             a7=customtkinter.CTkButton(self.history_frame,width=30,text='選擇',fg_color=("#5b5a5a"),text_color='white',command=go_order(k.Phone,k.Name))
@@ -190,10 +190,10 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
             self.columnconfigure((0,1),weight=1)
             self.rowconfigure((2,3),weight=2)
             user=get_user(Session(engine),self.user_id)
-            edit_n=customtkinter.CTkLabel(self,text='姓名',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            edit_n1=customtkinter.CTkLabel(self,text='電話',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            edit_n2=customtkinter.CTkLabel(self,text='地址',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            edit_n3=customtkinter.CTkLabel(self,text='備註',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            edit_n=customtkinter.CTkLabel(self,text='姓名',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            edit_n1=customtkinter.CTkLabel(self,text='電話',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            edit_n2=customtkinter.CTkLabel(self,text='地址',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            edit_n3=customtkinter.CTkLabel(self,text='備註',text_color='black',font=("microsoft yahei", 22, 'bold'))
             self.edit_entry_n=customtkinter.CTkEntry(self)
             self.edit_entry_n1=customtkinter.CTkEntry(self)
             self.edit_entry_n2=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
@@ -203,8 +203,8 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
             self.edit_entry_n1.insert(END,f'{user.Phone}')
             self.edit_entry_n2.insert(END,f'{user.Address}')
             self.edit_entry_n3.insert(END,f'{user.Remark}')
-            self.cancel_bt=customtkinter.CTkButton(self,text='取消',fg_color=("#5b5a5a"),command=self.cancel_click,font=("microsoft yahei", 18, 'bold'))
-            self.confirm_bt=customtkinter.CTkButton(self,text='確定更改',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
+            self.cancel_bt=customtkinter.CTkButton(self,text='取消',fg_color=("#5b5a5a"),command=self.cancel_click,font=("microsoft yahei", 22, 'bold'))
+            self.confirm_bt=customtkinter.CTkButton(self,text='確定更改',fg_color=("#5b5a5a"),font=("microsoft yahei", 22, 'bold'))
             self.cancel_bt.grid(row=4,column=0,sticky='e',padx=30,pady=10)
             self.confirm_bt.grid(row=4,column=1,sticky='e',padx=30,pady=10)
 
@@ -219,8 +219,8 @@ class edit_ToplevelWindow(customtkinter.CTkToplevel):
         except Exception as e:
             print(e)
             self.title('錯誤')
-            error_label=customtkinter.CTkLabel(self,text='查詢失敗，請回上層進行查詢',font=("microsoft yahei", 18, 'bold'))
-            error_bt=customtkinter.CTkButton(self,text='回上層',command=self.cancel_click,font=("microsoft yahei", 18, 'bold'))
+            error_label=customtkinter.CTkLabel(self,text='查詢失敗，請回上層進行查詢',font=("microsoft yahei", 22, 'bold'))
+            error_bt=customtkinter.CTkButton(self,text='回上層',command=self.cancel_click,font=("microsoft yahei", 22, 'bold'))
             error_label.pack(anchor='center',fill='y',pady=30)
             error_bt.pack(anchor='center',fill='y',pady=10)
     def cancel_click(self):
@@ -234,17 +234,17 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             self.columnconfigure((0,1),weight=1)
             self.rowconfigure((3,4),weight=2)
             
-            edit_n=customtkinter.CTkLabel(self,text='姓名',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            edit_n1=customtkinter.CTkLabel(self,text='電話',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            edit_n2=customtkinter.CTkLabel(self,text='地址',text_color='black',font=("microsoft yahei", 18, 'bold'))
-            edit_n3=customtkinter.CTkLabel(self,text='備註',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            edit_n=customtkinter.CTkLabel(self,text='姓名',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            edit_n1=customtkinter.CTkLabel(self,text='電話',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            edit_n2=customtkinter.CTkLabel(self,text='地址',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            edit_n3=customtkinter.CTkLabel(self,text='備註',text_color='black',font=("microsoft yahei", 22, 'bold'))
             self.edit_entry_n=customtkinter.CTkEntry(self)
             self.edit_entry_n1=customtkinter.CTkEntry(self)
             self.edit_entry_n2=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
             self.edit_entry_n3=customtkinter.CTkTextbox(self,border_color='black',border_width=2)
 
-            self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click,fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
-            self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
+            self.cancel_bt=customtkinter.CTkButton(self,text='取消',command=self.cancel_click,fg_color=("#5b5a5a"),font=("microsoft yahei", 22, 'bold'))
+            self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 22, 'bold'))
             self.cancel_bt.grid(row=5,column=0,sticky='e',padx=30,pady=10)
             self.confirm_bt.grid(row=5,column=1,sticky='e',padx=30,pady=10)
             edit_n.grid(row=1,column=0)#姓名
@@ -258,8 +258,8 @@ class add_ToplevelWindow(customtkinter.CTkToplevel):
             self.edit_entry_n3.grid(row=4,column=1,sticky='nsew',padx=10,pady=10)
             
         except:
-            error_label=customtkinter.CTkLabel(self,text='查詢失敗，請回上層進行查詢',font=("microsoft yahei", 18, 'bold'))
-            error_bt=customtkinter.CTkButton(self,text='回上層',command=self.cancel_click,font=("microsoft yahei", 18, 'bold'))
+            error_label=customtkinter.CTkLabel(self,text='查詢失敗，請回上層進行查詢',font=("microsoft yahei", 22, 'bold'))
+            error_bt=customtkinter.CTkButton(self,text='回上層',command=self.cancel_click,font=("microsoft yahei", 22, 'bold'))
             error_label.pack(anchor='center',fill='y',pady=30)
             error_bt.pack(anchor='center',fill='y',pady=10)
     def cancel_click(self):

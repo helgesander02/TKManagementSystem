@@ -14,8 +14,9 @@ import os
 import time
 import sqlalchemy as sa
 import tkinter.messagebox
-a=date_search(Session(engine),'2000-01-01','2023-10-10')
-print(a)
+# a=date_search(Session(engine),'2000-01-01','2023-10-10')
+# print(a)
+models.product.delete()
 # order_list,page_max=home_search_date(db=Session(engine),date_='2023-10-7',page=1)
 # od_l={}
 # for i in order_list:

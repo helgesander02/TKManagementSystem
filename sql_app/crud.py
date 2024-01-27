@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import or_,and_
-from sqlalchemy import func,desc,delete
+from sqlalchemy import func,desc,delete,Connection,text
 from . import models
 from datetime import date
 import tkinter as tk
@@ -82,6 +82,11 @@ def edit_order_(db:Session,phone:str,Pick_up:str,path:str,remark:str,product_:di
         db.refresh(new_od)
 def delete_product(db:Session,p_id:int):
     db.query(models.product).filter(models.product.prodcut_ID == p_id).delete()
+    db.commit()
+def delete_all_pd(db:Session):
+    # db.execute(text('DELETE FROM product'))
+    # Connection.execute('DELETE FROM product')
+    db.query(models.product).filter().delete()
     db.commit()
 def add_pd(db:Session,p_name:str,p_weight:str,p_price:int):
     new_pd=models.product(product_Name=p_name,product_Weight=p_weight,product_Price=p_price)
