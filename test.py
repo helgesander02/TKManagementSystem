@@ -13,20 +13,7 @@ import tkinter as tk
 import os
 import time
 import sqlalchemy as sa
-import tkinter.messagebox
-# a=date_search(Session(engine),'2000-01-01','2023-10-10')
-# print(a)
-models.product.delete()
-# order_list,page_max=home_search_date(db=Session(engine),date_='2023-10-7',page=1)
-# od_l={}
-# for i in order_list:
-#     od_l[f'{i.id}']=[i.m_id_.Phone,i.id,i.pick_up_date,i.pick_up,','.join(list(map(lambda x:x.p_id_.product_Name,i.orders_))),i.pick_up_tf,i.total]
-
-# print(od_l)
-# c={'a':[0,1],'b':[0,2]}
-# print(sum(i[1] for i in c.values()))
-    # for l in i.orders_[1:]:
-    #                 od_l[f'{i.id}'][4]+=f',{l.p_id_.product_Name}' 
+import tkinter.messagebox 
 # a=pd_Analysis(Session(engine),'2000-01-01','2023-09-20')
 # pd_=pd_Analysis(Session(engine),'2000-01-01','2023-09-20')
 # print(list(pd_.values())[0])

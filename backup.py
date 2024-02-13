@@ -9,9 +9,9 @@ class backup_Frame(customtkinter.CTkFrame):
         super().__init__(master, **kwargs)
         self.bt_frame=customtkinter.CTkFrame(self,fg_color='#EEEEEE')
 
-        self.backup_bt=customtkinter.CTkButton(self.bt_frame,text="備份",font=("microsoft yahei", 20, 'bold'),command=self.backup)
+        self.backup_bt=customtkinter.CTkButton(self.bt_frame,text="備份",command=self.backup)
         
-        self.restore_bt=customtkinter.CTkButton(self.bt_frame,text='恢復',font=("microsoft yahei", 20, 'bold'),command=self.restore)
+        self.restore_bt=customtkinter.CTkButton(self.bt_frame,text='恢復',command=self.restore)
 
         self.backup_bt.pack(side='left',padx=20)
         self.restore_bt.pack(side='left',padx=20)

@@ -60,22 +60,22 @@ class goods_frame(customtkinter.CTkFrame):
                                   size=(30, 30))        
         self.toplevel_window = None
         a=customtkinter.CTkFrame(self,fg_color=("#DDDDDD"),height=150)
-        # search_label=customtkinter.CTkLabel(a,text='品項查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 22, 'bold'))
+        # search_label=customtkinter.CTkLabel(a,text='品項查詢',fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
         # search_label.pack(side='left')
-        self.search=customtkinter.CTkEntry(a,fg_color = ("#EEEEEE"),text_color='black',placeholder_text='品項查詢',font=("microsoft yahei", 22, 'bold'),width=300)
+        self.search=customtkinter.CTkEntry(a,fg_color = ("#EEEEEE"),text_color='black',placeholder_text='品項查詢',font=("microsoft yahei", 18, 'bold'),width=300)
         self.search_bt=customtkinter.CTkButton(a, text="", width=40,hover=False,image=self.image,fg_color = "#DDDDDD",
                                                         command=self.search_)
         self.search.pack(side='left',padx=40)
         self.search_bt.pack(side='left')
         bt1=customtkinter.CTkButton(a,text='新增單個品項',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 22, 'bold'),command=self.add_product)
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.add_product)
         bt3=customtkinter.CTkButton(a,text='匯入品項資料',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 22, 'bold'),command=self.import_date)
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.import_date)
         bt2=customtkinter.CTkButton(a,text='匯出品項資料',
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 22, 'bold'),command=self.output_excel)
+                                                        font=("microsoft yahei", 18, 'bold'),command=self.output_excel)
         bt2.pack(side='right',padx=30,pady=5)
         bt3.pack(side='right',padx=30,pady=5)
         bt1.pack(side='right',padx=30,pady=5)
@@ -89,7 +89,6 @@ class goods_frame(customtkinter.CTkFrame):
         try:
             file_path = customtkinter.filedialog.askopenfilename()   # 選擇檔案後回傳檔案路徑與名稱
             df=pd.read_excel(file_path)
-            
             delete_all_pd(db=Session(engine))
             for index,row in df.iterrows():
                 add_pd(db=Session(engine),p_name=row['product_Name'],p_weight=row['product_Weight'],p_price=row['product_Price'])
@@ -105,12 +104,12 @@ class goods_frame(customtkinter.CTkFrame):
         self.history_frame=customtkinter.CTkScrollableFrame(self,fg_color = ("#DDDDDD"))
         self.history_frame.columnconfigure((0,2,3,4),weight=1)
         self.history_frame.columnconfigure(1,weight=3)
-        order_n=customtkinter.CTkLabel(self.history_frame,text='品項名稱',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        order_n1=customtkinter.CTkLabel(self.history_frame,text='內容物',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        order_n2=customtkinter.CTkLabel(self.history_frame,text='重量',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        order_n3=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        order_n4=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        order_n5=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        order_n=customtkinter.CTkLabel(self.history_frame,text='品項名稱',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n1=customtkinter.CTkLabel(self.history_frame,text='內容物',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n2=customtkinter.CTkLabel(self.history_frame,text='重量',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n3=customtkinter.CTkLabel(self.history_frame,text='價錢',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n4=customtkinter.CTkLabel(self.history_frame,text='編輯',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        order_n5=customtkinter.CTkLabel(self.history_frame,text='刪除',text_color='black',font=("microsoft yahei", 18, 'bold'))
         order_n.grid(row=0,column=0,sticky='w')
         order_n1.grid(row=0,column=1,sticky='w')
         order_n2.grid(row=0,column=2)
@@ -120,14 +119,14 @@ class goods_frame(customtkinter.CTkFrame):
         
         l=1
         def gen_cmd1(i):return lambda:self.edit_(i)
-        def gen_cmd(i):return lambda:self.delete(i)
+        def gen_cmd(i,name):return lambda:self.delete(i,name)
         for i in pd:
-            order_n=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Name}',text_color='black',font=("microsoft yahei", 22, 'bold'))
-            order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{"" if i.content==None else i.content}',text_color='black',font=("microsoft yahei", 22, 'bold'))
-            order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Weight}',text_color='black',font=("microsoft yahei", 22, 'bold'))
-            order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Price}',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            order_n=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Name}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            order_n1=customtkinter.CTkLabel(self.history_frame,text=f'{"" if i.content==None else i.content}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            order_n2=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Weight}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            order_n3=customtkinter.CTkLabel(self.history_frame,text=f'{i.product_Price}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             order_n4=customtkinter.CTkButton(self.history_frame,image=self.edit_photo, fg_color = ("#DDDDDD"),hover=False,text='',text_color='black',command=gen_cmd1(i.prodcut_ID))
-            order_n5=customtkinter.CTkButton(self.history_frame,image=self.delete_photo, fg_color = ("#DDDDDD"),hover=False,text='',text_color='black',command=gen_cmd(i.prodcut_ID))
+            order_n5=customtkinter.CTkButton(self.history_frame,image=self.delete_photo, fg_color = ("#DDDDDD"),hover=False,text='',text_color='black',command=gen_cmd(i.prodcut_ID,i.product_Name))
             order_n.grid(row=l,column=0,sticky='w')
             order_n1.grid(row=l,column=1,sticky='w')
             order_n2.grid(row=l,column=2)
@@ -143,9 +142,11 @@ class goods_frame(customtkinter.CTkFrame):
             self.toplevel_window.attributes('-topmost','true')   
         else:
             self.toplevel_window.focus()
-    def delete(self,i):
-        delete_product(Session(engine),i)
-        self.search_()
+    def delete(self,i,name):
+        msg_box = tkinter.messagebox.askquestion('確認訊息',f'確定要刪除{name}',icon='warning')
+        if msg_box == 'yes':
+            delete_product(Session(engine),i)
+            self.search_()
     def add_product(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = add_product_ToplevelWindow(self)
@@ -189,18 +190,18 @@ class edit_product_ToplevelWindow(customtkinter.CTkToplevel):
         self.columnconfigure((0,1),weight=1)
         self.pid=pid
         good=get_good(Session(engine),pid=pid)
-        name=customtkinter.CTkLabel(self,text='品項名稱：',font=("microsoft yahei", 22, 'bold'))
-        weight=customtkinter.CTkLabel(self,text='重量：',font=("microsoft yahei", 22, 'bold'))
-        price=customtkinter.CTkLabel(self,text='價格：',font=("microsoft yahei", 22, 'bold'))
-        self.name_entry=customtkinter.CTkEntry(self,font=("microsoft yahei", 22, 'bold'))
-        self.weight_entry=customtkinter.CTkEntry(self,font=("microsoft yahei", 22, 'bold'))
-        self.price_entry=customtkinter.CTkEntry(self,font=("microsoft yahei", 22, 'bold'))
+        name=customtkinter.CTkLabel(self,text='品項名稱：',font=("microsoft yahei", 18, 'bold'))
+        weight=customtkinter.CTkLabel(self,text='重量：',font=("microsoft yahei", 18, 'bold'))
+        price=customtkinter.CTkLabel(self,text='價格：',font=("microsoft yahei", 18, 'bold'))
+        self.name_entry=customtkinter.CTkEntry(self,font=("microsoft yahei", 18, 'bold'))
+        self.weight_entry=customtkinter.CTkEntry(self,font=("microsoft yahei", 18, 'bold'))
+        self.price_entry=customtkinter.CTkEntry(self,font=("microsoft yahei", 18, 'bold'))
         self.name_entry.insert(customtkinter.END,good.product_Name)
         self.weight_entry.insert(customtkinter.END,good.product_Weight)
         self.price_entry.insert(customtkinter.END,good.product_Price)
 
-        self.confirm=customtkinter.CTkButton(self,text='確定新增',font=("microsoft yahei", 22, 'bold'))
-        cancel=customtkinter.CTkButton(self,text='取消',command=self.destroy,font=("microsoft yahei", 22, 'bold'))
+        self.confirm=customtkinter.CTkButton(self,text='確定新增',font=("microsoft yahei", 18, 'bold'))
+        cancel=customtkinter.CTkButton(self,text='取消',command=self.destroy,font=("microsoft yahei", 18, 'bold'))
         self.confirm.grid(row=3,column=1,pady=10)
         cancel.grid(row=3,column=0,pady=10)
         name.grid(row=0,column=0,pady=10)
@@ -222,14 +223,14 @@ class add_product_ToplevelWindow(customtkinter.CTkToplevel):
         self.title('新增單品各項')
         self.geometry("400x200")
         self.columnconfigure((0,1),weight=1)
-        name=customtkinter.CTkLabel(self,text='品項名稱：',font=("microsoft yahei", 22, 'bold'))
-        weight=customtkinter.CTkLabel(self,text='重量：',font=("microsoft yahei", 22, 'bold'))
-        price=customtkinter.CTkLabel(self,text='價格：',font=("microsoft yahei", 22, 'bold'))
+        name=customtkinter.CTkLabel(self,text='品項名稱：',font=("microsoft yahei", 18, 'bold'))
+        weight=customtkinter.CTkLabel(self,text='重量：',font=("microsoft yahei", 18, 'bold'))
+        price=customtkinter.CTkLabel(self,text='價格：',font=("microsoft yahei", 18, 'bold'))
         self.name_entry=customtkinter.CTkEntry(self,)
         self.weight_entry=customtkinter.CTkEntry(self,)
         self.price_entry=customtkinter.CTkEntry(self,)
-        self.confirm=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 22, 'bold'))
-        cancel=customtkinter.CTkButton(self,text='取消',fg_color=("#5b5a5a"),command=self.destroy,font=("microsoft yahei", 22, 'bold'))
+        self.confirm=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
+        cancel=customtkinter.CTkButton(self,text='取消',fg_color=("#5b5a5a"),command=self.destroy,font=("microsoft yahei", 18, 'bold'))
         self.confirm.grid(row=3,column=1,pady=10)
         cancel.grid(row=3,column=0,pady=10)
         name.grid(row=0,column=0,pady=10)
@@ -250,13 +251,13 @@ class button_Frame(customtkinter.CTkFrame):
         super().__init__(master, **kwargs)
         self.input_button = customtkinter.CTkButton(self, text="品項管理", width=150, height=40,
                                                         fg_color=("#5b5a5a"),
-                                                        font=("microsoft yahei", 22, 'bold'),
+                                                        font=("microsoft yahei", 18, 'bold'),
                                                         text_color='white',border_width=2,corner_radius=0,
                                                         hover_color='#5b5a5a')
         self.input_button.grid(row=0, column=5,padx=30)
         self.edit_button = customtkinter.CTkButton(self, text="新增禮盒", width=150, height=40,
                                                         fg_color=("#EEEEEE"),
-                                                        font=("microsoft yahei", 22, 'bold'),
+                                                        font=("microsoft yahei", 18, 'bold'),
                                                         text_color='black',border_width=2,corner_radius=0,
                                                         hover_color='#5b5a5a')
         self.edit_button.grid(row=0, column=6,padx=30)
@@ -281,11 +282,11 @@ class product_Frame(customtkinter.CTkFrame):
             self.a_frame.columnconfigure(i,weight=1)
         def gen_cmd(i):return lambda:self.buy_bt_click(i)
         for i in range(len(prodcuts)):
-            label_Name=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Name,text_color='black',font=("microsoft yahei", 22, 'bold'))
+            label_Name=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Name,text_color='black',font=("microsoft yahei", 18, 'bold'))
             label_Name.grid(row=i,column=0,sticky='w')
-            label_Weight=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Weight,text_color='black',font=("microsoft yahei", 22, 'bold'))
+            label_Weight=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Weight,text_color='black',font=("microsoft yahei", 18, 'bold'))
             label_Weight.grid(row=i,column=1)
-            label_price=customtkinter.CTkLabel(self.a_frame,text=f'{prodcuts[i].product_Price}元',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            label_price=customtkinter.CTkLabel(self.a_frame,text=f'{prodcuts[i].product_Price}元',text_color='black',font=("microsoft yahei", 18, 'bold'))
             label_price.grid(row=i,column=2)
             
             spinbox_1 = FloatSpinbox(self.a_frame, width=150, step_size=1)
@@ -309,11 +310,11 @@ class product_Frame(customtkinter.CTkFrame):
         prodcuts=get_all_products(Session(engine))
         def gen_cmd(i):return lambda:self.buy_bt_click(i)
         for i in range(len(prodcuts)):
-            label_Name=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Name,text_color='black',font=("microsoft yahei", 22, 'bold'))
+            label_Name=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Name,text_color='black',font=("microsoft yahei", 18, 'bold'))
             label_Name.grid(row=i,column=0,sticky='w')
-            label_Weight=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Weight,text_color='black',font=("microsoft yahei", 22, 'bold'))
+            label_Weight=customtkinter.CTkLabel(self.a_frame,text=prodcuts[i].product_Weight,text_color='black',font=("microsoft yahei", 18, 'bold'))
             label_Weight.grid(row=i,column=1)
-            label_price=customtkinter.CTkLabel(self.a_frame,text=f'{prodcuts[i].product_Price}元',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            label_price=customtkinter.CTkLabel(self.a_frame,text=f'{prodcuts[i].product_Price}元',text_color='black',font=("microsoft yahei", 18, 'bold'))
             label_price.grid(row=i,column=2)
             
             spinbox_1 = FloatSpinbox(self.a_frame, width=150, step_size=1)
@@ -347,12 +348,12 @@ class sum_Frame(customtkinter.CTkFrame):
         f=customtkinter.CTkFrame(self,  fg_color = ("#EEEEEE"))
         f.columnconfigure(0,weight=1)
         f.columnconfigure(1,weight=5)
-        name_label=customtkinter.CTkLabel(f,text='名稱',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        self.name_entry=customtkinter.CTkEntry(f,fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 22, 'bold'))
-        weight_label=customtkinter.CTkLabel(f,text='重量',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        self.weight_entry=customtkinter.CTkEntry(f,fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 22, 'bold'))
-        price_label=customtkinter.CTkLabel(f,text='價錢',text_color='black',font=("microsoft yahei", 22, 'bold'))
-        self.price_entry=customtkinter.CTkEntry(f,fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 22, 'bold'))
+        name_label=customtkinter.CTkLabel(f,text='名稱',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        self.name_entry=customtkinter.CTkEntry(f,fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+        weight_label=customtkinter.CTkLabel(f,text='重量',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        self.weight_entry=customtkinter.CTkEntry(f,fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
+        price_label=customtkinter.CTkLabel(f,text='價錢',text_color='black',font=("microsoft yahei", 18, 'bold'))
+        self.price_entry=customtkinter.CTkEntry(f,fg_color = ("#EEEEEE"),text_color='black',font=("microsoft yahei", 18, 'bold'))
         name_label.grid(row=0,column=0,sticky='w')
         self.name_entry.grid(row=0,column=1,padx=30,sticky='ew')
         self.name_entry.insert(customtkinter.END,name)
@@ -363,7 +364,7 @@ class sum_Frame(customtkinter.CTkFrame):
         price_label.grid(row=2,column=0,sticky='w')
         self.price_entry.grid(row=2,column=1,padx=30,sticky='ew')
         f.pack(anchor='w',fill='x')
-        contents_label=customtkinter.CTkLabel(self,text='內容物',text_color='black',font=("microsoft yahei", 22, 'bold'))
+        contents_label=customtkinter.CTkLabel(self,text='內容物',text_color='black',font=("microsoft yahei", 18, 'bold'))
         contents_label.pack(anchor='w')
         self.a=a
         self.buy_list=buy_list
@@ -381,16 +382,16 @@ class sum_Frame(customtkinter.CTkFrame):
             if self.buy_list[self.a][0]==0:del self.buy_list[self.a]
         i=0
         for key,value in self.buy_list.items():
-            name_=customtkinter.CTkLabel(self.contents_,text=f'{key}',text_color='black',font=("microsoft yahei", 22, 'bold'))
-            number_=customtkinter.CTkLabel(self.contents_,text=f'X{value[0]:5}',text_color='black',font=("microsoft yahei", 22, 'bold'))
-            price_=customtkinter.CTkLabel(self.contents_,text=f'{value[0]*value[1]}',text_color='black',font=("microsoft yahei", 22, 'bold'))
+            name_=customtkinter.CTkLabel(self.contents_,text=f'{key}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            number_=customtkinter.CTkLabel(self.contents_,text=f'X{value[0]:5}',text_color='black',font=("microsoft yahei", 18, 'bold'))
+            price_=customtkinter.CTkLabel(self.contents_,text=f'{value[0]*value[1]}',text_color='black',font=("microsoft yahei", 18, 'bold'))
             name_.grid(row=i,column=0, padx=20, pady=3,sticky='nw')
             number_.grid(row=i,column=1, padx=20, pady=3,sticky='n')
             price_.grid(row=i,column=2, padx=20, pady=3,sticky='n')
             i+=1
         self.contents_.pack(fill='both',expand=1)
-        self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 22, 'bold'),command=lambda: self.add_gift_box_(pd=self.buy_list))
-        self.reset_bt=customtkinter.CTkButton(self,text='重設',fg_color=("#5b5a5a"),font=("microsoft yahei", 22, 'bold'))
+        self.confirm_bt=customtkinter.CTkButton(self,text='確定新增',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'),command=lambda: self.add_gift_box_(pd=self.buy_list))
+        self.reset_bt=customtkinter.CTkButton(self,text='重設',fg_color=("#5b5a5a"),font=("microsoft yahei", 18, 'bold'))
         self.confirm_bt.pack(pady=20,fill='x')
         self.reset_bt.pack(fill='x')
     def add_gift_box_(self,pd):

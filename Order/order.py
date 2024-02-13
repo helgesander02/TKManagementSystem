@@ -82,20 +82,20 @@ class button_Frame(customtkinter.CTkFrame):
         #5b5a5a
         self.input_button = customtkinter.CTkButton(self, text="輸入訂單", width=150, height=40,
                                                         fg_color=("#EEEEEE"),
-                                                        font=("microsoft yahei", 22, 'bold'),
+                                                        font=("microsoft yahei", 18, 'bold'),
                                                         text_color='black',border_width=2,corner_radius=0,
                                                         hover_color='#5b5a5a')
         self.input_button.grid(row=0, column=5,padx=30)
         self.edit_button = customtkinter.CTkButton(self, text="編輯與查詢", width=150, height=40,
                                                         fg_color=("#EEEEEE"),
-                                                        font=("microsoft yahei", 22, 'bold'),
+                                                        font=("microsoft yahei", 18, 'bold'),
                                                         text_color='black',border_width=2,corner_radius=0,
                                                         hover_color='#5b5a5a')
         self.edit_button.grid(row=0, column=6,padx=30)
 
         self.finish_button = customtkinter.CTkButton(self, text="完成訂單", width=150, height=40,
                                                         fg_color=("#EEEEEE"),
-                                                        font=("microsoft yahei", 22, 'bold'),
+                                                        font=("microsoft yahei", 18, 'bold'),
                                                         text_color='black',border_width=2,corner_radius=0,
                                                         hover_color='#5b5a5a')
         self.finish_button.grid(row=0, column=7,padx=30)
